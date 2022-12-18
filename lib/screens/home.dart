@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../widgets/drawer.dart';
+import '../widgets/player.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -14,6 +15,7 @@ class HomePage extends StatelessWidget {
         title: Text("Главная"),
       ),
       drawer: const AppDrawer(),
+      bottomSheet: const Player(),
     );
   }
 }
