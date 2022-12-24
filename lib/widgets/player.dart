@@ -1,18 +1,52 @@
 import 'package:flutter/material.dart';
 
-class Player extends StatelessWidget {
+import '../utils/duration.dart';
+
+class Player extends StatefulWidget {
   const Player({super.key});
+
+  @override
+  State<Player> createState() => _PlayerState();
+}
+
+class _PlayerState extends State<Player>  {
+  bool _hasNext = true;
+  bool _hasPrevious = false;
+  bool _favorite = false;
+  bool _mute = false;
+  bool _playing = false;
+  bool _repeating = false;
+  bool _shuffling = false;
+  double _trackDuration = 239;
+  double _trackPosition = 0;
+  double _volume = 100;
+
+  void _addToFavorite() {
+    setState(() {
+      _favorite = !_favorite;
+    });
+  }
 
   void _addToPlaylist() {
 
   }
 
-  void _onSeek(double newPosition) {
+  void _onChangeVolume(double newVolume) {
+    setState(() {
+      _volume = newVolume;
+    });
+  }
 
+  void _onSeek(double newPosition) {
+    setState(() {
+      _trackPosition = newPosition;
+    });
   }
 
   void _repeat() {
-
+    setState(() {
+      _repeating = !_repeating;
+    });
   }
 
   void _showLyrics() {
@@ -24,7 +58,9 @@ class Player extends StatelessWidget {
   }
 
   void _shuffle() {
-
+    setState(() {
+      _shuffling = !_shuffling;
+    });
   }
 
   void _skipBack() {
@@ -36,11 +72,15 @@ class Player extends StatelessWidget {
   }
 
   void _togglePlay() {
-
+    setState(() {
+      _playing = !_playing;
+    });
   }
 
   void _toggleVolume() {
-
+    setState(() {
+      _mute = !_mute;
+    });
   }
 
   @override
@@ -50,17 +90,17 @@ class Player extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.skip_previous),
             tooltip: 'Предыдущий',
-            onPressed: _skipBack,
+            onPressed: _hasPrevious ? _skipBack : null,
           ),
           IconButton(
-            icon: const Icon(Icons.play_arrow),
+            icon: _playing ? const Icon(Icons.pause) : const Icon(Icons.play_arrow),
             tooltip: 'Воспроизвести',
             onPressed: _togglePlay,
           ),
           IconButton(
             icon: const Icon(Icons.skip_next),
             tooltip: 'Следующий',
-            onPressed: _skipNext,
+            onPressed: _hasNext ? _skipNext : null,
           ),
           Expanded(
             flex: 1,
@@ -82,44 +122,43 @@ class Player extends StatelessWidget {
                       onPressed: _addToPlaylist,
                     ),
                     IconButton(
-                      icon: const Icon(Icons.favorite_border),
+                      icon: _favorite ? const Icon(Icons.favorite) : const Icon(Icons.favorite_border),
                       tooltip: 'Добавить в избранное',
-                      onPressed: _addToPlaylist,
+                      onPressed: _addToFavorite,
                     ),
                   ]
                 ),
                 Row(
                   children: <Widget>[
-                    Text('00:00'),
+                    Text(formatSecondsDuration(_trackPosition.round())),
                     Expanded(
                       flex: 1,
                       child: Slider(
-                        value: 0,
+                        value: _trackPosition,
                         min: 0,
-                        max: 239,
-                        label: '00:00',
+                        max: _trackDuration,
                         onChanged: _onSeek,
                       ),
                     ),
-                    Text('03:59'),
+                    Text(formatSecondsDuration(_trackDuration.round())),
                   ]
                 ),
               ]
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.replay),
+            icon: _repeating ? const Icon(Icons.repeat_on) : const Icon(Icons.repeat),
             tooltip: 'Повторять',
             onPressed: _repeat,
           ),
           IconButton(
-            icon: const Icon(Icons.shuffle),
+            icon: _shuffling ? const Icon(Icons.shuffle_on) : const Icon(Icons.shuffle),
             tooltip: 'Перемешать',
             onPressed: _shuffle,
           ),
           IconButton(
-            icon: const Icon(Icons.volume_up),
-            tooltip: 'Громкость: 100',
+            icon: _mute ? const Icon(Icons.volume_off) : const Icon(Icons.volume_up),
+            tooltip: 'Громкость: ${_volume.round()}',
             onPressed: _toggleVolume,
           ),
           IconButton(
