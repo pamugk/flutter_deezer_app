@@ -12,7 +12,7 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Главная"),
+        title: const Text("Главная"),
       ),
       drawer: const AppDrawer(),
       bottomSheet: const Player(),
