@@ -1,17 +1,15 @@
 import 'playable.dart';
 
 class Chart {
-  final int id;
   final List<Track> tracks;
   final List<Album> albums;
   final List<Artist> artists;
   final List<Playlist> playlists;
 
-  const Chart(this.id, this.tracks, this.albums, this.artists, this.playlists);
+  const Chart(this.tracks, this.albums, this.artists, this.playlists);
 
   Chart.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        tracks = [
+      : tracks = [
           for (var track in json['tracks']['data']) Track.fromJson(track)
         ],
         albums = [
