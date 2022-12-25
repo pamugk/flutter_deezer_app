@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'screens/home.dart';
+import 'screens/search.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,27 +20,8 @@ class MyApp extends StatelessWidget {
       ),
       home: const HomePage(),
       routes: <String, WidgetBuilder>{
-        '/search': (BuildContext context) {
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text('Поиск'),
-              bottom: const TabBar(
-                tabs: <Widget>[
-                  Tab(
-                    icon: Icon(Icons.cloud_outlined),
-                  ),
-                  Tab(
-                    icon: Icon(Icons.beach_access_sharp),
-                  ),
-                  Tab(
-                    icon: Icon(Icons.brightness_5_sharp),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
       },
+      debugShowCheckedModeBanner: false,
     );
   }
 }

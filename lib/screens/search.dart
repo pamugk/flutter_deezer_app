@@ -2,18 +2,21 @@ import 'package:flutter/material.dart';
 
 import '../widgets/drawer.dart';
 
-class SearchPage extends StatelessWidget {
-  const SearchPage({super.key});
+class SearchPageDelegate extends SearchDelegate {
+  final TabController _tabController;
+
+  SearchPageDelegate(TickerProvider tickerProvider)
+    : _tabController = TabController(vsync: tickerProvider, length: 7),
+      super(searchFieldLabel: 'Поиск');
 
   @override
-  Widget build(BuildContext context) {
-    return DefaultTabController(
-      initialIndex: 1,
-      length: 7,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Поиск'),
-          bottom: const TabBar(
+  List<Widget>? buildActions(BuildContext context) {
+    return null;
+  }
+
+  @override
+  PreferredSizeWidget? buildBottom(BuildContext context) {
+    return true ? null : TabBar(
             tabs: <Widget>[
               Tab(
                 text: 'Все',
@@ -37,10 +40,18 @@ class SearchPage extends StatelessWidget {
                 text: 'Профили',
               ),
             ],
-          ),
-        ),
-        drawer: const AppDrawer(),
-        body: const TabBarView(
+            controller: _tabController,
+          );
+  }
+
+  @override
+  Widget? buildLeading(BuildContext context) {
+    return null;
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return TabBarView(
           children: <Widget>[
             Center(
               child: Text("Общие результаты поиска"),
@@ -64,8 +75,12 @@ class SearchPage extends StatelessWidget {
               child: Text("Список пользователей"),
             ),
           ],
-        ),
-      ),
-    );
+          controller: _tabController,
+        );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return const Center(child: Text('Нечего предложить'));
   }
 }
