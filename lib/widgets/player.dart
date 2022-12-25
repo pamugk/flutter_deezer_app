@@ -19,7 +19,7 @@ class _PlayerState extends State<Player> {
   bool _shuffling = false;
   final double _trackDuration = 239;
   double _trackPosition = 0;
-  double _volume = 100;
+  final double _volume = 100;
 
   void _addToFavorite() {
     setState(() {
@@ -28,12 +28,6 @@ class _PlayerState extends State<Player> {
   }
 
   void _addToPlaylist() {}
-
-  void _onChangeVolume(double newVolume) {
-    setState(() {
-      _volume = newVolume;
-    });
-  }
 
   void _onSeek(double newPosition) {
     setState(() {

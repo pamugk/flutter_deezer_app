@@ -11,7 +11,6 @@ class Comment {
   Comment.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         text = json['text'],
-        date = DateTime.DateTime.fromMillisecondsSinceEpoch(json['date'],
-            isUtc: true),
+        date = DateTime.fromMillisecondsSinceEpoch(json['date'], isUtc: true),
         author = User.fromJson(json['author']);
 }

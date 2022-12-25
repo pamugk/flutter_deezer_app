@@ -24,7 +24,7 @@ class Album {
 
   final List<Contributor> contributors;
   final Artist artist;
-  final List<Track> tracks;
+  final List<Track>? tracks;
 
   const Album(
       this.id,
@@ -62,10 +62,9 @@ class Album {
         coverMedium = json['cover_medium'],
         coverBig = json['cover_big'],
         coverXl = json['cover_xl'],
-        genres = json['genres'] != null &&
-                json['genres'] is Map<String, dynamic>
-            ? [for (var genre in json['genres']['data']) Genre.fromJson(genre)]
-            : null,
+        genres = [
+          for (var genre in json['genres']['data']) Genre.fromJson(genre)
+        ],
         label = json['label'],
         trackCount = json['nb_tracks'],
         duration = Duration(seconds: json['duration']),
@@ -116,8 +115,7 @@ class Artist {
 
   Artist.fromJson(Map<String, dynamic> json)
       : id = json['id'],
-        title = json['title'],
-        description = json['description'],
+        name = json['name'],
         picture = json['picture'],
         pictureSmall = json['picture_small'],
         pictureMedium = json['picture_medium'],
@@ -130,7 +128,7 @@ class Artist {
 }
 
 class Contributor {
-  int id;
+  final int id;
 
   const Contributor(this.id);
 
@@ -286,24 +284,13 @@ class Track extends TrackShort {
       this.contributors);
 
   Track.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        readable = json['readable'],
-        title = json['title'],
-        titleShort = json['title_short'],
-        titleVersion = json['title_version'],
-        duration = Duration(seconds: json['duration']),
-        rank = json['rank'],
-        explicitLyrics = json['explicit_lyrics'],
-        preview = json['preview'],
-        artist = json['artist'],
-        album = json['album'],
-        unseen = json['unseen'],
+      : unseen = json['unseen'],
         isrc = json['isrc'],
         position = json['track_position'],
         diskNumber = json['disk_number'],
         releaseDate = DateTime.parse(json['release_date']),
-        explicitContentLyrics = json['explicit_content_lyrics'] == 1,
-        explicitContentCover = json['explicit_content_cover'] == 1,
+        explicitContentLyrics = json['explicit_content_lyrics'],
+        explicitContentCover = json['explicit_content_cover'],
         bpm = json['bpm'],
         gain = json['gain'],
         availableCountries = json['available_countries'],
@@ -313,7 +300,8 @@ class Track extends TrackShort {
         contributors = [
           for (var contributor in json['contributors'])
             Contributor.fromJson(contributor)
-        ];
+        ],
+        super.fromJson(json);
 }
 
 class TrackShort {

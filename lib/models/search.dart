@@ -1,22 +1,22 @@
 enum SearchOrder {
-  RANKING,
-  TRACK_ASC,
-  TRACK_DESC,
-  ARTIST_ASC,
-  ARTIST_DESC,
-  ALBUM_ASC,
-  ALBUM_DESC,
-  RATING_ASC,
-  RATING_DESC,
-  DURATION_ASC,
-  DURATION_DESC
+  ranking,
+  trackAsc,
+  trackDesc,
+  artistAsc,
+  artistDesc,
+  albumAsc,
+  albumDesc,
+  ratingAsc,
+  ratingDesc,
+  durationAsc,
+  durationDesc
 }
 
 class SearchResponse<T> {
   final List<T> data;
   final int total;
 
-  const SearchResponse(this.data);
+  const SearchResponse(this.data, this.total);
 }
 
 class PartialSearchResponse<T> extends SearchResponse<T> {

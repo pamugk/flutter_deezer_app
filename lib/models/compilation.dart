@@ -11,28 +11,19 @@ class Chart {
 
   Chart.fromJson(Map<String, dynamic> json)
       : id = json['id'],
-        tracks = json['tracks'] != null &&
-                json['tracks'] is Map<String, dynamic>
-            ? [for (var track in json['tracks']['data']) Track.fromJson(track)]
-            : null,
-        albums = json['albums'] != null &&
-                json['albums'] is Map<String, dynamic>
-            ? [for (var album in json['albums']['data']) Album.fromJson(album)]
-            : null,
-        artists =
-            json['artists'] != null && json['artists'] is Map<String, dynamic>
-                ? [
-                    for (var artist in json['artists']['data'])
-                      Artist.fromJson(artist)
-                  ]
-                : null,
-        playlists = json['playlists'] != null &&
-                json['playlists'] is Map<String, dynamic>
-            ? [
-                for (var playlist in json['playlists']['data'])
-                  Playlist.fromJson(playlist)
-              ]
-            : null;
+        tracks = [
+          for (var track in json['tracks']['data']) Track.fromJson(track)
+        ],
+        albums = [
+          for (var album in json['albums']['data']) Album.fromJson(album)
+        ],
+        artists = [
+          for (var artist in json['artists']['data']) Artist.fromJson(artist)
+        ],
+        playlists = [
+          for (var playlist in json['playlists']['data'])
+            Playlist.fromJson(playlist)
+        ];
 }
 
 class Editorial {
