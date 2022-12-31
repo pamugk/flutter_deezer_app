@@ -1,6 +1,5 @@
-class User {
-  final int id;
-  final String name, lastName, firstName;
+class User extends UserShort {
+  final String lastName, firstName;
   final DateTime birthday;
   final String gender;
 
@@ -9,18 +8,21 @@ class User {
   final DateTime inscriptionDate;
   final String link;
 
-  final String picture, pictureSmall, pictureMedium, pictureBig, pictureXl;
-
   final String country;
   final String lang;
   final bool isKid;
   final String explicitContentLevel;
   final List<String> explicitContentLevelsAvailable;
-  final String tracklist;
 
   const User(
-      this.id,
-      this.name,
+      super.id,
+      super.name,
+      super.picture,
+      super.pictureSmall,
+      super.pictureMedium,
+      super.pictureBig,
+      super.pictureXl,
+      super.tracklist,
       this.lastName,
       this.firstName,
       this.birthday,
@@ -29,22 +31,14 @@ class User {
       this.status,
       this.inscriptionDate,
       this.link,
-      this.picture,
-      this.pictureSmall,
-      this.pictureMedium,
-      this.pictureBig,
-      this.pictureXl,
       this.country,
       this.lang,
       this.isKid,
       this.explicitContentLevel,
-      this.explicitContentLevelsAvailable,
-      this.tracklist);
+      this.explicitContentLevelsAvailable);
 
   User.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        name = json['name'],
-        lastName = json['lastname'],
+      : lastName = json['lastname'],
         firstName = json['firstname'],
         birthday = DateTime.parse(json['birthday']),
         gender = json['gender'],
@@ -52,16 +46,31 @@ class User {
         status = json['status'],
         inscriptionDate = DateTime.parse(json['inscription_date']),
         link = json['link'],
-        picture = json['picture'],
-        pictureSmall = json['picture_small'],
-        pictureMedium = json['picture_medium'],
-        pictureBig = json['picture_big'],
-        pictureXl = json['picture_xl'],
         country = json['country'],
         lang = json['lang'],
         isKid = json['is_kid'],
         explicitContentLevel = json['explicit_content_level'],
         explicitContentLevelsAvailable =
             json['explicit_content_levels_available'],
+        super.fromJson(json);
+}
+
+class UserShort {
+  final int id;
+  final String name;
+  final String picture, pictureSmall, pictureMedium, pictureBig, pictureXl;
+  final String tracklist;
+
+  const UserShort(this.id, this.name, this.picture, this.pictureSmall,
+      this.pictureMedium, this.pictureBig, this.pictureXl, this.tracklist);
+
+  UserShort.fromJson(Map<String, dynamic> json)
+      : id = json['id'],
+        name = json['name'],
+        picture = json['picture'],
+        pictureSmall = json['picture_small'],
+        pictureMedium = json['picture_medium'],
+        pictureBig = json['picture_big'],
+        pictureXl = json['picture_xl'],
         tracklist = json['tracklist'];
 }

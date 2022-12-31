@@ -15,21 +15,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Главная"),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.search),
-            tooltip: 'Поиск',
-            onPressed: () async {
-              final searchResult = await showSearch(
-                context: context,
-                delegate: SearchPageDelegate(this),
-              );
-            },
-          ),
-        ]
-      ),
+      appBar: AppBar(title: const Text("Главная"), actions: <Widget>[
+        IconButton(
+          icon: const Icon(Icons.search),
+          tooltip: 'Поиск',
+          onPressed: () async {
+            final searchResult = await showSearch(
+              context: context,
+              delegate: SearchPageDelegate(this),
+            );
+          },
+        ),
+      ]),
       drawer: const AppDrawer(),
       bottomSheet: const Player(),
     );

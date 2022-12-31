@@ -11,3 +11,12 @@ String formatSecondsDuration(int seconds) {
       ? '$hoursStr:$minutesStr:$secondsStr'
       : '$minutesStr:$secondsStr';
 }
+
+String formatDuration(Duration duration) {
+  if (duration.isNegative) {
+    return '00:00';
+  }
+  return duration.inHours > 0
+      ? duration.toString().substring(0, 7)
+      : duration.toString().substring(2, 7);
+}

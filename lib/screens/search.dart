@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
 
-import '../widgets/drawer.dart';
+import '../models/search.dart';
+import '../providers/deezer.dart';
+import '../utils/duration.dart';
+import '../widgets/album_card.dart';
+import '../widgets/artist_card.dart';
+import '../widgets/playlist_card.dart';
+import '../widgets/radio_card.dart';
+import '../widgets/user_card.dart';
 
 class SearchPageDelegate extends SearchDelegate {
+  Future<FullSearchResponse>? _searchResponseFuture;
   final TabController _tabController;
 
   SearchPageDelegate(TickerProvider tickerProvider)
-    : _tabController = TabController(vsync: tickerProvider, length: 7),
-      super(searchFieldLabel: 'Поиск');
+      : _tabController = TabController(vsync: tickerProvider, length: 7),
+        super(searchFieldLabel: 'Поиск');
 
   @override
   List<Widget>? buildActions(BuildContext context) {
@@ -16,8 +24,10 @@ class SearchPageDelegate extends SearchDelegate {
 
   @override
   PreferredSizeWidget? buildBottom(BuildContext context) {
-    return true ? null : TabBar(
-            tabs: <Widget>[
+    return _searchResponseFuture == null
+        ? null
+        : TabBar(
+            tabs: const <Widget>[
               Tab(
                 text: 'Все',
               ),
@@ -51,36 +61,119 @@ class SearchPageDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    return TabBarView(
-          children: <Widget>[
-            Center(
-              child: Text("Общие результаты поиска"),
-            ),
-            Center(
-              child: Text("Список треков"),
-            ),
-            Center(
-              child: Text("Список альбомов"),
-            ),
-            Center(
-              child: Text("Список исполнителей"),
-            ),
-            Center(
-              child: Text("Список плейлистов"),
-            ),
-            Center(
-              child: Text("Список миксов"),
-            ),
-            Center(
-              child: Text("Список пользователей"),
-            ),
-          ],
-          controller: _tabController,
-        );
+    return FutureBuilder<FullSearchResponse>(
+      future: _searchResponseFuture,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return TabBarView(
+            controller: _tabController,
+            children: <Widget>[
+              SingleChildScrollView(
+                  child: Column(children: <Widget>[
+                const Text('Треки'),
+                Table(
+                  border: TableBorder.all(),
+                  columnWidths: const <int, TableColumnWidth>{
+                    0: IntrinsicColumnWidth(),
+                    1: FixedColumnWidth(56),
+                    5: IntrinsicColumnWidth(),
+                    6: IntrinsicColumnWidth(),
+                  },
+                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                  children: snapshot.data!.tracks.data
+                      .take(5)
+                      .map((track) => TableRow(children: [
+                            const Text('1'),
+                            Image.network(track.album.coverSmall,
+                                height: 56.0, width: 56.0),
+                            Text(track.title),
+                            Text(track.artist.name),
+                            Text(track.album.title),
+                            Text(formatDuration(track.duration)),
+                            Text('${track.rank}'),
+                          ]))
+                      .toList(),
+                ),
+                const Text('Альбомы'),
+                Wrap(
+                    spacing: 8.0,
+                    runSpacing: 4.0,
+                    children: snapshot.data!.albums.data
+                        .take(5)
+                        .map((album) => AlbumCard(album: album))
+                        .toList()),
+                const Text('Исполнители'),
+                Wrap(
+                    spacing: 8.0,
+                    runSpacing: 4.0,
+                    children: snapshot.data!.artists.data
+                        .take(5)
+                        .map((artist) => ArtistCard(artist: artist))
+                        .toList()),
+                const Text('Плейлисты'),
+                Wrap(
+                    spacing: 8.0,
+                    runSpacing: 4.0,
+                    children: snapshot.data!.playlists.data
+                        .take(5)
+                        .map((playlist) => PlaylistCard(playlist: playlist))
+                        .toList()),
+                const Text('Миксы'),
+                Wrap(
+                    spacing: 8.0,
+                    runSpacing: 4.0,
+                    children: snapshot.data!.radios.data
+                        .take(5)
+                        .map((radio) => RadioCard(radio: radio))
+                        .toList()),
+                const Text('Пользователи'),
+                Wrap(
+                    spacing: 8.0,
+                    runSpacing: 4.0,
+                    children: snapshot.data!.users.data
+                        .take(5)
+                        .map((user) => UserCard(user: user))
+                        .toList()),
+              ])),
+              Center(
+                child: Text('Список треков: ${snapshot.data!.tracks.total}: '),
+              ),
+              Center(
+                child: Text('Список альбомов: ${snapshot.data!.albums.total}'),
+              ),
+              Center(
+                child: Text(
+                    'Список исполнителей: ${snapshot.data!.artists.total}'),
+              ),
+              Center(
+                child: Text(
+                    'Список плейлистов: ${snapshot.data!.playlists.total}'),
+              ),
+              Center(
+                child: Text('Список миксов: ${snapshot.data!.radios.total}'),
+              ),
+              Center(
+                child:
+                    Text('Список пользователей: ${snapshot.data!.users.total}'),
+              ),
+            ],
+          );
+        } else if (snapshot.hasError) {
+          return Text('${snapshot.error}');
+        }
+        return const Center(child: CircularProgressIndicator());
+      },
+    );
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
     return const Center(child: Text('Нечего предложить'));
+  }
+
+  @override
+  void showResults(BuildContext context) {
+    _searchResponseFuture = search(query);
+    super.showResults(context);
   }
 }

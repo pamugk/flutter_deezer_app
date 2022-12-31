@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'screens/home.dart';
-import 'screens/search.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,8 +18,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const HomePage(),
-      routes: <String, WidgetBuilder>{
-      },
+      routes: const <String, WidgetBuilder>{},
       debugShowCheckedModeBanner: false,
     );
   }

@@ -1,40 +1,35 @@
 import 'user.dart';
 
-class Album {
-  final int id;
-  final String title;
-  final String upc;
+class Album extends AlbumShort {
+  final String? upc;
 
-  final String cover, coverSmall, coverMedium, coverBig, coverXl;
-
-  final List<Genre> genres;
-  final String label;
+  final List<Genre>? genres;
+  final String? label;
   final int trackCount;
-  final Duration duration;
-  final int fanCount;
-  final int rating;
-  final DateTime releaseDate;
+  final Duration? duration;
+  final int? fanCount;
+  final int? rating;
+  final DateTime? releaseDate;
   final String recordType;
-  final bool available;
+  final bool? available;
   final Album? alternative;
-  final String tracklist;
 
   final bool explicitLyrics;
-  final int explicitContentLyrics, explicitContentCover;
+  final int? explicitContentLyrics, explicitContentCover;
 
-  final List<Contributor> contributors;
+  final List<Contributor>? contributors;
   final Artist artist;
   final List<Track>? tracks;
 
   const Album(
-      this.id,
-      this.title,
+      super.id,
+      super.title,
       this.upc,
-      this.cover,
-      this.coverSmall,
-      this.coverMedium,
-      this.coverBig,
-      this.coverXl,
+      super.cover,
+      super.coverSmall,
+      super.coverMedium,
+      super.coverBig,
+      super.coverXl,
       this.genres,
       this.label,
       this.trackCount,
@@ -45,7 +40,7 @@ class Album {
       this.recordType,
       this.available,
       this.alternative,
-      this.tracklist,
+      super.tracklist,
       this.explicitLyrics,
       this.explicitContentLyrics,
       this.explicitContentCover,
@@ -54,50 +49,68 @@ class Album {
       this.tracks);
 
   Album.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        title = json['title'],
-        upc = json['upc'],
-        cover = json['cover'],
-        coverSmall = json['cover_small'],
-        coverMedium = json['cover_medium'],
-        coverBig = json['cover_big'],
-        coverXl = json['cover_xl'],
-        genres = [
-          for (var genre in json['genres']['data']) Genre.fromJson(genre)
-        ],
+      : upc = json['upc'],
+        genres = json['genres'] == null
+            ? null
+            : [for (var genre in json['genres']['data']) Genre.fromJson(genre)],
         label = json['label'],
         trackCount = json['nb_tracks'],
-        duration = Duration(seconds: json['duration']),
+        duration = json['duration'] == null
+            ? null
+            : Duration(seconds: json['duration']),
         fanCount = json['fans'],
         rating = json['rating'],
-        releaseDate = DateTime.parse(json['release_date']),
+        releaseDate = json['release_date'] == null
+            ? null
+            : DateTime.parse(json['release_date']),
         recordType = json['record_type'],
         available = json['available'],
         alternative = json['alternative'] == null
             ? null
             : Album.fromJson(json['alternative']),
-        tracklist = json['tracklist'],
         explicitLyrics = json['explicit_lyrics'],
         explicitContentLyrics = json['explicit_content_lyrics'],
         explicitContentCover = json['explicit_content_cover'],
-        contributors = [
-          for (var contributor in json['contributors'])
-            Contributor.fromJson(contributor)
-        ],
+        contributors = json['contributors'] == null
+            ? null
+            : [
+                for (var contributor in json['contributors'])
+                  Contributor.fromJson(contributor)
+              ],
         artist = Artist.fromJson(json['artist']),
-        tracks = json['tracks'] != null &&
-                json['tracks'] is Map<String, dynamic>
-            ? [for (var track in json['tracks']['data']) Track.fromJson(track)]
-            : null;
+        tracks = json['tracks'] == null
+            ? null
+            : [for (var track in json['tracks']['data']) Track.fromJson(track)],
+        super.fromJson(json);
+}
+
+class AlbumShort {
+  final int id;
+  final String title;
+  final String cover, coverSmall, coverMedium, coverBig, coverXl;
+  final String tracklist;
+
+  const AlbumShort(this.id, this.title, this.cover, this.coverSmall,
+      this.coverMedium, this.coverBig, this.coverXl, this.tracklist);
+
+  AlbumShort.fromJson(Map<String, dynamic> json)
+      : id = json['id'],
+        title = json['title'],
+        cover = json['cover'],
+        coverSmall = json['cover_small'],
+        coverMedium = json['cover_medium'],
+        coverBig = json['cover_big'],
+        coverXl = json['cover_xl'],
+        tracklist = json['tracklist'];
 }
 
 class Artist {
   final int id;
   final String name;
   final String picture, pictureSmall, pictureMedium, pictureBig, pictureXl;
-  final int albumCount;
-  final int fanCount;
-  final bool radio;
+  final int? albumCount;
+  final int? fanCount;
+  final bool? radio;
   final String tracklist;
 
   const Artist(
@@ -156,17 +169,18 @@ class Genre {
 class Playlist {
   final int id;
   final String title;
-  final String description;
-  final Duration duration;
+  final String? description;
+  final Duration? duration;
   final bool public;
-  final bool favorite;
-  final bool collaborative;
-  final int rating;
-  final int trackCount, unseenTrackCount;
-  final int fanCount;
+  final bool? favorite;
+  final bool? collaborative;
+  final int? rating;
+  final int trackCount;
+  final int? unseenTrackCount;
+  final int? fanCount;
   final String picture, pictureSmall, pictureMedium, pictureBig, pictureXl;
   final String checksum;
-  final User creator;
+  final User? creator;
   final List<Track>? tracks;
 
   const Playlist(
@@ -194,7 +208,9 @@ class Playlist {
       : id = json['id'],
         title = json['title'],
         description = json['description'],
-        duration = Duration(seconds: json['duration']),
+        duration = json['duration'] == null
+            ? null
+            : Duration(seconds: json['duration']),
         public = json['public'],
         favorite = json['is_loved_track'],
         collaborative = json['collaborative'],
@@ -208,11 +224,11 @@ class Playlist {
         pictureBig = json['picture_big'],
         pictureXl = json['picture_xl'],
         checksum = json['checksum'],
-        creator = User.fromJson(json['creator']),
-        tracks = json['tracks'] != null &&
-                json['tracks'] is Map<String, dynamic>
-            ? [for (var track in json['tracks']['data']) Track.fromJson(track)]
-            : null;
+        creator =
+            json['creator'] == null ? null : User.fromJson(json['creator']),
+        tracks = json['tracks'] == null
+            ? null
+            : [for (var track in json['tracks']['data']) Track.fromJson(track)];
 }
 
 class Radio {
@@ -313,7 +329,7 @@ class TrackShort {
   final bool explicitLyrics;
   final String preview;
   final Artist artist;
-  final Album album;
+  final AlbumShort album;
 
   const TrackShort(
       this.id,
@@ -338,6 +354,6 @@ class TrackShort {
         rank = json['rank'],
         explicitLyrics = json['explicit_lyrics'],
         preview = json['preview'],
-        artist = json['artist'],
-        album = json['album'];
+        artist = Artist.fromJson(json['artist']),
+        album = AlbumShort.fromJson(json['album']);
 }

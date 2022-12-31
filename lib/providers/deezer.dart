@@ -308,12 +308,23 @@ Future<User> getUser(int id) async {
   }
 }
 
+Future<FullSearchResponse> search(String query) async {
+  return FullSearchResponse(
+    await searchAlbums(query, 0, 10),
+    await searchArtists(query, 0, 10),
+    await searchPlaylists(query, 0, 10),
+    await searchRadios(query, 0, 10),
+    await searchTracks(query, 0, 10),
+    await searchUsers(query, 0, 10),
+  );
+}
+
 Future<PartialSearchResponse<Album>> searchAlbums(String query,
     [int index = 0, int limit = 25, bool strict = false]) async {
   final response = await http.get(Uri.https('api.deezer.com', 'search/album', {
     'q': query,
-    'index': index,
-    'limit': limit,
+    'index': index.toString(),
+    'limit': limit.toString(),
     'strict': strict ? 'on' : 'off'
   }));
 
@@ -333,8 +344,8 @@ Future<PartialSearchResponse<Artist>> searchArtists(String query,
     [int index = 0, int limit = 25, bool strict = false]) async {
   final response = await http.get(Uri.https('api.deezer.com', 'search/artist', {
     'q': query,
-    'index': index,
-    'limit': limit,
+    'index': index.toString(),
+    'limit': limit.toString(),
     'strict': strict ? 'on' : 'off'
   }));
 
@@ -352,11 +363,11 @@ Future<PartialSearchResponse<Artist>> searchArtists(String query,
 
 Future<PartialSearchResponse<Playlist>> searchPlaylists(String query,
     [int index = 0, int limit = 25, bool strict = false]) async {
-  final response = await http.get(Uri.https(
-      'api.deezer.com', 'search/playlist', {
+  final response =
+      await http.get(Uri.https('api.deezer.com', 'search/playlist', {
     'q': query,
-    'index': index,
-    'limit': limit,
+    'index': index.toString(),
+    'limit': limit.toString(),
     'strict': strict ? 'on' : 'off'
   }));
 
@@ -372,19 +383,40 @@ Future<PartialSearchResponse<Playlist>> searchPlaylists(String query,
   }
 }
 
-Future<PartialSearchResponse<Track>> searchTracks(String query,
+Future<PartialSearchResponse<Radio>> searchRadios(String query,
     [int index = 0, int limit = 25, bool strict = false]) async {
-  final response = await http.get(Uri.https('api.deezer.com', 'search/track', {
+  final response = await http.get(Uri.https('api.deezer.com', 'search/radio', {
     'q': query,
-    'index': index,
-    'limit': limit,
+    'index': index.toString(),
+    'limit': limit.toString(),
     'strict': strict ? 'on' : 'off'
   }));
 
   if (response.statusCode == 200) {
     final json = await compute(jsonDecode, response.body);
     return PartialSearchResponse(
-        [for (var track in json['data']) Track.fromJson(track)],
+        [for (var radio in json['data']) Radio.fromJson(radio)],
+        json['total'] ?? 0,
+        json['prev'],
+        json['next']);
+  } else {
+    throw Exception('Failed to search radios');
+  }
+}
+
+Future<PartialSearchResponse<TrackShort>> searchTracks(String query,
+    [int index = 0, int limit = 25, bool strict = false]) async {
+  final response = await http.get(Uri.https('api.deezer.com', 'search/track', {
+    'q': query,
+    'index': index.toString(),
+    'limit': limit.toString(),
+    'strict': strict ? 'on' : 'off'
+  }));
+
+  if (response.statusCode == 200) {
+    final json = await compute(jsonDecode, response.body);
+    return PartialSearchResponse(
+        [for (var track in json['data']) TrackShort.fromJson(track)],
         json['total'] ?? 0,
         json['prev'],
         json['next']);
@@ -393,19 +425,19 @@ Future<PartialSearchResponse<Track>> searchTracks(String query,
   }
 }
 
-Future<PartialSearchResponse<User>> searchUsers(String query,
+Future<PartialSearchResponse<UserShort>> searchUsers(String query,
     [int index = 0, int limit = 25, bool strict = false]) async {
   final response = await http.get(Uri.https('api.deezer.com', 'search/user', {
     'q': query,
-    'index': index,
-    'limit': limit,
+    'index': index.toString(),
+    'limit': limit.toString(),
     'strict': strict ? 'on' : 'off'
   }));
 
   if (response.statusCode == 200) {
     final json = await compute(jsonDecode, response.body);
     return PartialSearchResponse(
-        [for (var user in json['data']) User.fromJson(user)],
+        [for (var user in json['data']) UserShort.fromJson(user)],
         json['total'] ?? 0,
         json['prev'],
         json['next']);

@@ -1,3 +1,6 @@
+import 'playable.dart';
+import 'user.dart';
+
 enum SearchOrder {
   ranking,
   trackAsc,
@@ -10,6 +13,18 @@ enum SearchOrder {
   ratingDesc,
   durationAsc,
   durationDesc
+}
+
+class FullSearchResponse {
+  final SearchResponse<Album> albums;
+  final SearchResponse<Artist> artists;
+  final SearchResponse<Playlist> playlists;
+  final SearchResponse<Radio> radios;
+  final SearchResponse<TrackShort> tracks;
+  final SearchResponse<UserShort> users;
+
+  const FullSearchResponse(this.albums, this.artists, this.playlists,
+      this.radios, this.tracks, this.users);
 }
 
 class SearchResponse<T> {
