@@ -24,6 +24,20 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               context: context,
               delegate: SearchPageDelegate(this),
             );
+            if (searchResult != null) {
+              switch (searchResult.destination) {
+                case Destination.album:
+                  break;
+                case Destination.artist:
+                  break;
+                case Destination.playlist:
+                  break;
+                case Destination.radio:
+                  break;
+                case Destination.user:
+                  break;
+              }
+            }
           },
         ),
       ]),

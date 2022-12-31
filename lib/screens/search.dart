@@ -9,7 +9,21 @@ import '../widgets/playlist_card.dart';
 import '../widgets/radio_card.dart';
 import '../widgets/user_card.dart';
 
-class SearchPageDelegate extends SearchDelegate {
+enum Destination {
+  album,
+  artist,
+  playlist,
+  radio,
+  user,
+}
+
+class SearchPageOutput {
+  final int id;
+  final Destination destination;
+  const SearchPageOutput(this.id, this.destination);
+}
+
+class SearchPageDelegate extends SearchDelegate<SearchPageOutput> {
   Future<FullSearchResponse>? _searchResponseFuture;
   final TabController _tabController;
 
@@ -100,7 +114,9 @@ class SearchPageDelegate extends SearchDelegate {
                     runSpacing: 4.0,
                     children: snapshot.data!.albums.data
                         .take(5)
-                        .map((album) => AlbumCard(album: album))
+                        .map((album) => AlbumCard(album: album, onTap: () {
+                          close(context, SearchPageOutput(album.id, Destination.album));
+                        }))
                         .toList()),
                 const Text('Исполнители'),
                 Wrap(
@@ -108,7 +124,9 @@ class SearchPageDelegate extends SearchDelegate {
                     runSpacing: 4.0,
                     children: snapshot.data!.artists.data
                         .take(5)
-                        .map((artist) => ArtistCard(artist: artist))
+                        .map((artist) => ArtistCard(artist: artist, onTap: () {
+                          close(context, SearchPageOutput(artist.id, Destination.artist));
+                        }))
                         .toList()),
                 const Text('Плейлисты'),
                 Wrap(
@@ -116,7 +134,9 @@ class SearchPageDelegate extends SearchDelegate {
                     runSpacing: 4.0,
                     children: snapshot.data!.playlists.data
                         .take(5)
-                        .map((playlist) => PlaylistCard(playlist: playlist))
+                        .map((playlist) => PlaylistCard(playlist: playlist, onTap: () {
+                          close(context, SearchPageOutput(playlist.id, Destination.playlist));
+                        }))
                         .toList()),
                 const Text('Миксы'),
                 Wrap(
@@ -124,7 +144,9 @@ class SearchPageDelegate extends SearchDelegate {
                     runSpacing: 4.0,
                     children: snapshot.data!.radios.data
                         .take(5)
-                        .map((radio) => RadioCard(radio: radio))
+                        .map((radio) => RadioCard(radio: radio, onTap: () {
+                          close(context, SearchPageOutput(radio.id, Destination.radio));
+                        }))
                         .toList()),
                 const Text('Пользователи'),
                 Wrap(
@@ -132,7 +154,9 @@ class SearchPageDelegate extends SearchDelegate {
                     runSpacing: 4.0,
                     children: snapshot.data!.users.data
                         .take(5)
-                        .map((user) => UserCard(user: user))
+                        .map((user) => UserCard(user: user, onTap: () {
+                          close(context, SearchPageOutput(user.id, Destination.user));
+                        }))
                         .toList()),
               ])),
               Center(
