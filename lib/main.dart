@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'screens/album.dart';
 import 'screens/home.dart';
 
 void main() {
@@ -18,7 +19,9 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const HomePage(),
-      routes: const <String, WidgetBuilder>{},
+      routes: {
+        '/album': (context) => const AlbumPage(),
+      },
       debugShowCheckedModeBanner: false,
     );
   }

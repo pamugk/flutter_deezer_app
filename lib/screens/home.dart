@@ -25,8 +25,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               delegate: SearchPageDelegate(this),
             );
             if (searchResult != null) {
+              if (!mounted) return;
               switch (searchResult.destination) {
                 case Destination.album:
+                  Navigator.pushNamed(context, '/album',
+                      arguments: searchResult.id);
                   break;
                 case Destination.artist:
                   break;

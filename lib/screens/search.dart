@@ -98,11 +98,11 @@ class SearchPageDelegate extends SearchDelegate<SearchPageOutput> {
                       .take(5)
                       .map((track) => TableRow(children: [
                             const Text('1'),
-                            Image.network(track.album.coverSmall,
+                            Image.network(track.album!.coverSmall,
                                 height: 56.0, width: 56.0),
                             Text(track.title),
                             Text(track.artist.name),
-                            Text(track.album.title),
+                            Text(track.album!.title),
                             Text(formatDuration(track.duration)),
                             Text('${track.rank}'),
                           ]))
@@ -114,9 +114,14 @@ class SearchPageDelegate extends SearchDelegate<SearchPageOutput> {
                     runSpacing: 4.0,
                     children: snapshot.data!.albums.data
                         .take(5)
-                        .map((album) => AlbumCard(album: album, onTap: () {
-                          close(context, SearchPageOutput(album.id, Destination.album));
-                        }))
+                        .map((album) => AlbumCard(
+                            album: album,
+                            onTap: () {
+                              close(
+                                  context,
+                                  SearchPageOutput(
+                                      album.id, Destination.album));
+                            }))
                         .toList()),
                 const Text('Исполнители'),
                 Wrap(
@@ -124,9 +129,14 @@ class SearchPageDelegate extends SearchDelegate<SearchPageOutput> {
                     runSpacing: 4.0,
                     children: snapshot.data!.artists.data
                         .take(5)
-                        .map((artist) => ArtistCard(artist: artist, onTap: () {
-                          close(context, SearchPageOutput(artist.id, Destination.artist));
-                        }))
+                        .map((artist) => ArtistCard(
+                            artist: artist,
+                            onTap: () {
+                              close(
+                                  context,
+                                  SearchPageOutput(
+                                      artist.id, Destination.artist));
+                            }))
                         .toList()),
                 const Text('Плейлисты'),
                 Wrap(
@@ -134,9 +144,14 @@ class SearchPageDelegate extends SearchDelegate<SearchPageOutput> {
                     runSpacing: 4.0,
                     children: snapshot.data!.playlists.data
                         .take(5)
-                        .map((playlist) => PlaylistCard(playlist: playlist, onTap: () {
-                          close(context, SearchPageOutput(playlist.id, Destination.playlist));
-                        }))
+                        .map((playlist) => PlaylistCard(
+                            playlist: playlist,
+                            onTap: () {
+                              close(
+                                  context,
+                                  SearchPageOutput(
+                                      playlist.id, Destination.playlist));
+                            }))
                         .toList()),
                 const Text('Миксы'),
                 Wrap(
@@ -144,9 +159,14 @@ class SearchPageDelegate extends SearchDelegate<SearchPageOutput> {
                     runSpacing: 4.0,
                     children: snapshot.data!.radios.data
                         .take(5)
-                        .map((radio) => RadioCard(radio: radio, onTap: () {
-                          close(context, SearchPageOutput(radio.id, Destination.radio));
-                        }))
+                        .map((radio) => RadioCard(
+                            radio: radio,
+                            onTap: () {
+                              close(
+                                  context,
+                                  SearchPageOutput(
+                                      radio.id, Destination.radio));
+                            }))
                         .toList()),
                 const Text('Пользователи'),
                 Wrap(
@@ -154,9 +174,12 @@ class SearchPageDelegate extends SearchDelegate<SearchPageOutput> {
                     runSpacing: 4.0,
                     children: snapshot.data!.users.data
                         .take(5)
-                        .map((user) => UserCard(user: user, onTap: () {
-                          close(context, SearchPageOutput(user.id, Destination.user));
-                        }))
+                        .map((user) => UserCard(
+                            user: user,
+                            onTap: () {
+                              close(context,
+                                  SearchPageOutput(user.id, Destination.user));
+                            }))
                         .toList()),
               ])),
               Center(

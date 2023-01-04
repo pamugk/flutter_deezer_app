@@ -16,7 +16,7 @@ enum SearchOrder {
 }
 
 class FullSearchResponse {
-  final SearchResponse<Album> albums;
+  final SearchResponse<AlbumShort> albums;
   final SearchResponse<Artist> artists;
   final SearchResponse<Playlist> playlists;
   final SearchResponse<Radio> radios;

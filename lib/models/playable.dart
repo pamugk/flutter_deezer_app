@@ -1,68 +1,67 @@
 import 'user.dart';
 
 class Album extends AlbumShort {
-  final String? upc;
+  final String share;
+  final String upc;
 
-  final List<Genre>? genres;
+  final List<Genre> genres;
   final String? label;
   final int trackCount;
-  final Duration? duration;
-  final int? fanCount;
+  final Duration duration;
+  final int fanCount;
   final int? rating;
-  final DateTime? releaseDate;
+  final DateTime releaseDate;
   final String recordType;
-  final bool? available;
+  final bool available;
   final Album? alternative;
 
   final bool explicitLyrics;
-  final int? explicitContentLyrics, explicitContentCover;
+  final int explicitContentLyrics, explicitContentCover;
 
-  final List<Contributor>? contributors;
+  final List<Contributor> contributors;
   final Artist artist;
-  final List<Track>? tracks;
+  //final List<Track>? tracks;
 
   const Album(
-      super.id,
-      super.title,
-      this.upc,
-      super.cover,
-      super.coverSmall,
-      super.coverMedium,
-      super.coverBig,
-      super.coverXl,
-      this.genres,
-      this.label,
-      this.trackCount,
-      this.duration,
-      this.fanCount,
-      this.rating,
-      this.releaseDate,
-      this.recordType,
-      this.available,
-      this.alternative,
-      super.tracklist,
-      this.explicitLyrics,
-      this.explicitContentLyrics,
-      this.explicitContentCover,
-      this.contributors,
-      this.artist,
-      this.tracks);
+    super.id,
+    super.title,
+    this.upc,
+    this.share,
+    super.cover,
+    super.coverSmall,
+    super.coverMedium,
+    super.coverBig,
+    super.coverXl,
+    this.genres,
+    this.label,
+    this.trackCount,
+    this.duration,
+    this.fanCount,
+    this.rating,
+    this.releaseDate,
+    this.recordType,
+    this.available,
+    this.alternative,
+    super.tracklist,
+    this.explicitLyrics,
+    this.explicitContentLyrics,
+    this.explicitContentCover,
+    this.contributors,
+    this.artist,
+  );
 
   Album.fromJson(Map<String, dynamic> json)
       : upc = json['upc'],
-        genres = json['genres'] == null
-            ? null
-            : [for (var genre in json['genres']['data']) Genre.fromJson(genre)],
+        share = json['share'],
+        genres = [
+          for (var genre in json['genres']['data']) Genre.fromJson(genre)
+        ],
         label = json['label'],
         trackCount = json['nb_tracks'],
-        duration = json['duration'] == null
-            ? null
-            : Duration(seconds: json['duration']),
+        duration = Duration(seconds: json['duration']),
         fanCount = json['fans'],
         rating = json['rating'],
-        releaseDate = json['release_date'] == null
-            ? null
-            : DateTime.parse(json['release_date']),
+        releaseDate = DateTime.parse(json['release_date']),
         recordType = json['record_type'],
         available = json['available'],
         alternative = json['alternative'] == null
@@ -71,16 +70,14 @@ class Album extends AlbumShort {
         explicitLyrics = json['explicit_lyrics'],
         explicitContentLyrics = json['explicit_content_lyrics'],
         explicitContentCover = json['explicit_content_cover'],
-        contributors = json['contributors'] == null
-            ? null
-            : [
-                for (var contributor in json['contributors'])
-                  Contributor.fromJson(contributor)
-              ],
+        contributors = [
+          for (var contributor in json['contributors'])
+            Contributor.fromJson(contributor)
+        ],
         artist = Artist.fromJson(json['artist']),
-        tracks = json['tracks'] == null
-            ? null
-            : [for (var track in json['tracks']['data']) Track.fromJson(track)],
+        //tracks = json['tracks'] == null
+        //    ? null
+        //    : [for (var track in json['tracks']['data']) Track.fromJson(track)],
         super.fromJson(json);
 }
 
@@ -104,18 +101,15 @@ class AlbumShort {
         tracklist = json['tracklist'];
 }
 
-class Artist {
-  final int id;
-  final String name;
+class Artist extends ArtistShort {
   final String picture, pictureSmall, pictureMedium, pictureBig, pictureXl;
   final int? albumCount;
   final int? fanCount;
   final bool? radio;
-  final String tracklist;
 
   const Artist(
-      this.id,
-      this.name,
+      super.id,
+      super.name,
       this.picture,
       this.pictureSmall,
       this.pictureMedium,
@@ -124,12 +118,10 @@ class Artist {
       this.albumCount,
       this.fanCount,
       this.radio,
-      this.tracklist);
+      super.tracklist);
 
   Artist.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        name = json['name'],
-        picture = json['picture'],
+      : picture = json['picture'],
         pictureSmall = json['picture_small'],
         pictureMedium = json['picture_medium'],
         pictureBig = json['picture_big'],
@@ -137,21 +129,48 @@ class Artist {
         albumCount = json['nb_album'],
         fanCount = json['nb_fan'],
         radio = json['radio'],
+        super.fromJson(json);
+}
+
+class ArtistShort {
+  final int id;
+  final String name;
+  final String tracklist;
+
+  const ArtistShort(this.id, this.name, this.tracklist);
+
+  ArtistShort.fromJson(Map<String, dynamic> json)
+      : id = json['id'],
+        name = json['name'],
         tracklist = json['tracklist'];
 }
 
 class Contributor {
   final int id;
+  final String name;
+  final String link, share;
+  final String picture, pictureSmall, pictureMedium, pictureBig, pictureXl;
 
-  const Contributor(this.id);
+  const Contributor(this.id, this.name, this.link, this.share, this.picture,
+      this.pictureSmall, this.pictureMedium, this.pictureBig, this.pictureXl);
 
-  Contributor.fromJson(Map<String, dynamic> json) : id = json['id'];
+  Contributor.fromJson(Map<String, dynamic> json)
+      : id = json['id'],
+        name = json['name'],
+        link = json['link'],
+        share = json['share'],
+        picture = json['picture'],
+        pictureSmall = json['picture_small'],
+        pictureMedium = json['picture_medium'],
+        pictureBig = json['picture_big'],
+        pictureXl = json['picture_xl'];
 }
 
 class Genre {
   final int id;
   final String name;
-  final String picture, pictureSmall, pictureMedium, pictureBig, pictureXl;
+  final String picture;
+  final String? pictureSmall, pictureMedium, pictureBig, pictureXl;
 
   const Genre(this.id, this.name, this.picture, this.pictureSmall,
       this.pictureMedium, this.pictureBig, this.pictureXl);
@@ -262,17 +281,17 @@ class Radio {
 }
 
 class Track extends TrackShort {
-  final bool unseen;
+  final bool? unseen;
   final String isrc;
   final int position;
   final int diskNumber;
-  final DateTime releaseDate;
+  final DateTime? releaseDate;
   final int explicitContentLyrics, explicitContentCover;
-  final double bpm;
-  final double gain;
-  final List<String> availableCountries;
+  final double? bpm;
+  final double? gain;
+  final List<String>? availableCountries;
   final Track? alternative;
-  final List<Contributor> contributors;
+  final List<Contributor>? contributors;
 
   const Track(
       super.id,
@@ -304,7 +323,9 @@ class Track extends TrackShort {
         isrc = json['isrc'],
         position = json['track_position'],
         diskNumber = json['disk_number'],
-        releaseDate = DateTime.parse(json['release_date']),
+        releaseDate = json['release_date'] == null
+            ? null
+            : DateTime.parse(json['release_date']),
         explicitContentLyrics = json['explicit_content_lyrics'],
         explicitContentCover = json['explicit_content_cover'],
         bpm = json['bpm'],
@@ -313,10 +334,12 @@ class Track extends TrackShort {
         alternative = json['alternative'] == null
             ? null
             : Track.fromJson(json['alternative']),
-        contributors = [
-          for (var contributor in json['contributors'])
-            Contributor.fromJson(contributor)
-        ],
+        contributors = json['contributors'] == null
+            ? null
+            : [
+                for (var contributor in json['contributors'])
+                  Contributor.fromJson(contributor)
+              ],
         super.fromJson(json);
 }
 
@@ -328,8 +351,8 @@ class TrackShort {
   final int rank;
   final bool explicitLyrics;
   final String preview;
-  final Artist artist;
-  final AlbumShort album;
+  final ArtistShort artist;
+  final AlbumShort? album;
 
   const TrackShort(
       this.id,
@@ -354,6 +377,7 @@ class TrackShort {
         rank = json['rank'],
         explicitLyrics = json['explicit_lyrics'],
         preview = json['preview'],
-        artist = Artist.fromJson(json['artist']),
-        album = AlbumShort.fromJson(json['album']);
+        artist = ArtistShort.fromJson(json['artist']),
+        album =
+            json['album'] == null ? null : AlbumShort.fromJson(json['album']);
 }
