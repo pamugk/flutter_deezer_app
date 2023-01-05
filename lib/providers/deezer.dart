@@ -337,13 +337,20 @@ Future<User> getUser(int id) async {
 }
 
 Future<FullSearchResponse> search(String query) async {
+  final albums = searchAlbums(query, 0, 10);
+  final artists = searchArtists(query, 0, 10);
+  final playlists = searchPlaylists(query, 0, 10);
+  final radios = searchRadios(query, 0, 10);
+  final tracks = searchTracks(query, 0, 10);
+  final users = searchUsers(query, 0, 10);
+
   return FullSearchResponse(
-    await searchAlbums(query, 0, 10),
-    await searchArtists(query, 0, 10),
-    await searchPlaylists(query, 0, 10),
-    await searchRadios(query, 0, 10),
-    await searchTracks(query, 0, 10),
-    await searchUsers(query, 0, 10),
+    await albums,
+    await artists,
+    await playlists,
+    await radios,
+    await tracks,
+    await users,
   );
 }
 
