@@ -49,8 +49,12 @@ class _AlbumPageState extends State<AlbumPage> with TickerProviderStateMixin {
             if (searchResult != null) {
               switch (searchResult.destination) {
                 case Destination.album:
+                  Navigator.pushNamed(context, '/album',
+                      arguments: searchResult.id);
                   break;
                 case Destination.artist:
+                  Navigator.pushNamed(context, '/artist',
+                      arguments: searchResult.id);
                   break;
                 case Destination.playlist:
                   break;
@@ -144,6 +148,8 @@ class _AlbumPageState extends State<AlbumPage> with TickerProviderStateMixin {
                                 .map((artist) => ArtistCard(
                                     artist: artist,
                                     onTap: () {
+                                      Navigator.pushNamed(context, '/artist',
+                                          arguments: artist.id);
                                     }))
                                 .toList());
                       } else if (snapshot.hasError) {

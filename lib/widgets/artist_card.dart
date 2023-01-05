@@ -9,13 +9,17 @@ class ArtistCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-        child: InkWell(
-            onTap: onTap,
-            child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-              Image.network(artist.pictureMedium, height: 250.0, width: 250.0),
-              Text(artist.name),
-              Text('Слушателей: ${artist.fanCount ?? 0}'),
-            ])));
+    return SizedBox(
+        width: 250.0,
+        child: Card(
+            child: InkWell(
+                onTap: onTap,
+                child:
+                    Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                  Image.network(artist.pictureMedium,
+                      height: 250.0, width: 250.0),
+                  Text(artist.name),
+                  Text('Слушателей: ${artist.fanCount ?? 0}'),
+                ]))));
   }
 }

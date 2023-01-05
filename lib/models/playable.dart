@@ -194,7 +194,7 @@ class Playlist {
   final bool? favorite;
   final bool? collaborative;
   final int? rating;
-  final int trackCount;
+  final int? trackCount;
   final int? unseenTrackCount;
   final int? fanCount;
   final String picture, pictureSmall, pictureMedium, pictureBig, pictureXl;

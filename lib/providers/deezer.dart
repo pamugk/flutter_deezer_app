@@ -136,7 +136,7 @@ Future<PartialSearchResponse<Artist>> getArtistRelated(int id,
   }
 }
 
-Future<PartialSearchResponse<Track>> getArtistTopTracks(int id,
+Future<PartialSearchResponse<TrackShort>> getArtistTopTracks(int id,
     [int index = 0, int limit = 25]) async {
   final response = await http.get(Uri.https('api.deezer.com', 'artist/$id/top',
       {'index': index.toString(), 'limit': limit.toString()}));
@@ -144,7 +144,7 @@ Future<PartialSearchResponse<Track>> getArtistTopTracks(int id,
   if (response.statusCode == 200) {
     final json = await compute(jsonDecode, response.body);
     return PartialSearchResponse(
-        [for (var track in json['data']) Track.fromJson(track)],
+        [for (var track in json['data']) TrackShort.fromJson(track)],
         json['total'] ?? 0,
         json['prev'],
         json['next']);

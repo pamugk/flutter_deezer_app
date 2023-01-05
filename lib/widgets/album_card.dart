@@ -9,13 +9,16 @@ class AlbumCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-        child: InkWell(
-            onTap: onTap,
-            child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-              Image.network(album.coverMedium, height: 250.0, width: 250.0),
-              Text(album.title),
-              //Text(album.artist.name)
-            ])));
+    return SizedBox(
+        width: 250.0,
+        child: Card(
+            child: InkWell(
+                onTap: onTap,
+                child:
+                    Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                  Image.network(album.coverMedium, height: 250.0, width: 250.0),
+                  Text(album.title),
+                  //Text(album.artist.name)
+                ]))));
   }
 }

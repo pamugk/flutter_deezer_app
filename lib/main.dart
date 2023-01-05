@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'screens/album.dart';
+import 'screens/artist.dart';
 import 'screens/home.dart';
 
 void main() {
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
       home: const HomePage(),
       routes: {
         '/album': (context) => const AlbumPage(),
+        '/artist': (context) => const ArtistPage(),
       },
       debugShowCheckedModeBanner: false,
     );
