@@ -16,7 +16,7 @@ class UserCard extends StatelessWidget {
                 onTap: onTap,
                 child:
                     Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                  Image.network(user.pictureMedium,
+                  Image.network(user.pictureMedium!,
                       height: 250.0, width: 250.0),
                   Text(user.name),
                 ]))));

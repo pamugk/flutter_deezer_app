@@ -58,7 +58,7 @@ class User extends UserShort {
 class UserShort {
   final int id;
   final String name;
-  final String picture, pictureSmall, pictureMedium, pictureBig, pictureXl;
+  final String? picture, pictureSmall, pictureMedium, pictureBig, pictureXl;
   final String tracklist;
 
   const UserShort(this.id, this.name, this.picture, this.pictureSmall,

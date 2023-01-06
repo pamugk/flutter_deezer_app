@@ -199,8 +199,8 @@ class Playlist {
   final int? fanCount;
   final String picture, pictureSmall, pictureMedium, pictureBig, pictureXl;
   final String checksum;
-  final User? creator;
-  final List<Track>? tracks;
+  final UserShort? creator;
+  final List<TrackShort>? tracks;
 
   const Playlist(
       this.id,
@@ -243,11 +243,15 @@ class Playlist {
         pictureBig = json['picture_big'],
         pictureXl = json['picture_xl'],
         checksum = json['checksum'],
-        creator =
-            json['creator'] == null ? null : User.fromJson(json['creator']),
+        creator = json['creator'] == null
+            ? null
+            : UserShort.fromJson(json['creator']),
         tracks = json['tracks'] == null
             ? null
-            : [for (var track in json['tracks']['data']) Track.fromJson(track)];
+            : [
+                for (var track in json['tracks']['data'])
+                  TrackShort.fromJson(track)
+              ];
 }
 
 class Radio {

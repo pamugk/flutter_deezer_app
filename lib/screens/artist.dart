@@ -141,7 +141,12 @@ class _ArtistPageState extends State<ArtistPage> {
                                       runSpacing: 4.0,
                                       children: snapshot.data!.data
                                           .map((playlist) => PlaylistCard(
-                                              playlist: playlist, onTap: () {}))
+                                              playlist: playlist,
+                                              onTap: () {
+                                                Navigator.pushNamed(
+                                                    context, '/playlist',
+                                                    arguments: playlist.id);
+                                              }))
                                           .toList()));
                             } else if (snapshot.hasError) {
                               return Center(child: Text('${snapshot.error}'));
@@ -152,11 +157,13 @@ class _ArtistPageState extends State<ArtistPage> {
                       const Center(child: Text('Тут комментарии')),
                     ])));
           }
-          return Scaffold(
-              appBar: AppBar(
-                  title: const Text("Идёт загрузка..."),
-                  actions: const <Widget>[]),
-              body: const Center(child: CircularProgressIndicator()));
+          return snapshot.hasError
+              ? Scaffold(
+                  appBar: AppBar(title: const Text("Ошибка!")),
+                  body: Center(child: Text('${snapshot.error}')))
+              : Scaffold(
+                  appBar: AppBar(title: const Text("Идёт загрузка...")),
+                  body: const Center(child: CircularProgressIndicator()));
         });
   }
 }
