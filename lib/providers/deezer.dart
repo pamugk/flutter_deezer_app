@@ -325,14 +325,159 @@ Future<Track> getTrack(int id) async {
   }
 }
 
-Future<User> getUser(int id) async {
+Future<UserShort> getUser(int id) async {
   final response = await http.get(Uri.parse('https://api.deezer.com/user/$id'));
 
   if (response.statusCode == 200) {
     final json = await compute(jsonDecode, response.body);
-    return User.fromJson(json);
+    return UserShort.fromJson(json);
   } else {
     throw Exception('Failed to fetch user');
+  }
+}
+
+Future<PartialSearchResponse<AlbumShort>> getUserAlbums(int id,
+    [int index = 0, int limit = 25]) async {
+  final response = await http.get(Uri.https('api.deezer.com', 'user/$id/albums',
+      {'index': index.toString(), 'limit': limit.toString()}));
+
+  if (response.statusCode == 200) {
+    final json = await compute(jsonDecode, response.body);
+    return PartialSearchResponse(
+        [for (var album in json['data']) AlbumShort.fromJson(album)],
+        json['total'] ?? 0,
+        json['prev'],
+        json['next']);
+  } else {
+    throw Exception('Failed to get user favorite albums');
+  }
+}
+
+Future<PartialSearchResponse<Artist>> getUserArtists(int id,
+    [int index = 0, int limit = 25]) async {
+  final response = await http.get(Uri.https(
+      'api.deezer.com',
+      'user/$id/artists',
+      {'index': index.toString(), 'limit': limit.toString()}));
+
+  if (response.statusCode == 200) {
+    final json = await compute(jsonDecode, response.body);
+    return PartialSearchResponse(
+        [for (var artist in json['data']) Artist.fromJson(artist)],
+        json['total'] ?? 0,
+        json['prev'],
+        json['next']);
+  } else {
+    throw Exception('Failed to get user favorite artists');
+  }
+}
+
+Future<FullSearchResponse> getUserHighlights(int id) async {
+  final albums = getUserAlbums(id, 0, 10);
+  final artists = getUserArtists(id, 0, 10);
+  final playlists = getUserPlaylists(id, 0, 10);
+  final radios = getUserRadios(id, 0, 10);
+  final tracks = getUserTracks(id, 0, 10);
+  final users = getUserFollowers(id, 0, 10);
+
+  return FullSearchResponse(
+    await albums,
+    await artists,
+    await playlists,
+    await radios,
+    await tracks,
+    await users,
+  );
+}
+
+Future<PartialSearchResponse<UserShort>> getUserFollowers(int id,
+    [int index = 0, int limit = 25]) async {
+  final response = await http.get(Uri.https(
+      'api.deezer.com',
+      'user/$id/followers',
+      {'index': index.toString(), 'limit': limit.toString()}));
+
+  if (response.statusCode == 200) {
+    final json = await compute(jsonDecode, response.body);
+    return PartialSearchResponse(
+        [for (var user in json['data']) User.fromJson(user)],
+        json['total'] ?? 0,
+        json['prev'],
+        json['next']);
+  } else {
+    throw Exception('Failed to get user followers');
+  }
+}
+
+Future<PartialSearchResponse<UserShort>> getUserFollowings(int id,
+    [int index = 0, int limit = 25]) async {
+  final response = await http.get(Uri.https(
+      'api.deezer.com',
+      'user/$id/followings',
+      {'index': index.toString(), 'limit': limit.toString()}));
+
+  if (response.statusCode == 200) {
+    final json = await compute(jsonDecode, response.body);
+    return PartialSearchResponse(
+        [for (var user in json['data']) User.fromJson(user)],
+        json['total'] ?? 0,
+        json['prev'],
+        json['next']);
+  } else {
+    throw Exception('Failed to get user followings');
+  }
+}
+
+Future<PartialSearchResponse<Playlist>> getUserPlaylists(int id,
+    [int index = 0, int limit = 25]) async {
+  final response = await http.get(Uri.https(
+      'api.deezer.com',
+      'user/$id/playlists',
+      {'index': index.toString(), 'limit': limit.toString()}));
+
+  if (response.statusCode == 200) {
+    final json = await compute(jsonDecode, response.body);
+    return PartialSearchResponse(
+        [for (var playlist in json['data']) Playlist.fromJson(playlist)],
+        json['total'] ?? 0,
+        json['prev'],
+        json['next']);
+  } else {
+    throw Exception('Failed to get user favorite playlists');
+  }
+}
+
+Future<PartialSearchResponse<Radio>> getUserRadios(int id,
+    [int index = 0, int limit = 25]) async {
+  final response = await http.get(Uri.https('api.deezer.com', 'user/$id/radios',
+      {'index': index.toString(), 'limit': limit.toString()}));
+
+  if (response.statusCode == 200) {
+    final json = await compute(jsonDecode, response.body);
+    return PartialSearchResponse(
+        [for (var radio in json['data']) Radio.fromJson(radio)],
+        json['total'] ?? 0,
+        json['prev'],
+        json['next']);
+  } else {
+    throw Exception('Failed to get user favorite radios');
+  }
+}
+
+Future<PartialSearchResponse<TrackShort>> getUserTracks(int id,
+    [int index = 0, int limit = 25]) async {
+  final response = await http.get(Uri.https('api.deezer.com', 'user/$id/tracks',
+      {'index': index.toString(), 'limit': limit.toString()}));
+
+  if (response.statusCode == 200) {
+    final json = await compute(jsonDecode, response.body);
+    return PartialSearchResponse(
+        [for (var track in json['data']) TrackShort.fromJson(track)],
+        json['total'] ?? 0,
+        json['prev'],
+        json['next']);
+  } else {
+    throw Exception('Failed to get user favorite tracks');
   }
 }
 

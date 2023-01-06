@@ -42,6 +42,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 case Destination.radio:
                   break;
                 case Destination.user:
+                  Navigator.pushNamed(context, '/user',
+                      arguments: searchResult.id);
                   break;
               }
             }

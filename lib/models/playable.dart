@@ -350,11 +350,12 @@ class Track extends TrackShort {
 class TrackShort {
   final int id;
   final bool readable;
-  final String title, titleShort, titleVersion;
+  final String title;
+  final String? titleShort, titleVersion;
   final Duration duration;
   final int rank;
   final bool explicitLyrics;
-  final String preview;
+  final String? preview;
   final ArtistShort artist;
   final AlbumShort? album;
 

@@ -4,6 +4,7 @@ import 'screens/album.dart';
 import 'screens/artist.dart';
 import 'screens/home.dart';
 import 'screens/playlist.dart';
+import 'screens/user.dart';
 
 void main() {
   runApp(const MyApp());
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
         '/album': (context) => const AlbumPage(),
         '/artist': (context) => const ArtistPage(),
         '/playlist': (context) => const PlaylistPage(),
+        '/user': (context) => const UserPage(),
       },
       debugShowCheckedModeBanner: false,
     );
