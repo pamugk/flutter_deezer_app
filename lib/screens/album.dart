@@ -23,20 +23,30 @@ class _AlbumPageState extends State<AlbumPage> with TickerProviderStateMixin {
   late Future<List<Track>> _tracksFuture;
 
   @override
-  void initState() {
-    super.initState();
-    _albumFuture = getAlbum(94352652);
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final id = ModalRoute.of(context)!.settings.arguments as int;
+    _albumFuture = getAlbum(id);
     _albumFuture.then((Album album) {
       _discographyFuture = getArtistAlbums(album.artist.id, 0, 10);
       _relatedArtistsFuture = getArtistRelated(album.artist.id, 0, 10);
     });
-    _tracksFuture = getAlbumTracks(94352652);
+    _tracksFuture = getAlbumTracks(id);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Альбом"), actions: <Widget>[
+        IconButton(
+            icon: const Icon(Icons.play_circle),
+            tooltip: 'Воспроизвести',
+            onPressed: () {}),
+        const IconButton(
+            icon: Icon(Icons.favorite_border),
+            tooltip: 'Добавить в избранное',
+            onPressed: null),
         IconButton(
           icon: const Icon(Icons.search),
           tooltip: 'Поиск',

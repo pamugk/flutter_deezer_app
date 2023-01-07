@@ -32,17 +32,19 @@ class _UserPageState extends State<UserPage> {
   late Future<PartialSearchResponse<playable.TrackShort>> _userTracksFuture;
 
   @override
-  void initState() {
-    super.initState();
-    _userFuture = getUser(4224801602);
+  void didChangeDependencies() {
+    super.didChangeDependencies();
 
-    _userAlbumsFuture = getUserAlbums(4224801602);
-    _userArtistsFuture = getUserArtists(4224801602);
-    _userFollowersFuture = getUserFollowers(4224801602);
-    _userHighlightsFuture = getUserHighlights(4224801602);
-    _userPlaylistsFuture = getUserPlaylists(4224801602);
-    _userRadiosFuture = getUserRadios(4224801602);
-    _userTracksFuture = getUserTracks(4224801602);
+    final id = ModalRoute.of(context)!.settings.arguments as int;
+    _userFuture = getUser(id);
+
+    _userAlbumsFuture = getUserAlbums(id);
+    _userArtistsFuture = getUserArtists(id);
+    _userFollowersFuture = getUserFollowers(id);
+    _userHighlightsFuture = getUserHighlights(id);
+    _userPlaylistsFuture = getUserPlaylists(id);
+    _userRadiosFuture = getUserRadios(id);
+    _userTracksFuture = getUserTracks(id);
   }
 
   @override

@@ -18,9 +18,11 @@ class _PlaylistPageState extends State<PlaylistPage> {
   late Future<Playlist> _playlistFuture;
 
   @override
-  void initState() {
-    super.initState();
-    _playlistFuture = getPlaylist(7420034944);
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final id = ModalRoute.of(context)!.settings.arguments as int;
+    _playlistFuture = getPlaylist(id);
   }
 
   @override
@@ -34,6 +36,14 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 appBar: AppBar(
                   title: Text(playlist.title),
                   actions: <Widget>[
+                    IconButton(
+                        icon: const Icon(Icons.play_circle),
+                        tooltip: 'Воспроизвести',
+                        onPressed: () {}),
+                    const IconButton(
+                        icon: Icon(Icons.favorite_border),
+                        tooltip: 'Добавить в избранное',
+                        onPressed: null),
                     IconButton(
                       icon: const Icon(Icons.search),
                       tooltip: 'Поиск',

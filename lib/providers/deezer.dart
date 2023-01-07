@@ -419,7 +419,7 @@ Future<PartialSearchResponse<UserShort>> getUserFollowings(int id,
   if (response.statusCode == 200) {
     final json = await compute(jsonDecode, response.body);
     return PartialSearchResponse(
-        [for (var user in json['data']) User.fromJson(user)],
+        [for (var user in json['data']) UserShort.fromJson(user)],
         json['total'] ?? 0,
         json['prev'],
         json['next']);

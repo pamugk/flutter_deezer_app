@@ -25,13 +25,15 @@ class _ArtistPageState extends State<ArtistPage> {
   late Future<PartialSearchResponse<Artist>> _relatedArtistsFuture;
 
   @override
-  void initState() {
-    super.initState();
-    _artistFuture = getArtist(1026);
-    _discographyFuture = getArtistAlbums(1026);
-    _playlistsFuture = getArtistPlaylists(1026);
-    _popularTracksFuture = getArtistTopTracks(1026);
-    _relatedArtistsFuture = getArtistRelated(1026);
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final id = ModalRoute.of(context)!.settings.arguments as int;
+    _artistFuture = getArtist(id);
+    _discographyFuture = getArtistAlbums(id);
+    _playlistsFuture = getArtistPlaylists(id);
+    _popularTracksFuture = getArtistTopTracks(id);
+    _relatedArtistsFuture = getArtistRelated(id);
   }
 
   @override
@@ -47,6 +49,14 @@ class _ArtistPageState extends State<ArtistPage> {
                     appBar: AppBar(
                       title: Text(artist.name),
                       actions: <Widget>[
+                        IconButton(
+                            icon: const Icon(Icons.play_circle),
+                            tooltip: 'Воспроизвести',
+                            onPressed: () {}),
+                        const IconButton(
+                            icon: Icon(Icons.favorite_border),
+                            tooltip: 'Добавить в избранное',
+                            onPressed: null),
                         IconButton(
                           icon: const Icon(Icons.search),
                           tooltip: 'Поиск',

@@ -136,7 +136,7 @@ class _SearchPageState extends State<SearchPage> {
                                                   artist: artist,
                                                   onTap: () {
                                                     Navigator.pushNamed(
-                                                        context, '/artists',
+                                                        context, '/artist',
                                                         arguments: artist.id);
                                                   }))
                                               .toList())
