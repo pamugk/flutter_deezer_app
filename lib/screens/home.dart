@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'search.dart';
 import '../widgets/drawer.dart';
 import '../widgets/player.dart';
 
@@ -11,7 +10,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,34 +18,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         IconButton(
           icon: const Icon(Icons.search),
           tooltip: 'Поиск',
-          onPressed: () async {
-            final searchResult = await showSearch(
-              context: context,
-              delegate: SearchPageDelegate(this),
-            );
-            if (searchResult != null) {
-              if (!mounted) return;
-              switch (searchResult.destination) {
-                case Destination.album:
-                  Navigator.pushNamed(context, '/album',
-                      arguments: searchResult.id);
-                  break;
-                case Destination.artist:
-                  Navigator.pushNamed(context, '/artist',
-                      arguments: searchResult.id);
-                  break;
-                case Destination.playlist:
-                  Navigator.pushNamed(context, '/playlist',
-                      arguments: searchResult.id);
-                  break;
-                case Destination.radio:
-                  break;
-                case Destination.user:
-                  Navigator.pushNamed(context, '/user',
-                      arguments: searchResult.id);
-                  break;
-              }
-            }
+          onPressed: () {
+            Navigator.pushNamed(context, '/search');
           },
         ),
       ]),

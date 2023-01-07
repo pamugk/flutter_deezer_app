@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../models/playable.dart' as playable;
 import '../models/search.dart';
+import '../models/user.dart';
 import '../providers/deezer.dart';
 import '../utils/duration.dart';
 import '../widgets/album_card.dart';
@@ -9,234 +11,394 @@ import '../widgets/playlist_card.dart';
 import '../widgets/radio_card.dart';
 import '../widgets/user_card.dart';
 
-enum Destination {
-  album,
-  artist,
-  playlist,
-  radio,
-  user,
+class SearchPage extends StatefulWidget {
+  const SearchPage({super.key});
+
+  @override
+  State<SearchPage> createState() => _SearchPageState();
 }
 
-class SearchPageOutput {
-  final int id;
-  final Destination destination;
-  const SearchPageOutput(this.id, this.destination);
-}
+class _SearchPageState extends State<SearchPage> {
+  bool _completedSearch = false;
+  late String _query;
 
-class SearchPageDelegate extends SearchDelegate<SearchPageOutput> {
-  Future<FullSearchResponse>? _searchResponseFuture;
-  final TabController _tabController;
+  late Future<FullSearchResponse> _searchResponseFuture;
 
-  SearchPageDelegate(TickerProvider tickerProvider)
-      : _tabController = TabController(vsync: tickerProvider, length: 7),
-        super(searchFieldLabel: 'Поиск');
-
-  @override
-  List<Widget>? buildActions(BuildContext context) {
-    return null;
-  }
+  late Future<PartialSearchResponse<playable.AlbumShort>> _albumsFuture;
+  late Future<PartialSearchResponse<playable.Artist>> _artistsFuture;
+  late Future<PartialSearchResponse<playable.Playlist>> _playlistsFuture;
+  late Future<PartialSearchResponse<playable.Radio>> _radiosFuture;
+  late Future<PartialSearchResponse<playable.TrackShort>> _tracksFuture;
+  late Future<PartialSearchResponse<UserShort>> _usersFuture;
 
   @override
-  PreferredSizeWidget? buildBottom(BuildContext context) {
-    return _searchResponseFuture == null
-        ? null
-        : TabBar(
-            tabs: const <Widget>[
-              Tab(
-                text: 'Все',
-              ),
-              Tab(
-                text: 'Треки',
-              ),
-              Tab(
-                text: 'Альбомы',
-              ),
-              Tab(
-                text: 'Исполнители',
-              ),
-              Tab(
-                text: 'Плейлисты',
-              ),
-              Tab(
-                text: 'Миксы',
-              ),
-              Tab(
-                text: 'Профили',
-              ),
-            ],
-            controller: _tabController,
-          );
-  }
+  Widget build(BuildContext context) {
+    return _completedSearch
+        ? FutureBuilder<FullSearchResponse>(
+            future: _searchResponseFuture,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final overview = snapshot.data!;
+                final tabs = [
+                  if (overview.tracks.total > 0) 'Треки',
+                  if (overview.albums.total > 0) 'Альбомы',
+                  if (overview.artists.total > 0) 'Исполнители',
+                  if (overview.playlists.total > 0) 'Плейлисты',
+                  if (overview.radios.total > 0) 'Миксы',
+                  if (overview.users.total > 0) 'Профили',
+                ];
+                return DefaultTabController(
+                    length: 1 + tabs.length,
+                    child: Scaffold(
+                        appBar: AppBar(
+                          title: Text('Результаты поиска по запросу "$_query"'),
+                          bottom: TabBar(
+                            tabs: <Widget>[
+                              const Tab(
+                                text: 'Все',
+                              ),
+                              ...[for (var tab in tabs) Tab(text: tab)]
+                            ],
+                          ),
+                          actions: <Widget>[
+                            IconButton(
+                              icon: const Icon(Icons.search),
+                              tooltip: 'Поиск',
+                              onPressed: () {
+                                setState(() {
+                                  _completedSearch = false;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                        body: TabBarView(
+                          children: <Widget>[
+                            tabs.isEmpty
+                                ? const Center(
+                                    child: Text('Ничего не найдено :('))
+                                : SingleChildScrollView(
+                                    child: Column(children: <Widget>[
+                                    if (overview.tracks.total > 0) ...[
+                                      const Text('Треки'),
+                                      Table(
+                                        border: TableBorder.all(),
+                                        columnWidths: const <int,
+                                            TableColumnWidth>{
+                                          0: IntrinsicColumnWidth(),
+                                          1: FixedColumnWidth(56),
+                                          5: IntrinsicColumnWidth(),
+                                          6: IntrinsicColumnWidth(),
+                                        },
+                                        defaultVerticalAlignment:
+                                            TableCellVerticalAlignment.middle,
+                                        children: snapshot.data!.tracks.data
+                                            .map((track) => TableRow(children: [
+                                                  const Text('1'),
+                                                  Image.network(
+                                                      track.album!.coverSmall,
+                                                      height: 56.0,
+                                                      width: 56.0),
+                                                  Text(track.title),
+                                                  Text(track.artist.name),
+                                                  Text(track.album!.title),
+                                                  Text(formatDuration(
+                                                      track.duration)),
+                                                  Text('${track.rank}'),
+                                                ]))
+                                            .toList(),
+                                      )
+                                    ],
+                                    if (overview.albums.total > 0) ...[
+                                      const Text('Альбомы'),
+                                      Wrap(
+                                          spacing: 8.0,
+                                          runSpacing: 4.0,
+                                          children: snapshot.data!.albums.data
+                                              .map((album) => AlbumCard(
+                                                  album: album,
+                                                  onTap: () {
+                                                    Navigator.pushNamed(
+                                                        context, '/album',
+                                                        arguments: album.id);
+                                                  }))
+                                              .toList())
+                                    ],
+                                    if (overview.artists.total > 0) ...[
+                                      const Text('Исполнители'),
+                                      Wrap(
+                                          spacing: 8.0,
+                                          runSpacing: 4.0,
+                                          children: snapshot.data!.artists.data
+                                              .map((artist) => ArtistCard(
+                                                  artist: artist,
+                                                  onTap: () {
+                                                    Navigator.pushNamed(
+                                                        context, '/artists',
+                                                        arguments: artist.id);
+                                                  }))
+                                              .toList())
+                                    ],
+                                    if (overview.playlists.total > 0) ...[
+                                      const Text('Плейлисты'),
+                                      Wrap(
+                                          spacing: 8.0,
+                                          runSpacing: 4.0,
+                                          children: snapshot
+                                              .data!.playlists.data
+                                              .map((playlist) => PlaylistCard(
+                                                  playlist: playlist,
+                                                  onTap: () {
+                                                    Navigator.pushNamed(
+                                                        context, '/playlist',
+                                                        arguments: playlist.id);
+                                                  }))
+                                              .toList())
+                                    ],
+                                    if (overview.radios.total > 0) ...[
+                                      const Text('Миксы'),
+                                      Wrap(
+                                          spacing: 8.0,
+                                          runSpacing: 4.0,
+                                          children: snapshot.data!.radios.data
+                                              .map((radio) => RadioCard(
+                                                  radio: radio, onTap: () {}))
+                                              .toList())
+                                    ],
+                                    if (overview.users.total > 0) ...[
+                                      const Text('Пользователи'),
+                                      Wrap(
+                                          spacing: 8.0,
+                                          runSpacing: 4.0,
+                                          children: snapshot.data!.users.data
+                                              .map((user) => UserCard(
+                                                  user: user,
+                                                  onTap: () {
+                                                    Navigator.pushNamed(
+                                                        context, '/user',
+                                                        arguments: user.id);
+                                                  }))
+                                              .toList())
+                                    ],
+                                  ])),
+                            if (overview.tracks.total > 0)
+                              FutureBuilder<
+                                      PartialSearchResponse<
+                                          playable.TrackShort>>(
+                                  future: _tracksFuture,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData) {
+                                      return SingleChildScrollView(
+                                          child: Table(
+                                              border: TableBorder.all(),
+                                              columnWidths: const <int,
+                                                  TableColumnWidth>{
+                                                0: IntrinsicColumnWidth(),
+                                                1: FixedColumnWidth(56),
+                                                5: IntrinsicColumnWidth(),
+                                                6: IntrinsicColumnWidth(),
+                                              },
+                                              defaultVerticalAlignment:
+                                                  TableCellVerticalAlignment
+                                                      .middle,
+                                              children: [
+                                                for (var track
+                                                    in snapshot.data!.data)
+                                                  TableRow(children: [
+                                                    const Text('1'),
+                                                    Image.network(
+                                                        track.album!.coverSmall,
+                                                        height: 56.0,
+                                                        width: 56.0),
+                                                    Text(track.title),
+                                                    Text(track.artist.name),
+                                                    Text(track.album!.title),
+                                                    Text(formatDuration(
+                                                        track.duration)),
+                                                    Text('${track.rank}'),
+                                                  ])
+                                              ]));
+                                    } else if (snapshot.hasError) {
+                                      return Text('${snapshot.error}');
+                                    }
+                                    return const Center(
+                                        child: CircularProgressIndicator());
+                                  }),
+                            if (overview.albums.total > 0)
+                              FutureBuilder<
+                                      PartialSearchResponse<
+                                          playable.AlbumShort>>(
+                                  future: _albumsFuture,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData) {
+                                      return SingleChildScrollView(
+                                          child: Wrap(
+                                              spacing: 8.0,
+                                              runSpacing: 4.0,
+                                              children: [
+                                            for (var album
+                                                in snapshot.data!.data)
+                                              AlbumCard(
+                                                  album: album,
+                                                  onTap: () {
+                                                    Navigator.pushNamed(
+                                                        context, '/album',
+                                                        arguments: album.id);
+                                                  })
+                                          ]));
+                                    } else if (snapshot.hasError) {
+                                      return Text('${snapshot.error}');
+                                    }
+                                    return const Center(
+                                        child: CircularProgressIndicator());
+                                  }),
+                            if (overview.artists.total > 0)
+                              FutureBuilder<
+                                      PartialSearchResponse<playable.Artist>>(
+                                  future: _artistsFuture,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData) {
+                                      return SingleChildScrollView(
+                                          child: Wrap(
+                                              spacing: 8.0,
+                                              runSpacing: 4.0,
+                                              children: [
+                                            for (var artist
+                                                in snapshot.data!.data)
+                                              ArtistCard(
+                                                  artist: artist,
+                                                  onTap: () {
+                                                    Navigator.pushNamed(
+                                                        context, '/artist',
+                                                        arguments: artist.id);
+                                                  })
+                                          ]));
+                                    } else if (snapshot.hasError) {
+                                      return Text('${snapshot.error}');
+                                    }
+                                    return const Center(
+                                        child: CircularProgressIndicator());
+                                  }),
+                            if (overview.playlists.total > 0)
+                              FutureBuilder<
+                                      PartialSearchResponse<playable.Playlist>>(
+                                  future: _playlistsFuture,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData) {
+                                      return SingleChildScrollView(
+                                          child: Wrap(
+                                              spacing: 8.0,
+                                              runSpacing: 4.0,
+                                              children: [
+                                            for (var playlist
+                                                in snapshot.data!.data)
+                                              PlaylistCard(
+                                                  playlist: playlist,
+                                                  onTap: () {
+                                                    Navigator.pushNamed(
+                                                        context, '/playlist',
+                                                        arguments: playlist.id);
+                                                  })
+                                          ]));
+                                    } else if (snapshot.hasError) {
+                                      return Text('${snapshot.error}');
+                                    }
+                                    return const Center(
+                                        child: CircularProgressIndicator());
+                                  }),
+                            if (overview.radios.total > 0)
+                              FutureBuilder<
+                                      PartialSearchResponse<playable.Radio>>(
+                                  future: _radiosFuture,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData) {
+                                      return SingleChildScrollView(
+                                          child: Wrap(
+                                              spacing: 8.0,
+                                              runSpacing: 4.0,
+                                              children: [
+                                            for (var radio
+                                                in snapshot.data!.data)
+                                              RadioCard(
+                                                  radio: radio, onTap: () {})
+                                          ]));
+                                    } else if (snapshot.hasError) {
+                                      return Text('${snapshot.error}');
+                                    }
+                                    return const Center(
+                                        child: CircularProgressIndicator());
+                                  }),
+                            if (overview.users.total > 0)
+                              FutureBuilder<PartialSearchResponse<UserShort>>(
+                                  future: _usersFuture,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData) {
+                                      return SingleChildScrollView(
+                                          child: Wrap(
+                                              spacing: 8.0,
+                                              runSpacing: 4.0,
+                                              children: [
+                                            for (var user
+                                                in snapshot.data!.data)
+                                              UserCard(
+                                                  user: user,
+                                                  onTap: () {
+                                                    Navigator.pushNamed(
+                                                        context, '/user',
+                                                        arguments: user.id);
+                                                  })
+                                          ]));
+                                    } else if (snapshot.hasError) {
+                                      return Text('${snapshot.error}');
+                                    }
+                                    return const Center(
+                                        child: CircularProgressIndicator());
+                                  }),
+                          ],
+                        )));
+              } else if (snapshot.hasError) {
+                return Scaffold(
+                    appBar: AppBar(
+                      title: const Text('Ошибка!'),
+                      actions: const <Widget>[],
+                    ),
+                    body: Center(child: Text('${snapshot.error}')));
+              }
 
-  @override
-  Widget? buildLeading(BuildContext context) {
-    return null;
-  }
-
-  @override
-  Widget buildResults(BuildContext context) {
-    return FutureBuilder<FullSearchResponse>(
-      future: _searchResponseFuture,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final overview = snapshot.data!;
-          return TabBarView(
-            controller: _tabController,
-            children: <Widget>[
-              SingleChildScrollView(
-                  child: Column(children: <Widget>[
-                const Text('Треки'),
-                overview.tracks.total == 0
-                    ? const Text('Ничего не найдено')
-                    : Table(
-                        border: TableBorder.all(),
-                        columnWidths: const <int, TableColumnWidth>{
-                          0: IntrinsicColumnWidth(),
-                          1: FixedColumnWidth(56),
-                          5: IntrinsicColumnWidth(),
-                          6: IntrinsicColumnWidth(),
-                        },
-                        defaultVerticalAlignment:
-                            TableCellVerticalAlignment.middle,
-                        children: snapshot.data!.tracks.data
-                            .take(5)
-                            .map((track) => TableRow(children: [
-                                  const Text('1'),
-                                  Image.network(track.album!.coverSmall,
-                                      height: 56.0, width: 56.0),
-                                  Text(track.title),
-                                  Text(track.artist.name),
-                                  Text(track.album!.title),
-                                  Text(formatDuration(track.duration)),
-                                  Text('${track.rank}'),
-                                ]))
-                            .toList(),
-                      ),
-                const Text('Альбомы'),
-                overview.albums.total == 0
-                    ? const Text('Ничего не найдено')
-                    : Wrap(
-                        spacing: 8.0,
-                        runSpacing: 4.0,
-                        children: snapshot.data!.albums.data
-                            .take(5)
-                            .map((album) => AlbumCard(
-                                album: album,
-                                onTap: () {
-                                  close(
-                                      context,
-                                      SearchPageOutput(
-                                          album.id, Destination.album));
-                                }))
-                            .toList()),
-                const Text('Исполнители'),
-                overview.artists.total == 0
-                    ? const Text('Ничего не найдено')
-                    : Wrap(
-                        spacing: 8.0,
-                        runSpacing: 4.0,
-                        children: snapshot.data!.artists.data
-                            .take(5)
-                            .map((artist) => ArtistCard(
-                                artist: artist,
-                                onTap: () {
-                                  close(
-                                      context,
-                                      SearchPageOutput(
-                                          artist.id, Destination.artist));
-                                }))
-                            .toList()),
-                const Text('Плейлисты'),
-                overview.playlists.total == 0
-                    ? const Text('Ничего не найдено')
-                    : Wrap(
-                        spacing: 8.0,
-                        runSpacing: 4.0,
-                        children: snapshot.data!.playlists.data
-                            .take(5)
-                            .map((playlist) => PlaylistCard(
-                                playlist: playlist,
-                                onTap: () {
-                                  close(
-                                      context,
-                                      SearchPageOutput(
-                                          playlist.id, Destination.playlist));
-                                }))
-                            .toList()),
-                const Text('Миксы'),
-                overview.radios.total == 0
-                    ? const Text('Ничего не найдено')
-                    : Wrap(
-                        spacing: 8.0,
-                        runSpacing: 4.0,
-                        children: snapshot.data!.radios.data
-                            .take(5)
-                            .map((radio) => RadioCard(
-                                radio: radio,
-                                onTap: () {
-                                  close(
-                                      context,
-                                      SearchPageOutput(
-                                          radio.id, Destination.radio));
-                                }))
-                            .toList()),
-                const Text('Пользователи'),
-                overview.users.total == 0
-                    ? const Text('Ничего не найдено')
-                    : Wrap(
-                        spacing: 8.0,
-                        runSpacing: 4.0,
-                        children: snapshot.data!.users.data
-                            .take(5)
-                            .map((user) => UserCard(
-                                user: user,
-                                onTap: () {
-                                  close(
-                                      context,
-                                      SearchPageOutput(
-                                          user.id, Destination.user));
-                                }))
-                            .toList()),
-              ])),
-              Center(
-                child: Text('Список треков: ${snapshot.data!.tracks.total}: '),
+              return Scaffold(
+                  appBar: AppBar(
+                    title: Text('Поиск по запросу "$_query"...'),
+                    actions: const <Widget>[],
+                  ),
+                  body: const Center(child: CircularProgressIndicator()));
+            })
+        : Scaffold(
+            appBar: AppBar(
+              title: TextField(
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Трек, альбом, исполнитель...',
+                  icon: Icon(Icons.search),
+                ),
+                onSubmitted: (query) {
+                  if (query.trim().isNotEmpty) {
+                    _searchResponseFuture = search(query);
+                    _albumsFuture = searchAlbums(query);
+                    _artistsFuture = searchArtists(query);
+                    _playlistsFuture = searchPlaylists(query);
+                    _radiosFuture = searchRadios(query);
+                    _tracksFuture = searchTracks(query);
+                    _usersFuture = searchUsers(query);
+                    setState(() {
+                      _query = query;
+                      _completedSearch = true;
+                    });
+                  }
+                },
+                textInputAction: TextInputAction.search,
               ),
-              Center(
-                child: Text('Список альбомов: ${snapshot.data!.albums.total}'),
-              ),
-              Center(
-                child: Text(
-                    'Список исполнителей: ${snapshot.data!.artists.total}'),
-              ),
-              Center(
-                child: Text(
-                    'Список плейлистов: ${snapshot.data!.playlists.total}'),
-              ),
-              Center(
-                child: Text('Список миксов: ${snapshot.data!.radios.total}'),
-              ),
-              Center(
-                child:
-                    Text('Список пользователей: ${snapshot.data!.users.total}'),
-              ),
-            ],
-          );
-        } else if (snapshot.hasError) {
-          return Text('${snapshot.error}');
-        }
-        return const Center(child: CircularProgressIndicator());
-      },
-    );
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    return const Center(child: Text('Нечего предложить'));
-  }
-
-  @override
-  void showResults(BuildContext context) {
-    _searchResponseFuture = search(query);
-    super.showResults(context);
+              actions: const <Widget>[],
+            ),
+            body: const Center(child: Text('Нечего предложить')));
   }
 }

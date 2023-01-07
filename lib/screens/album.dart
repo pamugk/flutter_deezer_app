@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'search.dart';
 import '../models/playable.dart';
 import '../models/search.dart';
 import '../providers/deezer.dart';
@@ -41,29 +40,8 @@ class _AlbumPageState extends State<AlbumPage> with TickerProviderStateMixin {
         IconButton(
           icon: const Icon(Icons.search),
           tooltip: 'Поиск',
-          onPressed: () async {
-            final searchResult = await showSearch(
-              context: context,
-              delegate: SearchPageDelegate(this),
-            );
-            if (searchResult != null) {
-              switch (searchResult.destination) {
-                case Destination.album:
-                  Navigator.pushNamed(context, '/album',
-                      arguments: searchResult.id);
-                  break;
-                case Destination.artist:
-                  Navigator.pushNamed(context, '/artist',
-                      arguments: searchResult.id);
-                  break;
-                case Destination.playlist:
-                  break;
-                case Destination.radio:
-                  break;
-                case Destination.user:
-                  break;
-              }
-            }
+          onPressed: () {
+            Navigator.pushNamed(context, '/search');
           },
         ),
       ]),

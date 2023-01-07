@@ -31,7 +31,15 @@ class _PlaylistPageState extends State<PlaylistPage> {
             return Scaffold(
                 appBar: AppBar(
                   title: Text(playlist.title),
-                  actions: const <Widget>[],
+                  actions: <Widget>[
+                    IconButton(
+                      icon: const Icon(Icons.search),
+                      tooltip: 'Поиск',
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/search');
+                      },
+                    ),
+                  ],
                 ),
                 body: SingleChildScrollView(
                     child: Column(children: <Widget>[
