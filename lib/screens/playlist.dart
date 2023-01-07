@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../models/playable.dart';
 import '../providers/deezer.dart';
 import '../utils/duration.dart';
+import '../widgets/drawer.dart';
+import '../widgets/player.dart';
 
 class PlaylistPage extends StatefulWidget {
   const PlaylistPage({super.key});
@@ -87,15 +89,21 @@ class _PlaylistPageState extends State<PlaylistPage> {
                         .toList(),
                   ),
                   const Text('Комментарии'),
-                ])));
+                ])),
+                drawer: const AppDrawer(),
+                bottomSheet: const Player());
           }
           return snapshot.hasError
               ? Scaffold(
                   appBar: AppBar(title: const Text("Ошибка!")),
-                  body: Center(child: Text('${snapshot.error}')))
+                  body: Center(child: Text('${snapshot.error}')),
+                  drawer: const AppDrawer(),
+                  bottomSheet: const Player())
               : Scaffold(
                   appBar: AppBar(title: const Text("Идёт загрузка...")),
-                  body: const Center(child: CircularProgressIndicator()));
+                  body: const Center(child: CircularProgressIndicator()),
+                  drawer: const AppDrawer(),
+                  bottomSheet: const Player());
         });
   }
 }

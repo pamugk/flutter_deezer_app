@@ -7,6 +7,8 @@ import '../providers/deezer.dart';
 import '../utils/duration.dart';
 import '../widgets/album_card.dart';
 import '../widgets/artist_card.dart';
+import '../widgets/drawer.dart';
+import '../widgets/player.dart';
 import '../widgets/playlist_card.dart';
 import '../widgets/radio_card.dart';
 import '../widgets/user_card.dart';
@@ -335,15 +337,21 @@ class _UserPageState extends State<UserPage> {
                             return const Center(
                                 child: CircularProgressIndicator());
                           }),
-                    ])));
+                    ]),
+                    drawer: const AppDrawer(),
+                    bottomSheet: const Player()));
           }
           return snapshot.hasError
               ? Scaffold(
                   appBar: AppBar(title: const Text("Ошибка!")),
-                  body: Center(child: Text('${snapshot.error}')))
+                  body: Center(child: Text('${snapshot.error}')),
+                  drawer: const AppDrawer(),
+                  bottomSheet: const Player())
               : Scaffold(
                   appBar: AppBar(title: const Text("Идёт загрузка...")),
-                  body: const Center(child: CircularProgressIndicator()));
+                  body: const Center(child: CircularProgressIndicator()),
+                  drawer: const AppDrawer(),
+                  bottomSheet: const Player());
         });
   }
 }

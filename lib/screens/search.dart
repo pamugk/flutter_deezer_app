@@ -7,6 +7,8 @@ import '../providers/deezer.dart';
 import '../utils/duration.dart';
 import '../widgets/album_card.dart';
 import '../widgets/artist_card.dart';
+import '../widgets/drawer.dart';
+import '../widgets/player.dart';
 import '../widgets/playlist_card.dart';
 import '../widgets/radio_card.dart';
 import '../widgets/user_card.dart';
@@ -355,14 +357,18 @@ class _SearchPageState extends State<SearchPage> {
                                         child: CircularProgressIndicator());
                                   }),
                           ],
-                        )));
+                        ),
+                        drawer: const AppDrawer(),
+                        bottomSheet: const Player()));
               } else if (snapshot.hasError) {
                 return Scaffold(
                     appBar: AppBar(
                       title: const Text('Ошибка!'),
                       actions: const <Widget>[],
                     ),
-                    body: Center(child: Text('${snapshot.error}')));
+                    body: Center(child: Text('${snapshot.error}')),
+                    drawer: const AppDrawer(),
+                    bottomSheet: const Player());
               }
 
               return Scaffold(
@@ -370,7 +376,9 @@ class _SearchPageState extends State<SearchPage> {
                     title: Text('Поиск по запросу "$_query"...'),
                     actions: const <Widget>[],
                   ),
-                  body: const Center(child: CircularProgressIndicator()));
+                  body: const Center(child: CircularProgressIndicator()),
+                  drawer: const AppDrawer(),
+                  bottomSheet: const Player());
             })
         : Scaffold(
             appBar: AppBar(
@@ -399,6 +407,8 @@ class _SearchPageState extends State<SearchPage> {
               ),
               actions: const <Widget>[],
             ),
-            body: const Center(child: Text('Нечего предложить')));
+            body: const Center(child: Text('Нечего предложить')),
+            drawer: const AppDrawer(),
+            bottomSheet: const Player());
   }
 }
