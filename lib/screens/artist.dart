@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/playable.dart';
 import '../models/search.dart';
+import '../navigation/artist_arguments.dart';
 import '../providers/deezer.dart';
 import '../utils/duration.dart';
 import '../widgets/album_card.dart';
@@ -28,12 +29,13 @@ class _ArtistPageState extends State<ArtistPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    final id = ModalRoute.of(context)!.settings.arguments as int;
-    _artistFuture = getArtist(id);
-    _discographyFuture = getArtistAlbums(id);
-    _playlistsFuture = getArtistPlaylists(id);
-    _popularTracksFuture = getArtistTopTracks(id);
-    _relatedArtistsFuture = getArtistRelated(id);
+    final arguments =
+        ModalRoute.of(context)!.settings.arguments as ArtistArguments;
+    _artistFuture = getArtist(arguments.id);
+    _discographyFuture = getArtistAlbums(arguments.id);
+    _playlistsFuture = getArtistPlaylists(arguments.id);
+    _popularTracksFuture = getArtistTopTracks(arguments.id);
+    _relatedArtistsFuture = getArtistRelated(arguments.id);
   }
 
   @override
@@ -43,7 +45,10 @@ class _ArtistPageState extends State<ArtistPage> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final artist = snapshot.data!;
+            final arguments =
+                ModalRoute.of(context)!.settings.arguments as ArtistArguments;
             return DefaultTabController(
+                initialIndex: arguments.section,
                 length: 5,
                 child: Scaffold(
                     appBar: AppBar(
@@ -142,7 +147,8 @@ class _ArtistPageState extends State<ArtistPage> {
                                               onTap: () {
                                                 Navigator.pushNamed(
                                                     context, '/artist',
-                                                    arguments: artist.id);
+                                                    arguments: ArtistArguments(
+                                                        artist.id));
                                               }))
                                           .toList()));
                             } else if (snapshot.hasError) {

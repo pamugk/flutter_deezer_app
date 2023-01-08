@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/playable.dart' as playable;
 import '../models/search.dart';
 import '../models/user.dart';
+import '../navigation/artist_arguments.dart';
 import '../providers/deezer.dart';
 import '../utils/duration.dart';
 import '../widgets/album_card.dart';
@@ -137,7 +138,9 @@ class _SearchPageState extends State<SearchPage> {
                                                   onTap: () {
                                                     Navigator.pushNamed(
                                                         context, '/artist',
-                                                        arguments: artist.id);
+                                                        arguments:
+                                                            ArtistArguments(
+                                                                artist.id));
                                                   }))
                                               .toList())
                                     ],
@@ -272,7 +275,9 @@ class _SearchPageState extends State<SearchPage> {
                                                   onTap: () {
                                                     Navigator.pushNamed(
                                                         context, '/artist',
-                                                        arguments: artist.id);
+                                                        arguments:
+                                                            ArtistArguments(
+                                                                artist.id));
                                                   })
                                           ]));
                                     } else if (snapshot.hasError) {

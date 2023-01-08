@@ -21,9 +21,12 @@ Future<Album> getAlbum(int id) async {
   }
 }
 
-Future<List<Track>> getAlbumTracks(int id) async {
-  final response =
-      await http.get(Uri.https('api.deezer.com', 'album/$id/tracks'));
+Future<List<Track>> getAlbumTracks(int id,
+    [int index = 0, int limit = 25]) async {
+  final response = await http.get(Uri.https(
+      'api.deezer.com',
+      'album/$id/tracks',
+      {'index': index.toString(), 'limit': limit.toString()}));
 
   if (response.statusCode == 200) {
     final json = await compute(jsonDecode, response.body);

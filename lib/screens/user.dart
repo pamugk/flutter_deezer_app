@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/playable.dart' as playable;
 import '../models/search.dart';
 import '../models/user.dart';
+import '../navigation/artist_arguments.dart';
 import '../providers/deezer.dart';
 import '../utils/duration.dart';
 import '../widgets/album_card.dart';
@@ -170,7 +171,9 @@ class _UserPageState extends State<UserPage> {
                                                 onTap: () {
                                                   Navigator.pushNamed(
                                                       context, '/artist',
-                                                      arguments: artist.id);
+                                                      arguments:
+                                                          ArtistArguments(
+                                                              artist.id));
                                                 }))
                                             .toList()),
                                 const Text('Последователи'),
@@ -307,7 +310,8 @@ class _UserPageState extends State<UserPage> {
                                               onTap: () {
                                                 Navigator.pushNamed(
                                                     context, '/artist',
-                                                    arguments: artist.id);
+                                                    arguments: ArtistArguments(
+                                                        artist.id));
                                               }))
                                           .toList()));
                             } else if (snapshot.hasError) {
