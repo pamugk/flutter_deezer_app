@@ -156,7 +156,6 @@ class _AlbumPageState extends State<AlbumPage> with TickerProviderStateMixin {
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         return Carousel(
-                            spacing: 24.0,
                             title: const Text('Дискография'),
                             onNavigate: () {
                               Navigator.pushNamed(context, '/artist',
@@ -181,7 +180,6 @@ class _AlbumPageState extends State<AlbumPage> with TickerProviderStateMixin {
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         return Carousel(
-                            spacing: 24.0,
                             title: const Text('Похожие исполнители'),
                             onNavigate: () {
                               Navigator.pushNamed(context, '/artist',

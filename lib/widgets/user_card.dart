@@ -9,16 +9,19 @@ class UserCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-        width: 250.0,
-        child: Card(
-            child: InkWell(
-                onTap: onTap,
-                child:
-                    Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                  Image.network(user.pictureMedium!,
-                      height: 250.0, width: 250.0),
-                  Text(user.name),
-                ]))));
+    return Padding(
+        padding: const EdgeInsets.only(left: 34.0, top: 24.0),
+        child: SizedBox(
+            width: 250.0,
+            child: Card(
+                child: InkWell(
+                    onTap: onTap,
+                    child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Image.network(user.pictureMedium!,
+                              height: 250.0, width: 250.0),
+                          Text(user.name),
+                        ])))));
   }
 }
