@@ -60,63 +60,60 @@ class _TrackTableDataSource extends DataTableSource {
 class _PaginatedTrackTableState extends State<PaginatedTrackTable> {
   int _page = 0;
   final int _pageSize = 25;
-  late Future<PartialSearchResponse<TrackShort>> _tracksFuture;
 
   @override
   void initState() {
     super.initState();
-    _tracksFuture = widget.loader(_page, _pageSize);
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<PartialSearchResponse<TrackShort>>(
-        future: _tracksFuture,
+        future: widget.loader(_page, _pageSize),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final tracks = snapshot.data!;
             final datasource =
                 _TrackTableDataSource(context, tracks, _pageSize);
             return PaginatedDataTable(
-                    availableRowsPerPage: [_pageSize],
-                    header: widget.titleBuilder(tracks.total),
-                    onPageChanged: (newPage) {
-                      setState(() {
-                      _tracksFuture = widget.loader(newPage, _pageSize);
-                        _page = newPage;
-                      });
-                    },
-                    rowsPerPage: _pageSize,
-                    columns: const <DataColumn>[
-                      DataColumn(
-                        label: Expanded(
-                          child: Text(
-                            'Трек',
-                          ),
-                        ),
+                availableRowsPerPage: [_pageSize],
+                header: widget.titleBuilder(tracks.total),
+                onPageChanged: (newPage) {
+                  setState(() {
+                    _page = newPage;
+                  });
+                },
+                rowsPerPage: _pageSize,
+                columns: const <DataColumn>[
+                  DataColumn(
+                    label: Expanded(
+                      child: Text(
+                        'Трек',
                       ),
-                      DataColumn(
-                        label: Expanded(
-                          child: Text(
-                            'Исполнитель',
-                          ),
-                        ),
+                    ),
+                  ),
+                  DataColumn(
+                    label: Expanded(
+                      child: Text(
+                        'Исполнитель',
                       ),
-                      DataColumn(
-                        label: Expanded(
-                          child: Text(
-                            'Альбом',
-                          ),
-                        ),
+                    ),
+                  ),
+                  DataColumn(
+                    label: Expanded(
+                      child: Text(
+                        'Альбом',
                       ),
-                      DataColumn(
-                        label: Icon(
-                          Icons.access_time,
-                        ),
-                        tooltip: 'Длительность',
-                      ),
-                    ],
-                    source: datasource);
+                    ),
+                  ),
+                  DataColumn(
+                    label: Icon(
+                      Icons.access_time,
+                    ),
+                    tooltip: 'Длительность',
+                  ),
+                ],
+                source: datasource);
           } else if (snapshot.hasError) {
             return Text('${snapshot.error}');
           }

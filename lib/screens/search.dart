@@ -7,6 +7,7 @@ import '../navigation/artist_arguments.dart';
 import '../providers/deezer.dart';
 import '../widgets/album_card.dart';
 import '../widgets/artist_card.dart';
+import '../widgets/data_grid.dart';
 import '../widgets/drawer.dart';
 import '../widgets/paginated_track_table.dart';
 import '../widgets/player.dart';
@@ -28,12 +29,6 @@ class _SearchPageState extends State<SearchPage> {
   late String _query;
 
   late Future<FullSearchResponse> _searchResponseFuture;
-
-  late Future<PartialSearchResponse<playable.AlbumShort>> _albumsFuture;
-  late Future<PartialSearchResponse<playable.Artist>> _artistsFuture;
-  late Future<PartialSearchResponse<playable.Playlist>> _playlistsFuture;
-  late Future<PartialSearchResponse<playable.Radio>> _radiosFuture;
-  late Future<PartialSearchResponse<UserShort>> _usersFuture;
 
   @override
   Widget build(BuildContext context) {
@@ -193,145 +188,96 @@ class _SearchPageState extends State<SearchPage> {
                                     },
                                   )),
                                 if (overview.albums.total > 0)
-                                  FutureBuilder<
-                                          PartialSearchResponse<
-                                              playable.AlbumShort>>(
-                                      future: _albumsFuture,
-                                      builder: (context, snapshot) {
-                                        if (snapshot.hasData) {
-                                          return SingleChildScrollView(
-                                              child: Wrap(
-                                                  spacing: 8.0,
-                                                  runSpacing: 4.0,
-                                                  children: [
-                                                for (var album
-                                                    in snapshot.data!.data)
-                                                  AlbumCard(
-                                                      album: album,
-                                                      onTap: () {
-                                                        Navigator.pushNamed(
-                                                            context, '/album',
-                                                            arguments:
-                                                                album.id);
-                                                      })
-                                              ]));
-                                        } else if (snapshot.hasError) {
-                                          return Text('${snapshot.error}');
-                                        }
-                                        return const Center(
-                                            child: CircularProgressIndicator());
-                                      }),
+                                  DataGrid<playable.AlbumShort>(
+                                    itemBuilder: (itemContext, album) {
+                                      return AlbumCard(
+                                          album: album,
+                                          onTap: () {
+                                            Navigator.pushNamed(
+                                                itemContext, '/album',
+                                                arguments: album.id);
+                                          });
+                                    },
+                                    loader: (page, pageSize) {
+                                      return searchAlbums(
+                                          _query, page, pageSize);
+                                    },
+                                    titleBuilder: (total) {
+                                      return Text('Альбомов: $total');
+                                    },
+                                  ),
                                 if (overview.artists.total > 0)
-                                  FutureBuilder<
-                                          PartialSearchResponse<
-                                              playable.Artist>>(
-                                      future: _artistsFuture,
-                                      builder: (context, snapshot) {
-                                        if (snapshot.hasData) {
-                                          return SingleChildScrollView(
-                                              child: Wrap(
-                                                  spacing: 8.0,
-                                                  runSpacing: 4.0,
-                                                  children: [
-                                                for (var artist
-                                                    in snapshot.data!.data)
-                                                  ArtistCard(
-                                                      artist: artist,
-                                                      onTap: () {
-                                                        Navigator.pushNamed(
-                                                            context, '/artist',
-                                                            arguments:
-                                                                ArtistArguments(
-                                                                    artist.id));
-                                                      })
-                                              ]));
-                                        } else if (snapshot.hasError) {
-                                          return Text('${snapshot.error}');
-                                        }
-                                        return const Center(
-                                            child: CircularProgressIndicator());
-                                      }),
+                                  DataGrid<playable.Artist>(
+                                    itemBuilder: (itemContext, artist) {
+                                      return ArtistCard(
+                                          artist: artist,
+                                          onTap: () {
+                                            Navigator.pushNamed(
+                                                itemContext, '/artist',
+                                                arguments:
+                                                    ArtistArguments(artist.id));
+                                          });
+                                    },
+                                    loader: (page, pageSize) {
+                                      return searchArtists(
+                                          _query, page, pageSize);
+                                    },
+                                    titleBuilder: (total) {
+                                      return Text('Исполнителей: $total');
+                                    },
+                                  ),
                                 if (overview.playlists.total > 0)
-                                  FutureBuilder<
-                                          PartialSearchResponse<
-                                              playable.Playlist>>(
-                                      future: _playlistsFuture,
-                                      builder: (context, snapshot) {
-                                        if (snapshot.hasData) {
-                                          return SingleChildScrollView(
-                                              child: Wrap(
-                                                  spacing: 8.0,
-                                                  runSpacing: 4.0,
-                                                  children: [
-                                                for (var playlist
-                                                    in snapshot.data!.data)
-                                                  PlaylistCard(
-                                                      playlist: playlist,
-                                                      onTap: () {
-                                                        Navigator.pushNamed(
-                                                            context,
-                                                            '/playlist',
-                                                            arguments:
-                                                                playlist.id);
-                                                      })
-                                              ]));
-                                        } else if (snapshot.hasError) {
-                                          return Text('${snapshot.error}');
-                                        }
-                                        return const Center(
-                                            child: CircularProgressIndicator());
-                                      }),
+                                  DataGrid<playable.Playlist>(
+                                    itemBuilder: (itemContext, playlist) {
+                                      return PlaylistCard(
+                                          playlist: playlist,
+                                          onTap: () {
+                                            Navigator.pushNamed(
+                                                itemContext, '/playlist',
+                                                arguments: playlist.id);
+                                          });
+                                    },
+                                    loader: (page, pageSize) {
+                                      return searchPlaylists(
+                                          _query, page, pageSize);
+                                    },
+                                    titleBuilder: (total) {
+                                      return Text('Плейлистов: $total');
+                                    },
+                                  ),
                                 if (overview.radios.total > 0)
-                                  FutureBuilder<
-                                          PartialSearchResponse<
-                                              playable.Radio>>(
-                                      future: _radiosFuture,
-                                      builder: (context, snapshot) {
-                                        if (snapshot.hasData) {
-                                          return SingleChildScrollView(
-                                              child: Wrap(
-                                                  spacing: 8.0,
-                                                  runSpacing: 4.0,
-                                                  children: [
-                                                for (var radio
-                                                    in snapshot.data!.data)
-                                                  RadioCard(
-                                                      radio: radio,
-                                                      onTap: () {})
-                                              ]));
-                                        } else if (snapshot.hasError) {
-                                          return Text('${snapshot.error}');
-                                        }
-                                        return const Center(
-                                            child: CircularProgressIndicator());
-                                      }),
+                                  DataGrid<playable.Radio>(
+                                    itemBuilder: (itemContext, radio) {
+                                      return RadioCard(
+                                          radio: radio, onTap: () {});
+                                    },
+                                    loader: (page, pageSize) {
+                                      return searchRadios(
+                                          _query, page, pageSize);
+                                    },
+                                    titleBuilder: (total) {
+                                      return Text('Миксов: $total');
+                                    },
+                                  ),
                                 if (overview.users.total > 0)
-                                  FutureBuilder<
-                                          PartialSearchResponse<UserShort>>(
-                                      future: _usersFuture,
-                                      builder: (context, snapshot) {
-                                        if (snapshot.hasData) {
-                                          return SingleChildScrollView(
-                                              child: Wrap(
-                                                  spacing: 8.0,
-                                                  runSpacing: 4.0,
-                                                  children: [
-                                                for (var user
-                                                    in snapshot.data!.data)
-                                                  UserCard(
-                                                      user: user,
-                                                      onTap: () {
-                                                        Navigator.pushNamed(
-                                                            context, '/user',
-                                                            arguments: user.id);
-                                                      })
-                                              ]));
-                                        } else if (snapshot.hasError) {
-                                          return Text('${snapshot.error}');
-                                        }
-                                        return const Center(
-                                            child: CircularProgressIndicator());
-                                      }),
+                                  DataGrid<UserShort>(
+                                    itemBuilder: (itemContext, user) {
+                                      return UserCard(
+                                          user: user,
+                                          onTap: () {
+                                            Navigator.pushNamed(
+                                                itemContext, '/user',
+                                                arguments: user.id);
+                                          });
+                                    },
+                                    loader: (page, pageSize) {
+                                      return searchUsers(
+                                          _query, page, pageSize);
+                                    },
+                                    titleBuilder: (total) {
+                                      return Text('Пользователей: $total');
+                                    },
+                                  ),
                               ],
                             )),
                         drawer: const AppDrawer(),
@@ -367,11 +313,6 @@ class _SearchPageState extends State<SearchPage> {
                 onSubmitted: (query) {
                   if (query.trim().isNotEmpty) {
                     _searchResponseFuture = search(query);
-                    _albumsFuture = searchAlbums(query);
-                    _artistsFuture = searchArtists(query);
-                    _playlistsFuture = searchPlaylists(query);
-                    _radiosFuture = searchRadios(query);
-                    _usersFuture = searchUsers(query);
                     setState(() {
                       _query = query;
                       _completedSearch = true;

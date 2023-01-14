@@ -15,7 +15,9 @@ class Section extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
+    return Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
       final countOfElements = max(constraints.maxWidth ~/ 284, 1);
       final cutOffElements = children.take(countOfElements).toList();
@@ -37,6 +39,6 @@ class Section extends StatelessWidget {
               children: cutOffElements),
         ],
       ));
-    });
+    }));
   }
 }

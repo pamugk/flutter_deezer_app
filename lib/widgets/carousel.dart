@@ -27,7 +27,9 @@ class _CarouselState extends State<Carousel> {
       builder: (BuildContext context, BoxConstraints constraints) {
         final countOfElements = max(constraints.maxWidth ~/ 284, 1);
         final cutOffElements = shiftedChildren.take(countOfElements).toList();
-        return IntrinsicWidth(
+        return Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: IntrinsicWidth(
             child: Column(
           children: <Widget>[
             Row(children: <Widget>[
@@ -65,7 +67,7 @@ class _CarouselState extends State<Carousel> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: cutOffElements),
           ],
-        ));
+        )));
       },
     );
   }
