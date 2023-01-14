@@ -39,3 +39,16 @@ class PartialSearchResponse<T> extends SearchResponse<T> {
 
   const PartialSearchResponse(super.data, super.total, this.prev, this.next);
 }
+
+class UserHighlights {
+  final SearchResponse<AlbumShort> albums;
+  final SearchResponse<Artist> artists;
+  final SearchResponse<Playlist> playlists;
+  final SearchResponse<Radio> radios;
+  final SearchResponse<TrackShort> tracks;
+  final SearchResponse<UserShort> followers;
+  final SearchResponse<UserShort> followings;
+
+  const UserHighlights(this.albums, this.artists, this.playlists, this.radios,
+      this.tracks, this.followers, this.followings);
+}

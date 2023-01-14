@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../models/playable.dart';
 import '../providers/deezer.dart';
-import '../utils/duration.dart';
 import '../widgets/drawer.dart';
 import '../widgets/player.dart';
+import '../widgets/track_table.dart';
 
 class PlaylistPage extends StatefulWidget {
   const PlaylistPage({super.key});
@@ -13,22 +13,21 @@ class PlaylistPage extends StatefulWidget {
   State<PlaylistPage> createState() => _PlaylistPageState();
 }
 
+bool _checkTrack(TrackShort track, String searchText) {
+  final normalizedSearchText = searchText.toLowerCase();
+  return track.title.toLowerCase().contains(normalizedSearchText) ||
+      track.album!.title.toLowerCase().contains(normalizedSearchText) ||
+      track.artist.name.toLowerCase().contains(normalizedSearchText);
+}
+
 class _PlaylistPageState extends State<PlaylistPage> {
   String _searchText = "";
-  late Future<Playlist> _playlistFuture;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    final id = ModalRoute.of(context)!.settings.arguments as int;
-    _playlistFuture = getPlaylist(id);
-  }
 
   @override
   Widget build(BuildContext context) {
+    final id = ModalRoute.of(context)!.settings.arguments as int;
     return FutureBuilder<Playlist>(
-        future: _playlistFuture,
+        future: getPlaylist(id),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final playlist = snapshot.data!;
@@ -53,53 +52,29 @@ class _PlaylistPageState extends State<PlaylistPage> {
                     ),
                   ],
                 ),
-                body: SingleChildScrollView(
-                    child: Column(children: <Widget>[
-                  const Text('Треки'),
-                  TextField(
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'Трек, альбом, исполнитель...',
-                      icon: Icon(Icons.search),
-                    ),
-                    onChanged: (text) {
-                      setState(() {
-                        _searchText = text.toLowerCase();
-                      });
-                    },
-                  ),
-                  Table(
-                    border: TableBorder.all(),
-                    columnWidths: const <int, TableColumnWidth>{
-                      0: IntrinsicColumnWidth(),
-                      1: FixedColumnWidth(56),
-                      5: IntrinsicColumnWidth(),
-                      6: IntrinsicColumnWidth(),
-                    },
-                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                    children: playlist.tracks!
-                        .where((track) =>
-                            track.title.toLowerCase().contains(_searchText) ||
-                            track.album!.title
-                                .toLowerCase()
-                                .contains(_searchText) ||
-                            track.artist.name
-                                .toLowerCase()
-                                .contains(_searchText))
-                        .map((track) => TableRow(children: [
-                              const Text('1'),
-                              Image.network(track.album!.coverSmall,
-                                  height: 56.0, width: 56.0),
-                              Text(track.title),
-                              Text(track.artist.name),
-                              Text(track.album!.title),
-                              Text(formatDuration(track.duration)),
-                              Text('${track.rank}'),
-                            ]))
-                        .toList(),
-                  ),
-                  const Text('Комментарии'),
-                ])),
+                body: Padding(
+                    padding: const EdgeInsets.only(bottom: 100.0),
+                    child: SingleChildScrollView(
+                        child: TrackTable(
+                      placeholder: Center(
+                          child: Text('Нет результатов для "$_searchText"')),
+                      title: TextField(
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: 'Поиск',
+                          prefix: Icon(Icons.search),
+                        ),
+                        onChanged: (text) {
+                          setState(() {
+                            _searchText = text;
+                          });
+                        },
+                      ),
+                      tracks: [
+                        for (var track in playlist.tracks!)
+                          if (_checkTrack(track, _searchText)) track
+                      ],
+                    ))),
                 drawer: const AppDrawer(),
                 bottomSheet: const Player());
           }

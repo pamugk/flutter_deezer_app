@@ -5,13 +5,16 @@ import '../models/search.dart';
 import '../models/user.dart';
 import '../navigation/artist_arguments.dart';
 import '../providers/deezer.dart';
-import '../utils/duration.dart';
 import '../widgets/album_card.dart';
 import '../widgets/artist_card.dart';
+import '../widgets/carousel.dart';
+import '../widgets/data_grid.dart';
 import '../widgets/drawer.dart';
+import '../widgets/paginated_track_table.dart';
 import '../widgets/player.dart';
 import '../widgets/playlist_card.dart';
 import '../widgets/radio_card.dart';
+import '../widgets/track_table.dart';
 import '../widgets/user_card.dart';
 
 class UserPage extends StatefulWidget {
@@ -21,176 +24,177 @@ class UserPage extends StatefulWidget {
   State<UserPage> createState() => _UserPageState();
 }
 
-class _UserPageState extends State<UserPage> {
-  late Future<UserShort> _userFuture;
-
-  late Future<PartialSearchResponse<playable.AlbumShort>> _userAlbumsFuture;
-  late Future<PartialSearchResponse<playable.Artist>> _userArtistsFuture;
-  late Future<PartialSearchResponse<UserShort>> _userFollowersFuture;
-  late Future<FullSearchResponse> _userHighlightsFuture;
-  late Future<PartialSearchResponse<playable.Playlist>> _userPlaylistsFuture;
-  late Future<PartialSearchResponse<playable.Radio>> _userRadiosFuture;
-  late Future<PartialSearchResponse<playable.TrackShort>> _userTracksFuture;
+class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
+  late TabController _tabController;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
+    _tabController = TabController(vsync: this, length: 8);
+  }
 
-    final id = ModalRoute.of(context)!.settings.arguments as int;
-    _userFuture = getUser(id);
-
-    _userAlbumsFuture = getUserAlbums(id);
-    _userArtistsFuture = getUserArtists(id);
-    _userFollowersFuture = getUserFollowers(id);
-    _userHighlightsFuture = getUserHighlights(id);
-    _userPlaylistsFuture = getUserPlaylists(id);
-    _userRadiosFuture = getUserRadios(id);
-    _userTracksFuture = getUserTracks(id);
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final id = ModalRoute.of(context)!.settings.arguments as int;
     return FutureBuilder<UserShort>(
-        future: _userFuture,
+        future: getUser(id),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final entity = snapshot.data!;
-            return DefaultTabController(
-                length: 7,
-                child: Scaffold(
-                    appBar: AppBar(
-                      title: Text(entity.name),
-                      actions: <Widget>[
-                        IconButton(
-                          icon: const Icon(Icons.search),
-                          tooltip: 'Поиск',
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/search');
-                          },
-                        ),
-                      ],
-                      bottom: const TabBar(
-                        tabs: <Widget>[
-                          Tab(text: 'Обзор'),
-                          Tab(text: 'Любимые треки'),
-                          Tab(text: 'Плейлисты'),
-                          Tab(text: 'Миксы'),
-                          Tab(text: 'Альбомы'),
-                          Tab(text: 'Исполнители'),
-                          Tab(text: 'Последователи'),
-                        ],
-                      ),
+            return Scaffold(
+                appBar: AppBar(
+                  title: Text(entity.name),
+                  actions: <Widget>[
+                    IconButton(
+                      icon: const Icon(Icons.search),
+                      tooltip: 'Поиск',
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/search');
+                      },
                     ),
-                    body: TabBarView(children: <Widget>[
-                      FutureBuilder<FullSearchResponse>(
-                          future: _userHighlightsFuture,
+                  ],
+                  bottom: TabBar(
+                    controller: _tabController,
+                    tabs: const <Widget>[
+                      Tab(text: 'Обзор'),
+                      Tab(text: 'Любимые треки'),
+                      Tab(text: 'Плейлисты'),
+                      Tab(text: 'Миксы'),
+                      Tab(text: 'Альбомы'),
+                      Tab(text: 'Исполнители'),
+                      Tab(text: 'Подписки'),
+                      Tab(text: 'Подписчики'),
+                    ],
+                  ),
+                ),
+                body: Padding(
+                    padding: const EdgeInsets.only(bottom: 100.0),
+                    child: TabBarView(controller: _tabController, children: <
+                        Widget>[
+                      FutureBuilder<UserHighlights>(
+                          future: getUserHighlights(id),
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               final highlights = snapshot.data!;
                               return SingleChildScrollView(
                                   child: Column(children: <Widget>[
-                                const Text('Любимые треки'),
-                                highlights.tracks.total == 0
-                                    ? const Text('Ничего не найдено')
-                                    : Table(
-                                        border: TableBorder.all(),
-                                        columnWidths: const <int,
-                                            TableColumnWidth>{
-                                          0: IntrinsicColumnWidth(),
-                                          1: FixedColumnWidth(56),
-                                          5: IntrinsicColumnWidth(),
-                                          6: IntrinsicColumnWidth(),
+                                if (highlights.tracks.total > 0)
+                                  TrackTable(
+                                    title: Row(children: <Widget>[
+                                      const Text('Любимые треки'),
+                                      IconButton(
+                                        icon: const Icon(Icons.navigate_next),
+                                        tooltip: 'Перейти',
+                                        onPressed: () {
+                                          _tabController.animateTo(1);
                                         },
-                                        defaultVerticalAlignment:
-                                            TableCellVerticalAlignment.middle,
-                                        children: highlights.tracks.data
-                                            .map((track) => TableRow(children: [
-                                                  const Text('1'),
-                                                  Image.network(
-                                                      track.album!.coverSmall,
-                                                      height: 56.0,
-                                                      width: 56.0),
-                                                  Text(track.title),
-                                                  Text(track.artist.name),
-                                                  Text(track.album!.title),
-                                                  Text(formatDuration(
-                                                      track.duration)),
-                                                  Text('${track.rank}'),
-                                                ]))
-                                            .toList(),
                                       ),
-                                const Text('Плейлисты'),
-                                highlights.playlists.total == 0
-                                    ? const Text('Ничего не найдено')
-                                    : Wrap(
-                                        spacing: 8.0,
-                                        runSpacing: 4.0,
-                                        children: highlights.playlists.data
-                                            .map((playlist) => PlaylistCard(
-                                                playlist: playlist,
-                                                onTap: () {
-                                                  Navigator.pushNamed(
-                                                      context, '/playlist',
-                                                      arguments: playlist.id);
-                                                }))
-                                            .toList()),
-                                const Text('Миксы'),
-                                highlights.radios.total == 0
-                                    ? const Text('Ничего не найдено')
-                                    : Wrap(
-                                        spacing: 8.0,
-                                        runSpacing: 4.0,
-                                        children: highlights.radios.data
-                                            .map((radio) => RadioCard(
-                                                radio: radio, onTap: () {}))
-                                            .toList()),
-                                const Text('Альбомы'),
-                                highlights.albums.total == 0
-                                    ? const Text('Ничего не найдено')
-                                    : Wrap(
-                                        spacing: 8.0,
-                                        runSpacing: 4.0,
-                                        children: highlights.albums.data
-                                            .map((album) => AlbumCard(
-                                                album: album,
-                                                onTap: () {
-                                                  Navigator.pushNamed(
-                                                      context, '/album',
-                                                      arguments: album.id);
-                                                }))
-                                            .toList()),
-                                const Text('Исполнители'),
-                                highlights.artists.total == 0
-                                    ? const Text('Ничего не найдено')
-                                    : Wrap(
-                                        spacing: 8.0,
-                                        runSpacing: 4.0,
-                                        children: highlights.artists.data
-                                            .map((artist) => ArtistCard(
-                                                artist: artist,
-                                                onTap: () {
-                                                  Navigator.pushNamed(
-                                                      context, '/artist',
-                                                      arguments:
-                                                          ArtistArguments(
-                                                              artist.id));
-                                                }))
-                                            .toList()),
-                                const Text('Последователи'),
-                                highlights.users.total == 0
-                                    ? const Text('Ничего не найдено')
-                                    : Wrap(
-                                        spacing: 8.0,
-                                        runSpacing: 4.0,
-                                        children: highlights.users.data
-                                            .map((user) => UserCard(
-                                                user: user,
-                                                onTap: () {
-                                                  Navigator.pushNamed(
-                                                      context, '/user',
-                                                      arguments: user.id);
-                                                }))
-                                            .toList()),
+                                    ]),
+                                    tracks: highlights.tracks.data,
+                                  ),
+                                if (highlights.playlists.total > 0)
+                                  Carousel(
+                                      onNavigate: () {
+                                        _tabController.animateTo(2);
+                                      },
+                                      title: const Text('Плейлисты'),
+                                      children: [
+                                        for (var playlist
+                                            in highlights.playlists.data)
+                                          PlaylistCard(
+                                              playlist: playlist,
+                                              onTap: () {
+                                                Navigator.pushNamed(
+                                                    context, '/playlist',
+                                                    arguments: playlist.id);
+                                              })
+                                      ]),
+                                if (highlights.radios.total > 0)
+                                  Carousel(
+                                      onNavigate: () {
+                                        _tabController.animateTo(3);
+                                      },
+                                      title: const Text('Миксы'),
+                                      children: [
+                                        for (var radio
+                                            in highlights.radios.data)
+                                          RadioCard(radio: radio, onTap: () {})
+                                      ]),
+                                if (highlights.albums.total > 0)
+                                  Carousel(
+                                      onNavigate: () {
+                                        _tabController.animateTo(4);
+                                      },
+                                      title: const Text('Альбомы'),
+                                      children: [
+                                        for (var album
+                                            in highlights.albums.data)
+                                          AlbumCard(
+                                              album: album,
+                                              onTap: () {
+                                                Navigator.pushNamed(
+                                                    context, '/album',
+                                                    arguments: album.id);
+                                              })
+                                      ]),
+                                if (highlights.artists.total > 0)
+                                  Carousel(
+                                      onNavigate: () {
+                                        _tabController.animateTo(5);
+                                      },
+                                      title: const Text('Исполнители'),
+                                      children: [
+                                        for (var artist
+                                            in highlights.artists.data)
+                                          ArtistCard(
+                                              artist: artist,
+                                              onTap: () {
+                                                Navigator.pushNamed(
+                                                    context, '/artist',
+                                                    arguments: ArtistArguments(
+                                                        artist.id));
+                                              })
+                                      ]),
+                                if (highlights.followings.total > 0)
+                                  Carousel(
+                                      onNavigate: () {
+                                        _tabController.animateTo(6);
+                                      },
+                                      title: const Text('Подписки'),
+                                      children: [
+                                        for (var user
+                                            in highlights.followings.data)
+                                          UserCard(
+                                              user: user,
+                                              onTap: () {
+                                                Navigator.pushNamed(
+                                                    context, '/user',
+                                                    arguments: user.id);
+                                              })
+                                      ]),
+                                if (highlights.followers.total > 0)
+                                  Carousel(
+                                      onNavigate: () {
+                                        _tabController.animateTo(7);
+                                      },
+                                      title: const Text('Подписчики'),
+                                      children: [
+                                        for (var user
+                                            in highlights.followers.data)
+                                          UserCard(
+                                              user: user,
+                                              onTap: () {
+                                                Navigator.pushNamed(
+                                                    context, '/user',
+                                                    arguments: user.id);
+                                              })
+                                      ]),
                               ]));
                             } else if (snapshot.hasError) {
                               return Text('${snapshot.error}');
@@ -198,154 +202,121 @@ class _UserPageState extends State<UserPage> {
                             return const Center(
                                 child: CircularProgressIndicator());
                           }),
-                      FutureBuilder<PartialSearchResponse<playable.TrackShort>>(
-                          future: _userTracksFuture,
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return SingleChildScrollView(
-                                  child: Table(
-                                border: TableBorder.all(),
-                                columnWidths: const <int, TableColumnWidth>{
-                                  0: IntrinsicColumnWidth(),
-                                  1: FixedColumnWidth(56),
-                                  5: IntrinsicColumnWidth(),
-                                  6: IntrinsicColumnWidth(),
-                                },
-                                defaultVerticalAlignment:
-                                    TableCellVerticalAlignment.middle,
-                                children: snapshot.data!.data
-                                    .map((track) => TableRow(children: [
-                                          const Text('1'),
-                                          Image.network(track.album!.coverSmall,
-                                              height: 56.0, width: 56.0),
-                                          Text(track.title),
-                                          Text(track.artist.name),
-                                          Text(track.album!.title),
-                                          Text(formatDuration(track.duration)),
-                                          Text('${track.rank}'),
-                                        ]))
-                                    .toList(),
-                              ));
-                            } else if (snapshot.hasError) {
-                              return Text('${snapshot.error}');
-                            }
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          }),
-                      FutureBuilder<PartialSearchResponse<playable.Playlist>>(
-                          future: _userPlaylistsFuture,
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return SingleChildScrollView(
-                                  child: Wrap(
-                                      spacing: 8.0,
-                                      runSpacing: 4.0,
-                                      children: snapshot.data!.data
-                                          .map((playlist) => PlaylistCard(
-                                              playlist: playlist,
-                                              onTap: () {
-                                                Navigator.pushNamed(
-                                                    context, '/playlist',
-                                                    arguments: playlist.id);
-                                              }))
-                                          .toList()));
-                            } else if (snapshot.hasError) {
-                              return Text('${snapshot.error}');
-                            }
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          }),
-                      FutureBuilder<PartialSearchResponse<playable.Radio>>(
-                          future: _userRadiosFuture,
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return SingleChildScrollView(
-                                  child: Wrap(
-                                      spacing: 8.0,
-                                      runSpacing: 4.0,
-                                      children: snapshot.data!.data
-                                          .map((radio) => RadioCard(
-                                              radio: radio, onTap: () {}))
-                                          .toList()));
-                            } else if (snapshot.hasError) {
-                              return Text('${snapshot.error}');
-                            }
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          }),
-                      FutureBuilder<PartialSearchResponse<playable.AlbumShort>>(
-                          future: _userAlbumsFuture,
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return SingleChildScrollView(
-                                  child: Wrap(
-                                      spacing: 8.0,
-                                      runSpacing: 4.0,
-                                      children: snapshot.data!.data
-                                          .map((album) => AlbumCard(
-                                              album: album,
-                                              onTap: () {
-                                                Navigator.pushNamed(
-                                                    context, '/album',
-                                                    arguments: album.id);
-                                              }))
-                                          .toList()));
-                            } else if (snapshot.hasError) {
-                              return Text('${snapshot.error}');
-                            }
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          }),
-                      FutureBuilder<PartialSearchResponse<playable.Artist>>(
-                          future: _userArtistsFuture,
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return SingleChildScrollView(
-                                  child: Wrap(
-                                      spacing: 8.0,
-                                      runSpacing: 4.0,
-                                      children: snapshot.data!.data
-                                          .map((artist) => ArtistCard(
-                                              artist: artist,
-                                              onTap: () {
-                                                Navigator.pushNamed(
-                                                    context, '/artist',
-                                                    arguments: ArtistArguments(
-                                                        artist.id));
-                                              }))
-                                          .toList()));
-                            } else if (snapshot.hasError) {
-                              return Text('${snapshot.error}');
-                            }
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          }),
-                      FutureBuilder<PartialSearchResponse<UserShort>>(
-                          future: _userFollowersFuture,
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return SingleChildScrollView(
-                                  child: Wrap(
-                                      spacing: 8.0,
-                                      runSpacing: 4.0,
-                                      children: snapshot.data!.data
-                                          .map((user) => UserCard(
-                                              user: user,
-                                              onTap: () {
-                                                Navigator.pushNamed(
-                                                    context, '/user',
-                                                    arguments: user.id);
-                                              }))
-                                          .toList()));
-                            } else if (snapshot.hasError) {
-                              return Text('${snapshot.error}');
-                            }
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          }),
-                    ]),
-                    drawer: const AppDrawer(),
-                    bottomSheet: const Player()));
+                      SingleChildScrollView(
+                          child: PaginatedTrackTable(
+                        loader: (int page, int pageSize) {
+                          return getUserTracks(id, page, pageSize);
+                        },
+                        titleBuilder: (int trackCount) {
+                          return Text('Треков: $trackCount');
+                        },
+                      )),
+                      DataGrid<playable.Playlist>(
+                        itemBuilder: (itemContext, playlist) {
+                          return PlaylistCard(
+                              playlist: playlist,
+                              onTap: () {
+                                Navigator.pushNamed(itemContext, '/playlist',
+                                    arguments: playlist.id);
+                              });
+                        },
+                        loader: (page, pageSize) {
+                          return getUserPlaylists(id, page, pageSize);
+                        },
+                        placeholder:
+                            const Center(child: Text('Пока нет плейлистов')),
+                        titleBuilder: (total) {
+                          return Text('Плейлистов: $total');
+                        },
+                      ),
+                      DataGrid<playable.Radio>(
+                        itemBuilder: (itemContext, radio) {
+                          return RadioCard(radio: radio, onTap: () {});
+                        },
+                        loader: (page, pageSize) {
+                          return getUserRadios(id, page, pageSize);
+                        },
+                        placeholder: const Center(
+                            child: Text('Пока нет любимых миксов')),
+                        titleBuilder: (total) {
+                          return Text('Миксов: $total');
+                        },
+                      ),
+                      DataGrid<playable.AlbumShort>(
+                        itemBuilder: (itemContext, album) {
+                          return AlbumCard(
+                              album: album,
+                              onTap: () {
+                                Navigator.pushNamed(itemContext, '/album',
+                                    arguments: album.id);
+                              });
+                        },
+                        loader: (page, pageSize) {
+                          return getUserAlbums(id, page, pageSize);
+                        },
+                        placeholder: const Center(
+                            child: Text('Пока нет любимых альбомов')),
+                        titleBuilder: (total) {
+                          return Text('Альбомов: $total');
+                        },
+                      ),
+                      DataGrid<playable.Artist>(
+                        itemBuilder: (itemContext, artist) {
+                          return ArtistCard(
+                              artist: artist,
+                              onTap: () {
+                                Navigator.pushNamed(itemContext, '/artist',
+                                    arguments: ArtistArguments(artist.id));
+                              });
+                        },
+                        loader: (page, pageSize) {
+                          return getUserArtists(id, page, pageSize);
+                        },
+                        placeholder: const Center(
+                            child: Text('Пока нет любимых артистов')),
+                        titleBuilder: (total) {
+                          return Text('Исполнителей: $total');
+                        },
+                      ),
+                      DataGrid<UserShort>(
+                        itemBuilder: (itemContext, user) {
+                          return UserCard(
+                              user: user,
+                              onTap: () {
+                                Navigator.pushNamed(itemContext, '/user',
+                                    arguments: user.id);
+                              });
+                        },
+                        loader: (page, pageSize) {
+                          return getUserFollowings(id, page, pageSize);
+                        },
+                        placeholder:
+                            const Center(child: Text('Пока нет подписок')),
+                        titleBuilder: (total) {
+                          return Text('Подписок: $total');
+                        },
+                      ),
+                      DataGrid<UserShort>(
+                        itemBuilder: (itemContext, user) {
+                          return UserCard(
+                              user: user,
+                              onTap: () {
+                                Navigator.pushNamed(itemContext, '/user',
+                                    arguments: user.id);
+                              });
+                        },
+                        loader: (page, pageSize) {
+                          return getUserFollowers(id, page, pageSize);
+                        },
+                        placeholder:
+                            const Center(child: Text('Пока нет подписчиков')),
+                        titleBuilder: (total) {
+                          return Text('Подписчиков: $total');
+                        },
+                      ),
+                    ])),
+                drawer: const AppDrawer(),
+                bottomSheet: const Player());
           }
           return snapshot.hasError
               ? Scaffold(

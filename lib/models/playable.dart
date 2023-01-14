@@ -257,7 +257,7 @@ class Playlist {
 class Radio {
   final int id;
   final String title;
-  final String description;
+  final String? description;
   final String picture, pictureSmall, pictureMedium, pictureBig, pictureXl;
   final String tracklist;
 

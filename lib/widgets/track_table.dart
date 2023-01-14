@@ -5,10 +5,16 @@ import '../navigation/artist_arguments.dart';
 import '../utils/duration.dart';
 
 class TrackTable extends StatefulWidget {
+  final Widget placeholder;
   final Widget title;
   final List<TrackShort> tracks;
 
-  const TrackTable({super.key, required this.tracks, required this.title});
+  const TrackTable({
+    super.key,
+    required this.tracks,
+    required this.title,
+    this.placeholder = const Center(child: Text('Ничего не найдено')),
+  });
 
   @override
   State<TrackTable> createState() => _TrackTableState();
@@ -64,7 +70,8 @@ class _TrackTableState extends State<TrackTable> {
             }),
             DataCell(Text(formatDuration(track.duration))),
           ])
-      ])
+      ]),
+      if (widget.tracks.isEmpty) widget.placeholder
     ]);
   }
 }

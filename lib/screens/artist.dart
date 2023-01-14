@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../models/playable.dart';
-import '../models/search.dart';
 import '../navigation/artist_arguments.dart';
 import '../providers/deezer.dart';
-import '../utils/duration.dart';
 import '../widgets/album_card.dart';
 import '../widgets/artist_card.dart';
+import '../widgets/data_grid.dart';
 import '../widgets/drawer.dart';
+import '../widgets/paginated_track_table.dart';
 import '../widgets/player.dart';
 import '../widgets/playlist_card.dart';
 
@@ -19,34 +19,15 @@ class ArtistPage extends StatefulWidget {
 }
 
 class _ArtistPageState extends State<ArtistPage> {
-  late Future<Artist> _artistFuture;
-  late Future<PartialSearchResponse<AlbumShort>> _discographyFuture;
-  late Future<PartialSearchResponse<Playlist>> _playlistsFuture;
-  late Future<PartialSearchResponse<TrackShort>> _popularTracksFuture;
-  late Future<PartialSearchResponse<Artist>> _relatedArtistsFuture;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    final arguments =
-        ModalRoute.of(context)!.settings.arguments as ArtistArguments;
-    _artistFuture = getArtist(arguments.id);
-    _discographyFuture = getArtistAlbums(arguments.id);
-    _playlistsFuture = getArtistPlaylists(arguments.id);
-    _popularTracksFuture = getArtistTopTracks(arguments.id);
-    _relatedArtistsFuture = getArtistRelated(arguments.id);
-  }
-
   @override
   Widget build(BuildContext context) {
+    final arguments =
+        ModalRoute.of(context)!.settings.arguments as ArtistArguments;
     return FutureBuilder<Artist>(
-        future: _artistFuture,
+        future: getArtist(arguments.id),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final artist = snapshot.data!;
-            final arguments =
-                ModalRoute.of(context)!.settings.arguments as ArtistArguments;
             return DefaultTabController(
                 initialIndex: arguments.section,
                 length: 5,
@@ -80,108 +61,73 @@ class _ArtistPageState extends State<ArtistPage> {
                         ],
                       ),
                     ),
-                    body: TabBarView(children: <Widget>[
-                      FutureBuilder<PartialSearchResponse<AlbumShort>>(
-                          future: _discographyFuture,
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return SingleChildScrollView(
-                                  child: Wrap(
-                                      spacing: 8.0,
-                                      runSpacing: 4.0,
-                                      children: snapshot.data!.data
-                                          .map((album) => AlbumCard(
-                                              album: album,
-                                              onTap: () {
-                                                Navigator.pushNamed(
-                                                    context, '/album',
-                                                    arguments: album.id);
-                                              }))
-                                          .toList()));
-                            } else if (snapshot.hasError) {
-                              return Center(child: Text('${snapshot.error}'));
-                            }
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          }),
-                      FutureBuilder<PartialSearchResponse<TrackShort>>(
-                          future: _popularTracksFuture,
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return Table(
-                                border: TableBorder.all(),
-                                columnWidths: const <int, TableColumnWidth>{
-                                  0: IntrinsicColumnWidth(),
-                                  3: IntrinsicColumnWidth(),
-                                  4: IntrinsicColumnWidth(),
-                                },
-                                defaultVerticalAlignment:
-                                    TableCellVerticalAlignment.middle,
-                                children: snapshot.data!.data
-                                    .map((track) => TableRow(children: [
-                                          const Text('0'),
-                                          Text(track.title),
-                                          Text(track.album!.title),
-                                          Text(formatDuration(track.duration)),
-                                          Text('${track.rank}'),
-                                        ]))
-                                    .toList(),
-                              );
-                            } else if (snapshot.hasError) {
-                              return Center(child: Text('${snapshot.error}'));
-                            }
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          }),
-                      FutureBuilder<PartialSearchResponse<Artist>>(
-                          future: _relatedArtistsFuture,
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return SingleChildScrollView(
-                                  child: Wrap(
-                                      spacing: 8.0,
-                                      runSpacing: 4.0,
-                                      children: snapshot.data!.data
-                                          .map((artist) => ArtistCard(
-                                              artist: artist,
-                                              onTap: () {
-                                                Navigator.pushNamed(
-                                                    context, '/artist',
-                                                    arguments: ArtistArguments(
-                                                        artist.id));
-                                              }))
-                                          .toList()));
-                            } else if (snapshot.hasError) {
-                              return Center(child: Text('${snapshot.error}'));
-                            }
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          }),
-                      FutureBuilder<PartialSearchResponse<Playlist>>(
-                          future: _playlistsFuture,
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return SingleChildScrollView(
-                                  child: Wrap(
-                                      spacing: 8.0,
-                                      runSpacing: 4.0,
-                                      children: snapshot.data!.data
-                                          .map((playlist) => PlaylistCard(
-                                              playlist: playlist,
-                                              onTap: () {
-                                                Navigator.pushNamed(
-                                                    context, '/playlist',
-                                                    arguments: playlist.id);
-                                              }))
-                                          .toList()));
-                            } else if (snapshot.hasError) {
-                              return Center(child: Text('${snapshot.error}'));
-                            }
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          }),
-                      const Center(child: Text('Тут комментарии')),
-                    ]),
+                    body: Padding(
+                        padding: const EdgeInsets.only(bottom: 100.0),
+                        child: TabBarView(children: <Widget>[
+                          DataGrid<AlbumShort>(
+                            itemBuilder: (itemContext, album) {
+                              return AlbumCard(
+                                  album: album,
+                                  onTap: () {
+                                    Navigator.pushNamed(itemContext, '/album',
+                                        arguments: album.id);
+                                  });
+                            },
+                            loader: (page, pageSize) {
+                              return getArtistAlbums(
+                                  arguments.id, page, pageSize);
+                            },
+                            titleBuilder: (total) {
+                              return Text('Альбомов в дискографии: $total');
+                            },
+                          ),
+                          SingleChildScrollView(
+                              child: PaginatedTrackTable(
+                            loader: (int page, int pageSize) {
+                              return getArtistTopTracks(
+                                  arguments.id, page, pageSize);
+                            },
+                            titleBuilder: (int trackCount) {
+                              return Text('Популярных треков: $trackCount');
+                            },
+                          )),
+                          DataGrid<Artist>(
+                            itemBuilder: (itemContext, artist) {
+                              return ArtistCard(
+                                  artist: artist,
+                                  onTap: () {
+                                    Navigator.pushNamed(itemContext, '/artist',
+                                        arguments: ArtistArguments(artist.id));
+                                  });
+                            },
+                            loader: (page, pageSize) {
+                              return getArtistRelated(
+                                  arguments.id, page, pageSize);
+                            },
+                            titleBuilder: (total) {
+                              return Text('Похожих исполнителей: $total');
+                            },
+                          ),
+                          DataGrid<Playlist>(
+                            itemBuilder: (itemContext, playlist) {
+                              return PlaylistCard(
+                                  playlist: playlist,
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                        itemContext, '/playlist',
+                                        arguments: playlist.id);
+                                  });
+                            },
+                            loader: (page, pageSize) {
+                              return getArtistPlaylists(
+                                  arguments.id, page, pageSize);
+                            },
+                            titleBuilder: (total) {
+                              return Text('Плейлистов: $total');
+                            },
+                          ),
+                          const Center(child: Text('Тут комментарии')),
+                        ])),
                     drawer: const AppDrawer(),
                     bottomSheet: const Player()));
           }

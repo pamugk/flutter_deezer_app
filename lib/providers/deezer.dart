@@ -375,21 +375,23 @@ Future<PartialSearchResponse<Artist>> getUserArtists(int id,
   }
 }
 
-Future<FullSearchResponse> getUserHighlights(int id) async {
+Future<UserHighlights> getUserHighlights(int id) async {
   final albums = getUserAlbums(id, 0, 10);
   final artists = getUserArtists(id, 0, 10);
   final playlists = getUserPlaylists(id, 0, 10);
   final radios = getUserRadios(id, 0, 10);
   final tracks = getUserTracks(id, 0, 10);
-  final users = getUserFollowers(id, 0, 10);
+  final followers = getUserFollowers(id, 0, 10);
+  final followings = getUserFollowings(id, 0, 10);
 
-  return FullSearchResponse(
+  return UserHighlights(
     await albums,
     await artists,
     await playlists,
     await radios,
     await tracks,
-    await users,
+    await followers,
+    await followings,
   );
 }
 
@@ -403,7 +405,7 @@ Future<PartialSearchResponse<UserShort>> getUserFollowers(int id,
   if (response.statusCode == 200) {
     final json = await compute(jsonDecode, response.body);
     return PartialSearchResponse(
-        [for (var user in json['data']) User.fromJson(user)],
+        [for (var user in json['data']) UserShort.fromJson(user)],
         json['total'] ?? 0,
         json['prev'],
         json['next']);

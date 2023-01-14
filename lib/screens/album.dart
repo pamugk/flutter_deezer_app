@@ -19,29 +19,12 @@ class AlbumPage extends StatefulWidget {
   State<AlbumPage> createState() => _AlbumPageState();
 }
 
-class _AlbumPageState extends State<AlbumPage> with TickerProviderStateMixin {
-  late Future<Album> _albumFuture;
-  late Future<PartialSearchResponse<AlbumShort>> _discographyFuture;
-  late Future<PartialSearchResponse<Artist>> _relatedArtistsFuture;
-  late Future<List<Track>> _tracksFuture;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    final id = ModalRoute.of(context)!.settings.arguments as int;
-    _albumFuture = getAlbum(id);
-    _albumFuture.then((Album album) {
-      _tracksFuture = getAlbumTracks(id, 0, album.trackCount);
-      _discographyFuture = getArtistAlbums(album.artist.id, 0, 10);
-      _relatedArtistsFuture = getArtistRelated(album.artist.id, 0, 10);
-    });
-  }
-
+class _AlbumPageState extends State<AlbumPage> {
   @override
   Widget build(BuildContext context) {
+    final id = ModalRoute.of(context)!.settings.arguments as int;
     return FutureBuilder<Album>(
-        future: _albumFuture,
+        future: getAlbum(id),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final album = snapshot.data!;
@@ -63,75 +46,62 @@ class _AlbumPageState extends State<AlbumPage> with TickerProviderStateMixin {
                   },
                 ),
               ]),
-              body: SingleChildScrollView(
-                  child: Column(children: <Widget>[
-                Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Image.network(album.coverMedium,
-                          height: 250.0, width: 250.0),
-                      Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            if (album.explicitLyrics) const Text('EXPLICIT'),
-                            Row(children: [
-                              CircleAvatar(
-                                backgroundImage:
-                                    NetworkImage(album.artist.pictureSmall),
-                              ),
-                              Text(album.artist.name),
-                            ]),
-                            Row(children: <Widget>[
-                              Text('треков: ${album.trackCount}'),
-                              Text(formatDuration(album.duration)),
-                              Text('${album.releaseDate}'),
-                              Text('фанатов: ${album.fanCount}'),
-                            ]),
-                          ]),
-                    ]),
-                FutureBuilder<List<Track>>(
-                    future: _tracksFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        final tracks = groupBy(snapshot.data!, (Track track) {
-                          return track.diskNumber;
-                        });
-                        return DataTable(
-                          columns: const <DataColumn>[
-                            DataColumn(
-                              label: Expanded(
-                                child: Text(
-                                  'Трек',
+              body: Padding(
+                  padding: const EdgeInsets.only(bottom: 100.0),
+                  child: SingleChildScrollView(
+                      child: Column(children: <Widget>[
+                    Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Image.network(album.coverMedium,
+                              height: 250.0, width: 250.0),
+                          Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                if (album.explicitLyrics)
+                                  const Text('EXPLICIT'),
+                                Row(children: [
+                                  CircleAvatar(
+                                    backgroundImage:
+                                        NetworkImage(album.artist.pictureSmall),
+                                  ),
+                                  Text(album.artist.name),
+                                ]),
+                                Row(children: <Widget>[
+                                  Text('треков: ${album.trackCount}'),
+                                  Text(formatDuration(album.duration)),
+                                  Text('${album.releaseDate}'),
+                                  Text('фанатов: ${album.fanCount}'),
+                                ]),
+                              ]),
+                        ]),
+                    FutureBuilder<List<Track>>(
+                        future: getAlbumTracks(id, 0, album.trackCount),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            final tracks =
+                                groupBy(snapshot.data!, (Track track) {
+                              return track.diskNumber;
+                            });
+                            return DataTable(
+                              columns: const <DataColumn>[
+                                DataColumn(
+                                  label: Expanded(
+                                    child: Text(
+                                      'Трек',
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                            DataColumn(
-                              label: Icon(
-                                Icons.access_time,
-                              ),
-                              tooltip: 'Длительность',
-                            ),
-                          ],
-                          rows: tracks.length == 1
-                              ? [
-                                  for (var track in tracks[1]!)
-                                    DataRow(
-                                        onSelectChanged: (bool? selected) {},
-                                        cells: <DataCell>[
-                                          DataCell(Text(
-                                              '${track.position}. ${track.title}')),
-                                          DataCell(Text(
-                                              formatDuration(track.duration))),
-                                        ])
-                                ]
-                              : [
-                                  for (var disk in tracks.entries) ...[
-                                    DataRow(cells: <DataCell>[
-                                      DataCell(Text('CD №${disk.key}')),
-                                      const DataCell(Text('')),
-                                    ]),
-                                    ...[
-                                      for (var track in disk.value)
+                                DataColumn(
+                                  label: Icon(
+                                    Icons.access_time,
+                                  ),
+                                  tooltip: 'Длительность',
+                                ),
+                              ],
+                              rows: tracks.length == 1
+                                  ? [
+                                      for (var track in tracks[1]!)
                                         DataRow(
                                             onSelectChanged:
                                                 (bool? selected) {},
@@ -142,66 +112,89 @@ class _AlbumPageState extends State<AlbumPage> with TickerProviderStateMixin {
                                                   track.duration))),
                                             ])
                                     ]
-                                  ]
-                                ],
-                        );
-                      } else if (snapshot.hasError) {
-                        return Text('${snapshot.error}');
-                      }
-                      return const Center(child: CircularProgressIndicator());
-                    }),
-                if (album.label != null) Text(album.label!),
-                FutureBuilder<PartialSearchResponse<AlbumShort>>(
-                    future: _discographyFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return Carousel(
-                            title: const Text('Дискография'),
-                            onNavigate: () {
-                              Navigator.pushNamed(context, '/artist',
-                                  arguments: ArtistArguments(album.artist.id));
-                            },
-                            children: [
-                              for (var album in snapshot.data!.data)
-                                AlbumCard(
-                                    album: album,
-                                    onTap: () {
-                                      Navigator.pushNamed(context, '/album',
-                                          arguments: album.id);
-                                    })
-                            ]);
-                      } else if (snapshot.hasError) {
-                        return Text('${snapshot.error}');
-                      }
-                      return const Center(child: CircularProgressIndicator());
-                    }),
-                FutureBuilder<PartialSearchResponse<Artist>>(
-                    future: _relatedArtistsFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return Carousel(
-                            title: const Text('Похожие исполнители'),
-                            onNavigate: () {
-                              Navigator.pushNamed(context, '/artist',
-                                  arguments:
-                                      ArtistArguments(album.artist.id, 2));
-                            },
-                            children: [
-                              for (var artist in snapshot.data!.data)
-                                ArtistCard(
-                                    artist: artist,
-                                    onTap: () {
-                                      Navigator.pushNamed(context, '/artist',
-                                          arguments:
-                                              ArtistArguments(artist.id));
-                                    })
-                            ]);
-                      } else if (snapshot.hasError) {
-                        return Text('${snapshot.error}');
-                      }
-                      return const Center(child: CircularProgressIndicator());
-                    }),
-              ])),
+                                  : [
+                                      for (var disk in tracks.entries) ...[
+                                        DataRow(cells: <DataCell>[
+                                          DataCell(Text('CD №${disk.key}')),
+                                          const DataCell(Text('')),
+                                        ]),
+                                        ...[
+                                          for (var track in disk.value)
+                                            DataRow(
+                                                onSelectChanged:
+                                                    (bool? selected) {},
+                                                cells: <DataCell>[
+                                                  DataCell(Text(
+                                                      '${track.position}. ${track.title}')),
+                                                  DataCell(Text(formatDuration(
+                                                      track.duration))),
+                                                ])
+                                        ]
+                                      ]
+                                    ],
+                            );
+                          } else if (snapshot.hasError) {
+                            return Text('${snapshot.error}');
+                          }
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }),
+                    if (album.label != null) Text(album.label!),
+                    FutureBuilder<PartialSearchResponse<AlbumShort>>(
+                        future: getArtistAlbums(album.artist.id, 0, 10),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return Carousel(
+                                title: const Text('Дискография'),
+                                onNavigate: () {
+                                  Navigator.pushNamed(context, '/artist',
+                                      arguments:
+                                          ArtistArguments(album.artist.id));
+                                },
+                                children: [
+                                  for (var album in snapshot.data!.data)
+                                    AlbumCard(
+                                        album: album,
+                                        onTap: () {
+                                          Navigator.pushNamed(context, '/album',
+                                              arguments: album.id);
+                                        })
+                                ]);
+                          } else if (snapshot.hasError) {
+                            return Text('${snapshot.error}');
+                          }
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }),
+                    FutureBuilder<PartialSearchResponse<Artist>>(
+                        future: getArtistRelated(album.artist.id, 0, 10),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return Carousel(
+                                title: const Text('Похожие исполнители'),
+                                onNavigate: () {
+                                  Navigator.pushNamed(context, '/artist',
+                                      arguments:
+                                          ArtistArguments(album.artist.id, 2));
+                                },
+                                children: [
+                                  for (var artist in snapshot.data!.data)
+                                    ArtistCard(
+                                        artist: artist,
+                                        onTap: () {
+                                          Navigator.pushNamed(
+                                              context, '/artist',
+                                              arguments:
+                                                  ArtistArguments(artist.id));
+                                        })
+                                ]);
+                          } else if (snapshot.hasError) {
+                            return Text('${snapshot.error}');
+                          }
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }),
+                  ]))),
               drawer: const AppDrawer(),
               bottomSheet: const Player(),
             );

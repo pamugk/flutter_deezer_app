@@ -28,46 +28,47 @@ class _CarouselState extends State<Carousel> {
         final countOfElements = max(constraints.maxWidth ~/ 284, 1);
         final cutOffElements = shiftedChildren.take(countOfElements).toList();
         return Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: IntrinsicWidth(
-            child: Column(
-          children: <Widget>[
-            Row(children: <Widget>[
-              widget.title,
-              if (widget.onNavigate != null)
-                IconButton(
-                  icon: const Icon(Icons.navigate_next),
-                  tooltip: 'Перейти',
-                  onPressed: widget.onNavigate,
-                ),
-              const Spacer(),
-              IconButton(
-                icon: const Icon(Icons.navigate_before),
-                onPressed: _offset == 0
-                    ? null
-                    : () {
-                        setState(() {
-                          _offset = max(_offset - countOfElements, 0);
-                        });
-                      },
-              ),
-              IconButton(
-                icon: const Icon(Icons.navigate_next),
-                onPressed: _offset + countOfElements >= widget.children.length
-                    ? null
-                    : () {
-                        setState(() {
-                          _offset += countOfElements;
-                        });
-                      },
-              ),
-            ]),
-            Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: cutOffElements),
-          ],
-        )));
+            padding: const EdgeInsets.all(24.0),
+            child: IntrinsicWidth(
+                child: Column(
+              children: <Widget>[
+                Row(children: <Widget>[
+                  widget.title,
+                  if (widget.onNavigate != null)
+                    IconButton(
+                      icon: const Icon(Icons.navigate_next),
+                      tooltip: 'Перейти',
+                      onPressed: widget.onNavigate,
+                    ),
+                  const Spacer(),
+                  IconButton(
+                    icon: const Icon(Icons.navigate_before),
+                    onPressed: _offset == 0
+                        ? null
+                        : () {
+                            setState(() {
+                              _offset = max(_offset - countOfElements, 0);
+                            });
+                          },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.navigate_next),
+                    onPressed:
+                        _offset + countOfElements >= widget.children.length
+                            ? null
+                            : () {
+                                setState(() {
+                                  _offset += countOfElements;
+                                });
+                              },
+                  ),
+                ]),
+                Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: cutOffElements),
+              ],
+            )));
       },
     );
   }

@@ -16,29 +16,29 @@ class Section extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-      final countOfElements = max(constraints.maxWidth ~/ 284, 1);
-      final cutOffElements = children.take(countOfElements).toList();
-      return IntrinsicWidth(
-          child: Column(
-        children: <Widget>[
-          Row(children: <Widget>[
-            title,
-            if (onNavigate != null)
-              IconButton(
-                icon: const Icon(Icons.navigate_next),
-                tooltip: 'Перейти',
-                onPressed: onNavigate,
-              ),
-          ]),
-          Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: cutOffElements),
-        ],
-      ));
-    }));
+        padding: const EdgeInsets.all(24.0),
+        child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+          final countOfElements = max(constraints.maxWidth ~/ 284, 1);
+          final cutOffElements = children.take(countOfElements).toList();
+          return IntrinsicWidth(
+              child: Column(
+            children: <Widget>[
+              Row(children: <Widget>[
+                title,
+                if (onNavigate != null)
+                  IconButton(
+                    icon: const Icon(Icons.navigate_next),
+                    tooltip: 'Перейти',
+                    onPressed: onNavigate,
+                  ),
+              ]),
+              Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: cutOffElements),
+            ],
+          ));
+        }));
   }
 }

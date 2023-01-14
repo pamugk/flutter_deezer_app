@@ -86,8 +86,7 @@ class _SearchPageState extends State<SearchPage> {
                                             if (overview.tracks.total > 0)
                                               TrackTable(
                                                 title: const Text('Треки'),
-                                                tracks:
-                                                    snapshot.data!.tracks.data,
+                                                tracks: overview.tracks.data,
                                               ),
                                             if (overview.albums.total > 0)
                                               Section(
@@ -112,8 +111,8 @@ class _SearchPageState extends State<SearchPage> {
                                                   title:
                                                       const Text('Исполнители'),
                                                   children: [
-                                                    for (var artist in snapshot
-                                                        .data!.artists.data)
+                                                    for (var artist in overview
+                                                        .artists.data)
                                                       ArtistCard(
                                                           artist: artist,
                                                           onTap: () {
@@ -133,7 +132,7 @@ class _SearchPageState extends State<SearchPage> {
                                                       const Text('Плейлисты'),
                                                   children: [
                                                     for (var playlist
-                                                        in snapshot.data!
+                                                        in overview
                                                             .playlists.data)
                                                       PlaylistCard(
                                                           playlist: playlist,
@@ -151,8 +150,8 @@ class _SearchPageState extends State<SearchPage> {
                                                   onNavigate: () {},
                                                   title: const Text('Миксы'),
                                                   children: [
-                                                    for (var radio in snapshot
-                                                        .data!.radios.data)
+                                                    for (var radio
+                                                        in overview.radios.data)
                                                       RadioCard(
                                                           radio: radio,
                                                           onTap: () {})
@@ -163,8 +162,8 @@ class _SearchPageState extends State<SearchPage> {
                                                   title: const Text(
                                                       'Пользователи'),
                                                   children: [
-                                                    for (var user in snapshot
-                                                        .data!.users.data)
+                                                    for (var user
+                                                        in overview.users.data)
                                                       UserCard(
                                                           user: user,
                                                           onTap: () {
