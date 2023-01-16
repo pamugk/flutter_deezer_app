@@ -21,7 +21,7 @@ class AppDrawer extends StatelessWidget {
             leading: Icon(Icons.explore),
             title: Text('Исследуйте'),
           ),
-          ListTile(
+          /*ListTile(
             leading: Icon(Icons.library_music),
             title: Text('Моя музыка'),
           ),
@@ -36,7 +36,7 @@ class AppDrawer extends StatelessWidget {
           ),
           ListTile(
             title: Text('Исполнители'),
-          ),
+          ),*/
         ],
       ),
     );

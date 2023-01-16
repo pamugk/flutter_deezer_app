@@ -19,7 +19,7 @@ class ArtistCard extends StatelessWidget {
                   Image.network(artist.pictureMedium,
                       height: 250.0, width: 250.0),
                   Text(artist.name),
-                  Text('Слушателей: ${artist.fanCount ?? 0}'),
+                  Text('Поклонников: ${artist.fanCount ?? 0}'),
                 ]))));
   }
 }

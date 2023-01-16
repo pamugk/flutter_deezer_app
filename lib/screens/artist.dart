@@ -19,6 +19,8 @@ class ArtistPage extends StatefulWidget {
 }
 
 class _ArtistPageState extends State<ArtistPage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     final arguments =
@@ -32,8 +34,18 @@ class _ArtistPageState extends State<ArtistPage> {
                 initialIndex: arguments.section,
                 length: 5,
                 child: Scaffold(
+                    key: _scaffoldKey,
                     appBar: AppBar(
-                      title: Text(artist.name),
+                      title: InkWell(
+                      onTap: () {
+                        _scaffoldKey.currentState!.openEndDrawer();
+                      },
+                      child: Row(children: [
+                        CircleAvatar(
+                          backgroundImage: NetworkImage(artist.pictureSmall),
+                        ),
+                        Text(artist.name),
+                      ])),
                       actions: <Widget>[
                         IconButton(
                             icon: const Icon(Icons.play_circle),
@@ -129,6 +141,18 @@ class _ArtistPageState extends State<ArtistPage> {
                           const Center(child: Text('Тут комментарии')),
                         ])),
                     drawer: const AppDrawer(),
+                    endDrawer: Drawer(
+                      child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Image.network(artist.pictureMedium,
+                              height: 250.0, width: 250.0),
+                          Text('Поклонников: ${artist.fanCount ?? 0}'),
+                        ],
+                      ),
+                    )),
                     bottomSheet: const Player()));
           }
           return snapshot.hasError

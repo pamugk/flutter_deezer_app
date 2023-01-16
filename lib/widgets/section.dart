@@ -21,8 +21,7 @@ class Section extends StatelessWidget {
             builder: (BuildContext context, BoxConstraints constraints) {
           final countOfElements = max(constraints.maxWidth ~/ 284, 1);
           final cutOffElements = children.take(countOfElements).toList();
-          return IntrinsicWidth(
-              child: Column(
+          return Column(
             children: <Widget>[
               Row(children: <Widget>[
                 title,
@@ -38,7 +37,7 @@ class Section extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: cutOffElements),
             ],
-          ));
+          );
         }));
   }
 }

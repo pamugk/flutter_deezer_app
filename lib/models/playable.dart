@@ -189,6 +189,7 @@ class Playlist {
   final int id;
   final String title;
   final String? description;
+  final DateTime? creationDate;
   final Duration? duration;
   final bool public;
   final bool? favorite;
@@ -200,12 +201,13 @@ class Playlist {
   final String picture, pictureSmall, pictureMedium, pictureBig, pictureXl;
   final String checksum;
   final UserShort? creator;
-  final List<TrackShort>? tracks;
+  final List<PlaylistTrack>? tracks;
 
   const Playlist(
       this.id,
       this.title,
       this.description,
+      this.creationDate,
       this.duration,
       this.public,
       this.favorite,
@@ -227,6 +229,9 @@ class Playlist {
       : id = json['id'],
         title = json['title'],
         description = json['description'],
+        creationDate = json['creation_date'] == null
+            ? null
+            : DateTime.parse(json['creation_date']),
         duration = json['duration'] == null
             ? null
             : Duration(seconds: json['duration']),
@@ -250,8 +255,30 @@ class Playlist {
             ? null
             : [
                 for (var track in json['tracks']['data'])
-                  TrackShort.fromJson(track)
+                  PlaylistTrack.fromJson(track)
               ];
+}
+
+class PlaylistTrack extends TrackShort {
+  final DateTime added;
+
+  const PlaylistTrack(
+      super.id,
+      super.readable,
+      super.title,
+      super.titleShort,
+      super.titleVersion,
+      super.duration,
+      super.rank,
+      super.explicitLyrics,
+      super.preview,
+      super.artist,
+      super.album,
+      this.added);
+
+  PlaylistTrack.fromJson(Map<String, dynamic> json)
+      : added = DateTime(1970).add(Duration(seconds: json['time_add'])),
+        super.fromJson(json);
 }
 
 class Radio {

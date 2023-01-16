@@ -29,8 +29,7 @@ class _CarouselState extends State<Carousel> {
         final cutOffElements = shiftedChildren.take(countOfElements).toList();
         return Padding(
             padding: const EdgeInsets.all(24.0),
-            child: IntrinsicWidth(
-                child: Column(
+            child: Column(
               children: <Widget>[
                 Row(children: <Widget>[
                   widget.title,
@@ -68,7 +67,7 @@ class _CarouselState extends State<Carousel> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: cutOffElements),
               ],
-            )));
+            ));
       },
     );
   }

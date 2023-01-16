@@ -25,6 +25,7 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   late TabController _tabController;
 
   @override
@@ -48,8 +49,18 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
           if (snapshot.hasData) {
             final entity = snapshot.data!;
             return Scaffold(
+                    key: _scaffoldKey,
                 appBar: AppBar(
-                  title: Text(entity.name),
+                  title: InkWell(
+                      onTap: () {
+                        _scaffoldKey.currentState!.openEndDrawer();
+                      },
+                      child: Row(children: [
+                    CircleAvatar(
+                      backgroundImage: NetworkImage(entity.pictureSmall!),
+                    ),
+                    Text(entity.name),
+                  ])),
                   actions: <Widget>[
                     IconButton(
                       icon: const Icon(Icons.search),
@@ -316,6 +327,17 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
                       ),
                     ])),
                 drawer: const AppDrawer(),
+                  endDrawer: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Drawer(
+                      child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Image.network(entity.pictureMedium!,
+                              height: 250.0, width: 250.0),
+                        ],
+                      ),
+                    )),
                 bottomSheet: const Player());
           }
           return snapshot.hasError

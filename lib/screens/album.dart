@@ -20,6 +20,8 @@ class AlbumPage extends StatefulWidget {
 }
 
 class _AlbumPageState extends State<AlbumPage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     final id = ModalRoute.of(context)!.settings.arguments as int;
@@ -29,52 +31,43 @@ class _AlbumPageState extends State<AlbumPage> {
           if (snapshot.hasData) {
             final album = snapshot.data!;
             return Scaffold(
-              appBar: AppBar(title: Text(album.title), actions: <Widget>[
-                IconButton(
-                    icon: const Icon(Icons.play_circle),
-                    tooltip: 'Воспроизвести',
-                    onPressed: () {}),
-                const IconButton(
-                    icon: Icon(Icons.favorite_border),
-                    tooltip: 'Добавить в избранное',
-                    onPressed: null),
-                IconButton(
-                  icon: const Icon(Icons.search),
-                  tooltip: 'Поиск',
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/search');
-                  },
-                ),
-              ]),
-              body: Padding(
+              key: _scaffoldKey,
+              appBar: AppBar(
+                  title: InkWell(
+                      onTap: () {
+                        _scaffoldKey.currentState!.openEndDrawer();
+                      },
+                      child: Row(children: [
+                        Image.network(album.coverSmall,
+                            height: 56.0, width: 56.0),
+                        Text(album.title),
+                        if (album.explicitLyrics)
+                          const Icon(
+                            Icons.explicit,
+                          ),
+                      ])),
+                  actions: <Widget>[
+                    IconButton(
+                        icon: const Icon(Icons.play_circle),
+                        tooltip: 'Воспроизвести',
+                        onPressed: () {}),
+                    const IconButton(
+                        icon: Icon(Icons.favorite_border),
+                        tooltip: 'Добавить в избранное',
+                        onPressed: null),
+                    IconButton(
+                      icon: const Icon(Icons.search),
+                      tooltip: 'Поиск',
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/search');
+                      },
+                    ),
+                  ]),
+              body: SizedBox.expand(child: Padding(
                   padding: const EdgeInsets.only(bottom: 100.0),
                   child: SingleChildScrollView(
                       child: Column(children: <Widget>[
-                    Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Image.network(album.coverMedium,
-                              height: 250.0, width: 250.0),
-                          Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                if (album.explicitLyrics)
-                                  const Text('EXPLICIT'),
-                                Row(children: [
-                                  CircleAvatar(
-                                    backgroundImage:
-                                        NetworkImage(album.artist.pictureSmall),
-                                  ),
-                                  Text(album.artist.name),
-                                ]),
-                                Row(children: <Widget>[
-                                  Text('треков: ${album.trackCount}'),
-                                  Text(formatDuration(album.duration)),
-                                  Text('${album.releaseDate}'),
-                                  Text('фанатов: ${album.fanCount}'),
-                                ]),
-                              ]),
-                        ]),
+                    Text('Треков: ${album.trackCount}'),
                     FutureBuilder<List<Track>>(
                         future: getAlbumTracks(id, 0, album.trackCount),
                         builder: (context, snapshot) {
@@ -194,8 +187,29 @@ class _AlbumPageState extends State<AlbumPage> {
                           return const Center(
                               child: CircularProgressIndicator());
                         }),
-                  ]))),
+                  ])))),
               drawer: const AppDrawer(),
+              endDrawer: Drawer(
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Image.network(album.coverMedium,
+                        height: 250.0, width: 250.0),
+                    Text('Продолжительность: ${formatDuration(album.duration)}'),
+                    Text('Дата выпуска: ${album.releaseDate}'),
+                    Text('Поклонников: ${album.fanCount}'),
+                    Row(children: [
+                      CircleAvatar(
+                        backgroundImage:
+                            NetworkImage(album.artist.pictureSmall),
+                      ),
+                      Text(album.artist.name),
+                    ]),
+                  ],
+                ),
+              )),
               bottomSheet: const Player(),
             );
           } else if (snapshot.hasError) {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/playable.dart';
 import '../providers/deezer.dart';
+import '../utils/duration.dart';
 import '../widgets/drawer.dart';
 import '../widgets/player.dart';
 import '../widgets/track_table.dart';
@@ -21,6 +22,7 @@ bool _checkTrack(TrackShort track, String searchText) {
 }
 
 class _PlaylistPageState extends State<PlaylistPage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   String _searchText = "";
 
   @override
@@ -31,9 +33,19 @@ class _PlaylistPageState extends State<PlaylistPage> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final playlist = snapshot.data!;
+            final lastUpdated = playlist.tracks?.map((track) => track.added).reduce((date, otherDate) => date.isAfter(otherDate) ? date : otherDate);
             return Scaffold(
+                    key: _scaffoldKey,
                 appBar: AppBar(
-                  title: Text(playlist.title),
+                  title: InkWell(
+                      onTap: () {
+                        _scaffoldKey.currentState!.openEndDrawer();
+                      },
+                      child: Row(children: [
+                    Image.network(playlist.pictureSmall,
+                        height: 56.0, width: 56.0),
+                    Text(playlist.title),
+                  ])),
                   actions: <Widget>[
                     IconButton(
                         icon: const Icon(Icons.play_circle),
@@ -52,30 +64,53 @@ class _PlaylistPageState extends State<PlaylistPage> {
                     ),
                   ],
                 ),
-                body: Padding(
+                body: SizedBox.expand(child: Padding(
                     padding: const EdgeInsets.only(bottom: 100.0),
                     child: SingleChildScrollView(
                         child: TrackTable(
                       placeholder: Center(
                           child: Text('Нет результатов для "$_searchText"')),
-                      title: TextField(
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: 'Поиск',
-                          prefix: Icon(Icons.search),
-                        ),
-                        onChanged: (text) {
-                          setState(() {
-                            _searchText = text;
-                          });
-                        },
-                      ),
+                      title: FractionallySizedBox(
+                          alignment: Alignment.centerLeft,
+                          widthFactor: 0.4,
+                          child: TextField(
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              hintText: 'Поиск',
+                              prefix: Icon(Icons.search),
+                            ),
+                            onChanged: (text) {
+                              setState(() {
+                                _searchText = text;
+                              });
+                            },
+                          )),
                       tracks: [
                         for (var track in playlist.tracks!)
                           if (_checkTrack(track, _searchText)) track
                       ],
-                    ))),
+                    )))),
                 drawer: const AppDrawer(),
+                  endDrawer: Drawer(
+                      child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Image.network(playlist.pictureMedium,
+                              height: 250.0, width: 250.0),
+                          if (playlist.description != null)
+                            Text(playlist.description!),
+                          Text('Продолжительность: ${formatDuration(playlist.duration!)}'),
+                          Text('Треков: ${playlist.trackCount ?? 0}'),
+                          Text('Поклонников: ${playlist.fanCount ?? 0}'),
+                          if (playlist.creationDate != null)
+                            Text('Создан: ${playlist.creationDate}'),
+                          if (lastUpdated != null)
+                            Text('Обновлен: $lastUpdated'),
+                        ],
+                      ),
+                    )),
                 bottomSheet: const Player());
           }
           return snapshot.hasError
