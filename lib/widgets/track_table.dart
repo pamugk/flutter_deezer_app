@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../models/playable.dart';
 import '../navigation/artist_arguments.dart';
 import '../utils/duration.dart';
 
 class TrackTable extends StatefulWidget {
-  final Widget placeholder;
+  final Widget? placeholder;
   final Widget title;
   final List<TrackShort> tracks;
 
@@ -13,7 +14,7 @@ class TrackTable extends StatefulWidget {
     super.key,
     required this.tracks,
     required this.title,
-    this.placeholder = const Center(child: Text('Ничего не найдено')),
+    this.placeholder,
   });
 
   @override
@@ -25,33 +26,33 @@ class _TrackTableState extends State<TrackTable> {
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       widget.title,
-      DataTable(columns: const <DataColumn>[
+      DataTable(columns: <DataColumn>[
         DataColumn(
           label: Expanded(
             child: Text(
-              'Трек',
+              AppLocalizations.of(context)!.track,
             ),
           ),
         ),
         DataColumn(
           label: Expanded(
             child: Text(
-              'Исполнитель',
+              AppLocalizations.of(context)!.artist,
             ),
           ),
         ),
         DataColumn(
           label: Expanded(
             child: Text(
-              'Альбом',
+              AppLocalizations.of(context)!.album,
             ),
           ),
         ),
         DataColumn(
-          label: Icon(
+          label: const Icon(
             Icons.access_time,
           ),
-          tooltip: 'Длительность',
+          tooltip: AppLocalizations.of(context)!.duration,
         ),
       ], rows: [
         for (var track in widget.tracks)
@@ -71,7 +72,8 @@ class _TrackTableState extends State<TrackTable> {
             DataCell(Text(formatDuration(track.duration))),
           ])
       ]),
-      if (widget.tracks.isEmpty) widget.placeholder
+      if (widget.tracks.isEmpty && widget.placeholder != null)
+        widget.placeholder!
     ]);
   }
 }

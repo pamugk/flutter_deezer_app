@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../models/playable.dart';
 import '../models/search.dart';
@@ -84,33 +85,33 @@ class _PaginatedTrackTableState extends State<PaginatedTrackTable> {
                   });
                 },
                 rowsPerPage: _pageSize,
-                columns: const <DataColumn>[
+                columns: <DataColumn>[
                   DataColumn(
                     label: Expanded(
                       child: Text(
-                        'Трек',
+                        AppLocalizations.of(context)!.track,
                       ),
                     ),
                   ),
                   DataColumn(
                     label: Expanded(
                       child: Text(
-                        'Исполнитель',
+                        AppLocalizations.of(context)!.artist,
                       ),
                     ),
                   ),
                   DataColumn(
                     label: Expanded(
                       child: Text(
-                        'Альбом',
+                        AppLocalizations.of(context)!.album,
                       ),
                     ),
                   ),
                   DataColumn(
-                    label: Icon(
+                    label: const Icon(
                       Icons.access_time,
                     ),
-                    tooltip: 'Длительность',
+                    tooltip: AppLocalizations.of(context)!.duration,
                   ),
                 ],
                 source: datasource);

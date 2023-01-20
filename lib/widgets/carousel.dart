@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Carousel extends StatefulWidget {
   final List<Widget> children;
@@ -36,7 +37,7 @@ class _CarouselState extends State<Carousel> {
                   if (widget.onNavigate != null)
                     IconButton(
                       icon: const Icon(Icons.navigate_next),
-                      tooltip: 'Перейти',
+                      tooltip: AppLocalizations.of(context)!.navigate,
                       onPressed: widget.onNavigate,
                     ),
                   const Spacer(),

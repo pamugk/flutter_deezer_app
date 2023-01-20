@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -8,35 +9,19 @@ class AppDrawer extends StatelessWidget {
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
-        children: const <Widget>[
-          DrawerHeader(
+        children: <Widget>[
+          const DrawerHeader(
             child: Image(
                 image: AssetImage('assets/images/Colored_Full_Black@2x.png')),
           ),
           ListTile(
-            leading: Icon(Icons.home),
-            title: Text('Главная'),
+            leading: const Icon(Icons.home),
+            title: Text(AppLocalizations.of(context)!.home),
           ),
           ListTile(
-            leading: Icon(Icons.explore),
-            title: Text('Исследуйте'),
+            leading: const Icon(Icons.explore),
+            title: Text(AppLocalizations.of(context)!.explore),
           ),
-          /*ListTile(
-            leading: Icon(Icons.library_music),
-            title: Text('Моя музыка'),
-          ),
-          ListTile(
-            title: Text('Любимые треки'),
-          ),
-          ListTile(
-            title: Text('Плейлисты'),
-          ),
-          ListTile(
-            title: Text('Альбомы'),
-          ),
-          ListTile(
-            title: Text('Исполнители'),
-          ),*/
         ],
       ),
     );

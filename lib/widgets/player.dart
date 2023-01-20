@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../utils/duration.dart';
 
@@ -72,40 +73,40 @@ class _PlayerState extends State<Player> {
     return Row(children: <Widget>[
       IconButton(
         icon: const Icon(Icons.skip_previous),
-        tooltip: 'Предыдущий',
+        tooltip: AppLocalizations.of(context)!.previous,
         onPressed: _hasPrevious ? _skipBack : null,
       ),
       IconButton(
         icon: _playing ? const Icon(Icons.pause) : const Icon(Icons.play_arrow),
-        tooltip: 'Воспроизвести',
+        tooltip: AppLocalizations.of(context)!.play,
         onPressed: _togglePlay,
       ),
       IconButton(
         icon: const Icon(Icons.skip_next),
-        tooltip: 'Следующий',
+        tooltip: AppLocalizations.of(context)!.next,
         onPressed: _hasNext ? _skipNext : null,
       ),
       Expanded(
         flex: 1,
         child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
           Row(children: <Widget>[
-            const Text('Трек'),
-            const Text('Исполнитель'),
+            Text(AppLocalizations.of(context)!.track),
+            Text(AppLocalizations.of(context)!.artist),
             IconButton(
               icon: const Icon(Icons.lyrics),
-              tooltip: 'Текст песни',
+              tooltip: AppLocalizations.of(context)!.lyrics,
               onPressed: _showLyrics,
             ),
             IconButton(
               icon: const Icon(Icons.playlist_add),
-              tooltip: 'Добавить в плейлист',
+              tooltip: AppLocalizations.of(context)!.addToPlaylist,
               onPressed: _addToPlaylist,
             ),
             IconButton(
               icon: _favorite
                   ? const Icon(Icons.favorite)
                   : const Icon(Icons.favorite_border),
-              tooltip: 'Добавить в избранное',
+              tooltip: AppLocalizations.of(context)!.addToFavorite,
               onPressed: _addToFavorite,
             ),
           ]),
@@ -127,25 +128,25 @@ class _PlayerState extends State<Player> {
       IconButton(
         icon:
             _repeating ? const Icon(Icons.repeat_on) : const Icon(Icons.repeat),
-        tooltip: 'Повторять',
+        tooltip: AppLocalizations.of(context)!.repeat,
         onPressed: _repeat,
       ),
       IconButton(
         icon: _shuffling
             ? const Icon(Icons.shuffle_on)
             : const Icon(Icons.shuffle),
-        tooltip: 'Перемешать',
+        tooltip: AppLocalizations.of(context)!.shuffle,
         onPressed: _shuffle,
       ),
       IconButton(
         icon:
             _mute ? const Icon(Icons.volume_off) : const Icon(Icons.volume_up),
-        tooltip: 'Громкость: ${_volume.round()}',
+        tooltip: AppLocalizations.of(context)!.volume(_volume.round()),
         onPressed: _toggleVolume,
       ),
       IconButton(
         icon: const Icon(Icons.tune),
-        tooltip: 'Настройки',
+        tooltip: AppLocalizations.of(context)!.settings,
         onPressed: _showSettings,
       ),
     ]);

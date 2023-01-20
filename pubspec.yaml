@@ -11,7 +11,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   http: ^0.13.5
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:
@@ -22,4 +25,5 @@ flutter:
   assets:
     - assets/images/
     - assets/fonts/
+  generate: true
   uses-material-design: true

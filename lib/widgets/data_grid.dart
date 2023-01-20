@@ -13,7 +13,7 @@ class DataGrid<T> extends StatefulWidget {
     required this.itemBuilder,
     required this.loader,
     required this.titleBuilder,
-    this.placeholder = const Center(child: Text('Ничего не найдено')),
+    required this.placeholder,
   });
 
   @override

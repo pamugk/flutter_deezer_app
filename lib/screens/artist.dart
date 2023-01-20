@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../models/playable.dart';
 import '../navigation/artist_arguments.dart';
@@ -32,44 +33,47 @@ class _ArtistPageState extends State<ArtistPage> {
             final artist = snapshot.data!;
             return DefaultTabController(
                 initialIndex: arguments.section,
-                length: 5,
+                length: 4,
                 child: Scaffold(
                     key: _scaffoldKey,
                     appBar: AppBar(
                       title: InkWell(
-                      onTap: () {
-                        _scaffoldKey.currentState!.openEndDrawer();
-                      },
-                      child: Row(children: [
-                        CircleAvatar(
-                          backgroundImage: NetworkImage(artist.pictureSmall),
-                        ),
-                        Text(artist.name),
-                      ])),
+                          onTap: () {
+                            _scaffoldKey.currentState!.openEndDrawer();
+                          },
+                          child: Row(children: [
+                            CircleAvatar(
+                              backgroundImage:
+                                  NetworkImage(artist.pictureSmall),
+                            ),
+                            Text(artist.name),
+                          ])),
                       actions: <Widget>[
                         IconButton(
                             icon: const Icon(Icons.play_circle),
-                            tooltip: 'Воспроизвести',
+                            tooltip: AppLocalizations.of(context)!.mix,
                             onPressed: () {}),
-                        const IconButton(
-                            icon: Icon(Icons.favorite_border),
-                            tooltip: 'Добавить в избранное',
+                        IconButton(
+                            icon: const Icon(Icons.favorite_border),
+                            tooltip:
+                                AppLocalizations.of(context)!.addToFavorite,
                             onPressed: null),
                         IconButton(
                           icon: const Icon(Icons.search),
-                          tooltip: 'Поиск',
+                          tooltip: AppLocalizations.of(context)!.search,
                           onPressed: () {
                             Navigator.pushNamed(context, '/search');
                           },
                         ),
                       ],
-                      bottom: const TabBar(
+                      bottom: TabBar(
                         tabs: <Widget>[
-                          Tab(text: 'Дискография'),
-                          Tab(text: 'Популярные треки'),
-                          Tab(text: 'Похожие исполнители'),
-                          Tab(text: 'Плейлисты'),
-                          Tab(text: 'Комментарии'),
+                          Tab(text: AppLocalizations.of(context)!.discography),
+                          Tab(text: AppLocalizations.of(context)!.topTracks),
+                          Tab(
+                              text:
+                                  AppLocalizations.of(context)!.similarArtists),
+                          Tab(text: AppLocalizations.of(context)!.playlists),
                         ],
                       ),
                     ),
@@ -89,8 +93,12 @@ class _ArtistPageState extends State<ArtistPage> {
                               return getArtistAlbums(
                                   arguments.id, page, pageSize);
                             },
+                            placeholder: Center(
+                                child: Text(AppLocalizations.of(context)!
+                                    .nothingFound)),
                             titleBuilder: (total) {
-                              return Text('Альбомов в дискографии: $total');
+                              return Text(AppLocalizations.of(context)!
+                                  .albumsCount(total));
                             },
                           ),
                           SingleChildScrollView(
@@ -100,7 +108,8 @@ class _ArtistPageState extends State<ArtistPage> {
                                   arguments.id, page, pageSize);
                             },
                             titleBuilder: (int trackCount) {
-                              return Text('Популярных треков: $trackCount');
+                              return Text(AppLocalizations.of(context)!
+                                  .albumsCount(trackCount));
                             },
                           )),
                           DataGrid<Artist>(
@@ -116,8 +125,12 @@ class _ArtistPageState extends State<ArtistPage> {
                               return getArtistRelated(
                                   arguments.id, page, pageSize);
                             },
+                            placeholder: Center(
+                                child: Text(AppLocalizations.of(context)!
+                                    .nothingFound)),
                             titleBuilder: (total) {
-                              return Text('Похожих исполнителей: $total');
+                              return Text(AppLocalizations.of(context)!
+                                  .similarArtistsCount(total));
                             },
                           ),
                           DataGrid<Playlist>(
@@ -134,22 +147,26 @@ class _ArtistPageState extends State<ArtistPage> {
                               return getArtistPlaylists(
                                   arguments.id, page, pageSize);
                             },
+                            placeholder: Center(
+                                child: Text(AppLocalizations.of(context)!
+                                    .nothingFound)),
                             titleBuilder: (total) {
-                              return Text('Плейлистов: $total');
+                              return Text(AppLocalizations.of(context)!
+                                  .playlistsCount(total));
                             },
                           ),
-                          const Center(child: Text('Тут комментарии')),
                         ])),
                     drawer: const AppDrawer(),
                     endDrawer: Drawer(
-                      child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                        child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Image.network(artist.pictureMedium,
                               height: 250.0, width: 250.0),
-                          Text('Поклонников: ${artist.fanCount ?? 0}'),
+                          Text(AppLocalizations.of(context)!
+                              .fansCount(artist.fanCount ?? 0)),
                         ],
                       ),
                     )),
@@ -157,12 +174,14 @@ class _ArtistPageState extends State<ArtistPage> {
           }
           return snapshot.hasError
               ? Scaffold(
-                  appBar: AppBar(title: const Text("Ошибка!")),
+                  appBar:
+                      AppBar(title: Text(AppLocalizations.of(context)!.error)),
                   body: Center(child: Text('${snapshot.error}')),
                   drawer: const AppDrawer(),
                   bottomSheet: const Player())
               : Scaffold(
-                  appBar: AppBar(title: const Text("Идёт загрузка...")),
+                  appBar: AppBar(
+                      title: Text(AppLocalizations.of(context)!.loading)),
                   body: const Center(child: CircularProgressIndicator()),
                   drawer: const AppDrawer(),
                   bottomSheet: const Player());

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../models/playable.dart';
 
@@ -19,7 +20,8 @@ class ArtistCard extends StatelessWidget {
                   Image.network(artist.pictureMedium,
                       height: 250.0, width: 250.0),
                   Text(artist.name),
-                  Text('Поклонников: ${artist.fanCount ?? 0}'),
+                  Text(AppLocalizations.of(context)!
+                      .fansCount(artist.fanCount ?? 0)),
                 ]))));
   }
 }

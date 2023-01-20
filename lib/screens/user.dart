@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../models/playable.dart' as playable;
 import '../models/search.dart';
@@ -13,7 +14,6 @@ import '../widgets/drawer.dart';
 import '../widgets/paginated_track_table.dart';
 import '../widgets/player.dart';
 import '../widgets/playlist_card.dart';
-import '../widgets/radio_card.dart';
 import '../widgets/track_table.dart';
 import '../widgets/user_card.dart';
 
@@ -31,7 +31,7 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: 8);
+    _tabController = TabController(vsync: this, length: 7);
   }
 
   @override
@@ -49,22 +49,22 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
           if (snapshot.hasData) {
             final entity = snapshot.data!;
             return Scaffold(
-                    key: _scaffoldKey,
+                key: _scaffoldKey,
                 appBar: AppBar(
                   title: InkWell(
                       onTap: () {
                         _scaffoldKey.currentState!.openEndDrawer();
                       },
                       child: Row(children: [
-                    CircleAvatar(
-                      backgroundImage: NetworkImage(entity.pictureSmall!),
-                    ),
-                    Text(entity.name),
-                  ])),
+                        CircleAvatar(
+                          backgroundImage: NetworkImage(entity.pictureSmall!),
+                        ),
+                        Text(entity.name),
+                      ])),
                   actions: <Widget>[
                     IconButton(
                       icon: const Icon(Icons.search),
-                      tooltip: 'Поиск',
+                      tooltip: AppLocalizations.of(context)!.search,
                       onPressed: () {
                         Navigator.pushNamed(context, '/search');
                       },
@@ -72,15 +72,14 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
                   ],
                   bottom: TabBar(
                     controller: _tabController,
-                    tabs: const <Widget>[
-                      Tab(text: 'Обзор'),
-                      Tab(text: 'Любимые треки'),
-                      Tab(text: 'Плейлисты'),
-                      Tab(text: 'Миксы'),
-                      Tab(text: 'Альбомы'),
-                      Tab(text: 'Исполнители'),
-                      Tab(text: 'Подписки'),
-                      Tab(text: 'Подписчики'),
+                    tabs: <Widget>[
+                      Tab(text: AppLocalizations.of(context)!.highlights),
+                      Tab(text: AppLocalizations.of(context)!.favoriteTracks),
+                      Tab(text: AppLocalizations.of(context)!.playlists),
+                      Tab(text: AppLocalizations.of(context)!.albums),
+                      Tab(text: AppLocalizations.of(context)!.artists),
+                      Tab(text: AppLocalizations.of(context)!.followings),
+                      Tab(text: AppLocalizations.of(context)!.followers),
                     ],
                   ),
                 ),
@@ -98,10 +97,12 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
                                 if (highlights.tracks.total > 0)
                                   TrackTable(
                                     title: Row(children: <Widget>[
-                                      const Text('Любимые треки'),
+                                      Text(AppLocalizations.of(context)!
+                                          .favoriteTracks),
                                       IconButton(
                                         icon: const Icon(Icons.navigate_next),
-                                        tooltip: 'Перейти',
+                                        tooltip: AppLocalizations.of(context)!
+                                            .navigate,
                                         onPressed: () {
                                           _tabController.animateTo(1);
                                         },
@@ -114,7 +115,8 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
                                       onNavigate: () {
                                         _tabController.animateTo(2);
                                       },
-                                      title: const Text('Плейлисты'),
+                                      title: Text(AppLocalizations.of(context)!
+                                          .playlists),
                                       children: [
                                         for (var playlist
                                             in highlights.playlists.data)
@@ -126,23 +128,13 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
                                                     arguments: playlist.id);
                                               })
                                       ]),
-                                if (highlights.radios.total > 0)
-                                  Carousel(
-                                      onNavigate: () {
-                                        _tabController.animateTo(3);
-                                      },
-                                      title: const Text('Миксы'),
-                                      children: [
-                                        for (var radio
-                                            in highlights.radios.data)
-                                          RadioCard(radio: radio, onTap: () {})
-                                      ]),
                                 if (highlights.albums.total > 0)
                                   Carousel(
                                       onNavigate: () {
                                         _tabController.animateTo(4);
                                       },
-                                      title: const Text('Альбомы'),
+                                      title: Text(
+                                          AppLocalizations.of(context)!.albums),
                                       children: [
                                         for (var album
                                             in highlights.albums.data)
@@ -159,7 +151,8 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
                                       onNavigate: () {
                                         _tabController.animateTo(5);
                                       },
-                                      title: const Text('Исполнители'),
+                                      title: Text(AppLocalizations.of(context)!
+                                          .artists),
                                       children: [
                                         for (var artist
                                             in highlights.artists.data)
@@ -177,7 +170,8 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
                                       onNavigate: () {
                                         _tabController.animateTo(6);
                                       },
-                                      title: const Text('Подписки'),
+                                      title: Text(AppLocalizations.of(context)!
+                                          .followings),
                                       children: [
                                         for (var user
                                             in highlights.followings.data)
@@ -194,7 +188,8 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
                                       onNavigate: () {
                                         _tabController.animateTo(7);
                                       },
-                                      title: const Text('Подписчики'),
+                                      title: Text(AppLocalizations.of(context)!
+                                          .followers),
                                       children: [
                                         for (var user
                                             in highlights.followers.data)
@@ -219,7 +214,8 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
                           return getUserTracks(id, page, pageSize);
                         },
                         titleBuilder: (int trackCount) {
-                          return Text('Треков: $trackCount');
+                          return Text(AppLocalizations.of(context)!
+                              .tracksCount(trackCount));
                         },
                       )),
                       DataGrid<playable.Playlist>(
@@ -234,23 +230,12 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
                         loader: (page, pageSize) {
                           return getUserPlaylists(id, page, pageSize);
                         },
-                        placeholder:
-                            const Center(child: Text('Пока нет плейлистов')),
+                        placeholder: Center(
+                            child: Text(
+                                AppLocalizations.of(context)!.noPlaylists)),
                         titleBuilder: (total) {
-                          return Text('Плейлистов: $total');
-                        },
-                      ),
-                      DataGrid<playable.Radio>(
-                        itemBuilder: (itemContext, radio) {
-                          return RadioCard(radio: radio, onTap: () {});
-                        },
-                        loader: (page, pageSize) {
-                          return getUserRadios(id, page, pageSize);
-                        },
-                        placeholder: const Center(
-                            child: Text('Пока нет любимых миксов')),
-                        titleBuilder: (total) {
-                          return Text('Миксов: $total');
+                          return Text(AppLocalizations.of(context)!
+                              .playlistsCount(total));
                         },
                       ),
                       DataGrid<playable.AlbumShort>(
@@ -265,10 +250,12 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
                         loader: (page, pageSize) {
                           return getUserAlbums(id, page, pageSize);
                         },
-                        placeholder: const Center(
-                            child: Text('Пока нет любимых альбомов')),
+                        placeholder: Center(
+                            child: Text(AppLocalizations.of(context)!
+                                .noFavoriteAlbums)),
                         titleBuilder: (total) {
-                          return Text('Альбомов: $total');
+                          return Text(
+                              AppLocalizations.of(context)!.albumsCount(total));
                         },
                       ),
                       DataGrid<playable.Artist>(
@@ -283,10 +270,12 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
                         loader: (page, pageSize) {
                           return getUserArtists(id, page, pageSize);
                         },
-                        placeholder: const Center(
-                            child: Text('Пока нет любимых артистов')),
+                        placeholder: Center(
+                            child: Text(AppLocalizations.of(context)!
+                                .noFavoriteArtists)),
                         titleBuilder: (total) {
-                          return Text('Исполнителей: $total');
+                          return Text(AppLocalizations.of(context)!
+                              .artistsCount(total));
                         },
                       ),
                       DataGrid<UserShort>(
@@ -301,10 +290,12 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
                         loader: (page, pageSize) {
                           return getUserFollowings(id, page, pageSize);
                         },
-                        placeholder:
-                            const Center(child: Text('Пока нет подписок')),
+                        placeholder: Center(
+                            child: Text(
+                                AppLocalizations.of(context)!.noFollowings)),
                         titleBuilder: (total) {
-                          return Text('Подписок: $total');
+                          return Text(AppLocalizations.of(context)!
+                              .followingsCount(total));
                         },
                       ),
                       DataGrid<UserShort>(
@@ -319,19 +310,21 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
                         loader: (page, pageSize) {
                           return getUserFollowers(id, page, pageSize);
                         },
-                        placeholder:
-                            const Center(child: Text('Пока нет подписчиков')),
+                        placeholder: Center(
+                            child: Text(
+                                AppLocalizations.of(context)!.noFollowers)),
                         titleBuilder: (total) {
-                          return Text('Подписчиков: $total');
+                          return Text(AppLocalizations.of(context)!
+                              .followersCount(total));
                         },
                       ),
                     ])),
                 drawer: const AppDrawer(),
-                  endDrawer: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Drawer(
+                endDrawer: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Drawer(
                       child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Image.network(entity.pictureMedium!,
                               height: 250.0, width: 250.0),
@@ -342,12 +335,14 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
           }
           return snapshot.hasError
               ? Scaffold(
-                  appBar: AppBar(title: const Text("Ошибка!")),
+                  appBar:
+                      AppBar(title: Text(AppLocalizations.of(context)!.error)),
                   body: Center(child: Text('${snapshot.error}')),
                   drawer: const AppDrawer(),
                   bottomSheet: const Player())
               : Scaffold(
-                  appBar: AppBar(title: const Text("Идёт загрузка...")),
+                  appBar: AppBar(
+                      title: Text(AppLocalizations.of(context)!.loading)),
                   body: const Center(child: CircularProgressIndicator()),
                   drawer: const AppDrawer(),
                   bottomSheet: const Player());

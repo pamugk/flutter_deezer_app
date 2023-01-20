@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Section extends StatelessWidget {
   final List<Widget> children;
@@ -28,7 +29,7 @@ class Section extends StatelessWidget {
                 if (onNavigate != null)
                   IconButton(
                     icon: const Icon(Icons.navigate_next),
-                    tooltip: 'Перейти',
+                    tooltip: AppLocalizations.of(context)!.navigate,
                     onPressed: onNavigate,
                   ),
               ]),

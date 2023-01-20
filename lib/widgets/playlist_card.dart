@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../models/playable.dart';
 
@@ -20,7 +21,8 @@ class PlaylistCard extends StatelessWidget {
                       height: 250.0, width: 250.0),
                   Text(playlist.title),
                   if (playlist.trackCount != null)
-                    Text('Треков: ${playlist.trackCount}')
+                    Text(AppLocalizations.of(context)!
+                        .tracksCount(playlist.trackCount!))
                 ]))));
   }
 }

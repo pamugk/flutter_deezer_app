@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../models/playable.dart' as playable;
+import '../models/playable.dart';
 import '../models/search.dart';
 import '../models/user.dart';
 import '../navigation/artist_arguments.dart';
@@ -12,7 +13,6 @@ import '../widgets/drawer.dart';
 import '../widgets/paginated_track_table.dart';
 import '../widgets/player.dart';
 import '../widgets/playlist_card.dart';
-import '../widgets/radio_card.dart';
 import '../widgets/section.dart';
 import '../widgets/track_table.dart';
 import '../widgets/user_card.dart';
@@ -39,22 +39,27 @@ class _SearchPageState extends State<SearchPage> {
               if (snapshot.hasData) {
                 final overview = snapshot.data!;
                 final tabs = [
-                  if (overview.tracks.total > 0) 'Треки',
-                  if (overview.albums.total > 0) 'Альбомы',
-                  if (overview.artists.total > 0) 'Исполнители',
-                  if (overview.playlists.total > 0) 'Плейлисты',
-                  if (overview.radios.total > 0) 'Миксы',
-                  if (overview.users.total > 0) 'Профили',
+                  if (overview.tracks.total > 0)
+                    AppLocalizations.of(context)!.tracks,
+                  if (overview.albums.total > 0)
+                    AppLocalizations.of(context)!.albums,
+                  if (overview.artists.total > 0)
+                    AppLocalizations.of(context)!.artists,
+                  if (overview.playlists.total > 0)
+                    AppLocalizations.of(context)!.playlists,
+                  if (overview.users.total > 0)
+                    AppLocalizations.of(context)!.users,
                 ];
                 return DefaultTabController(
                     length: 1 + tabs.length,
                     child: Scaffold(
                         appBar: AppBar(
-                          title: Text('Результаты поиска по запросу "$_query"'),
+                          title: Text(AppLocalizations.of(context)!
+                              .searchResult(_query)),
                           bottom: TabBar(
                             tabs: <Widget>[
-                              const Tab(
-                                text: 'Все',
+                              Tab(
+                                text: AppLocalizations.of(context)!.all,
                               ),
                               ...[for (var tab in tabs) Tab(text: tab)]
                             ],
@@ -62,7 +67,7 @@ class _SearchPageState extends State<SearchPage> {
                           actions: <Widget>[
                             IconButton(
                               icon: const Icon(Icons.search),
-                              tooltip: 'Поиск',
+                              tooltip: AppLocalizations.of(context)!.search,
                               onPressed: () {
                                 setState(() {
                                   _completedSearch = false;
@@ -76,8 +81,10 @@ class _SearchPageState extends State<SearchPage> {
                             child: TabBarView(
                               children: <Widget>[
                                 tabs.isEmpty
-                                    ? const Center(
-                                        child: Text('Ничего не найдено :('))
+                                    ? Center(
+                                        child: Text(
+                                            AppLocalizations.of(context)!
+                                                .nothingFound))
                                     : SingleChildScrollView(
                                         child: Column(
                                             crossAxisAlignment:
@@ -85,13 +92,18 @@ class _SearchPageState extends State<SearchPage> {
                                             children: <Widget>[
                                             if (overview.tracks.total > 0)
                                               TrackTable(
-                                                title: const Text('Треки'),
+                                                title: Text(AppLocalizations.of(
+                                                        context)!
+                                                    .tracks),
                                                 tracks: overview.tracks.data,
                                               ),
                                             if (overview.albums.total > 0)
                                               Section(
                                                   onNavigate: () {},
-                                                  title: const Text('Альбомы'),
+                                                  title: Text(
+                                                      AppLocalizations.of(
+                                                              context)!
+                                                          .albums),
                                                   children: [
                                                     for (var album in snapshot
                                                         .data!.albums.data)
@@ -108,8 +120,10 @@ class _SearchPageState extends State<SearchPage> {
                                             if (overview.artists.total > 0)
                                               Section(
                                                   onNavigate: () {},
-                                                  title:
-                                                      const Text('Исполнители'),
+                                                  title: Text(
+                                                      AppLocalizations.of(
+                                                              context)!
+                                                          .artists),
                                                   children: [
                                                     for (var artist in overview
                                                         .artists.data)
@@ -128,8 +142,10 @@ class _SearchPageState extends State<SearchPage> {
                                             if (overview.playlists.total > 0)
                                               Section(
                                                   onNavigate: () {},
-                                                  title:
-                                                      const Text('Плейлисты'),
+                                                  title: Text(
+                                                      AppLocalizations.of(
+                                                              context)!
+                                                          .playlists),
                                                   children: [
                                                     for (var playlist
                                                         in overview
@@ -145,22 +161,13 @@ class _SearchPageState extends State<SearchPage> {
                                                                         .id);
                                                           })
                                                   ]),
-                                            if (overview.radios.total > 0)
-                                              Section(
-                                                  onNavigate: () {},
-                                                  title: const Text('Миксы'),
-                                                  children: [
-                                                    for (var radio
-                                                        in overview.radios.data)
-                                                      RadioCard(
-                                                          radio: radio,
-                                                          onTap: () {})
-                                                  ]),
                                             if (overview.users.total > 0)
                                               Section(
                                                   onNavigate: () {},
-                                                  title: const Text(
-                                                      'Пользователи'),
+                                                  title: Text(
+                                                      AppLocalizations.of(
+                                                              context)!
+                                                          .users),
                                                   children: [
                                                     for (var user
                                                         in overview.users.data)
@@ -178,16 +185,17 @@ class _SearchPageState extends State<SearchPage> {
                                 if (overview.tracks.total > 0)
                                   SingleChildScrollView(
                                       child: PaginatedTrackTable(
-                                    loader: (int page, int pageSize) {
+                                    loader: (page, pageSize) {
                                       return searchTracks(
                                           _query, page, pageSize);
                                     },
-                                    titleBuilder: (int trackCount) {
-                                      return Text('Треков: $trackCount');
+                                    titleBuilder: (total) {
+                                      return Text(AppLocalizations.of(context)!
+                                          .tracksCount(total));
                                     },
                                   )),
                                 if (overview.albums.total > 0)
-                                  DataGrid<playable.AlbumShort>(
+                                  DataGrid<AlbumShort>(
                                     itemBuilder: (itemContext, album) {
                                       return AlbumCard(
                                           album: album,
@@ -201,12 +209,17 @@ class _SearchPageState extends State<SearchPage> {
                                       return searchAlbums(
                                           _query, page, pageSize);
                                     },
+                                    placeholder: Center(
+                                        child: Text(
+                                            AppLocalizations.of(context)!
+                                                .nothingFound)),
                                     titleBuilder: (total) {
-                                      return Text('Альбомов: $total');
+                                      return Text(AppLocalizations.of(context)!
+                                          .albumsCount(total));
                                     },
                                   ),
                                 if (overview.artists.total > 0)
-                                  DataGrid<playable.Artist>(
+                                  DataGrid<Artist>(
                                     itemBuilder: (itemContext, artist) {
                                       return ArtistCard(
                                           artist: artist,
@@ -221,12 +234,17 @@ class _SearchPageState extends State<SearchPage> {
                                       return searchArtists(
                                           _query, page, pageSize);
                                     },
+                                    placeholder: Center(
+                                        child: Text(
+                                            AppLocalizations.of(context)!
+                                                .nothingFound)),
                                     titleBuilder: (total) {
-                                      return Text('Исполнителей: $total');
+                                      return Text(AppLocalizations.of(context)!
+                                          .artistsCount(total));
                                     },
                                   ),
                                 if (overview.playlists.total > 0)
-                                  DataGrid<playable.Playlist>(
+                                  DataGrid<Playlist>(
                                     itemBuilder: (itemContext, playlist) {
                                       return PlaylistCard(
                                           playlist: playlist,
@@ -240,22 +258,13 @@ class _SearchPageState extends State<SearchPage> {
                                       return searchPlaylists(
                                           _query, page, pageSize);
                                     },
+                                    placeholder: Center(
+                                        child: Text(
+                                            AppLocalizations.of(context)!
+                                                .nothingFound)),
                                     titleBuilder: (total) {
-                                      return Text('Плейлистов: $total');
-                                    },
-                                  ),
-                                if (overview.radios.total > 0)
-                                  DataGrid<playable.Radio>(
-                                    itemBuilder: (itemContext, radio) {
-                                      return RadioCard(
-                                          radio: radio, onTap: () {});
-                                    },
-                                    loader: (page, pageSize) {
-                                      return searchRadios(
-                                          _query, page, pageSize);
-                                    },
-                                    titleBuilder: (total) {
-                                      return Text('Миксов: $total');
+                                      return Text(AppLocalizations.of(context)!
+                                          .playlistsCount(total));
                                     },
                                   ),
                                 if (overview.users.total > 0)
@@ -273,8 +282,13 @@ class _SearchPageState extends State<SearchPage> {
                                       return searchUsers(
                                           _query, page, pageSize);
                                     },
+                                    placeholder: Center(
+                                        child: Text(
+                                            AppLocalizations.of(context)!
+                                                .nothingFound)),
                                     titleBuilder: (total) {
-                                      return Text('Пользователей: $total');
+                                      return Text(AppLocalizations.of(context)!
+                                          .usersCount(total));
                                     },
                                   ),
                               ],
@@ -284,7 +298,7 @@ class _SearchPageState extends State<SearchPage> {
               } else if (snapshot.hasError) {
                 return Scaffold(
                     appBar: AppBar(
-                      title: const Text('Ошибка!'),
+                      title: Text(AppLocalizations.of(context)!.error),
                       actions: const <Widget>[],
                     ),
                     body: Center(child: Text('${snapshot.error}')),
@@ -294,7 +308,8 @@ class _SearchPageState extends State<SearchPage> {
 
               return Scaffold(
                   appBar: AppBar(
-                    title: Text('Поиск по запросу "$_query"...'),
+                    title: Text(
+                        AppLocalizations.of(context)!.searchProcessing(_query)),
                     actions: const <Widget>[],
                   ),
                   body: const Center(child: CircularProgressIndicator()),
@@ -304,10 +319,10 @@ class _SearchPageState extends State<SearchPage> {
         : Scaffold(
             appBar: AppBar(
               title: TextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Трек, альбом, исполнитель...',
-                  icon: Icon(Icons.search),
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  hintText: AppLocalizations.of(context)!.search,
+                  icon: const Icon(Icons.search),
                 ),
                 onSubmitted: (query) {
                   if (query.trim().isNotEmpty) {
@@ -322,7 +337,7 @@ class _SearchPageState extends State<SearchPage> {
               ),
               actions: const <Widget>[],
             ),
-            body: const Center(child: Text('Нечего предложить')),
+            body: const Center(child: Text('')),
             drawer: const AppDrawer(),
             bottomSheet: const Player());
   }
