@@ -1,4 +1,8 @@
 {
+  "added": "Added",
+  "@added": {
+    "description": "Added column header label"
+  },
   "addToFavorite": "Add to my favorites",
   "@addToFavorite": {
     "description": "Favorite action label"

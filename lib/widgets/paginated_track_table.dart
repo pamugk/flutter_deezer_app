@@ -1,26 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'track_columns.dart';
 import '../models/playable.dart';
 import '../models/search.dart';
 import '../navigation/artist_arguments.dart';
 import '../utils/duration.dart';
 
 class PaginatedTrackTable extends StatefulWidget {
+  final Set<TrackColumn> columns;
   final Future<PartialSearchResponse<TrackShort>> Function(int, int) loader;
   final Widget Function(int) titleBuilder;
 
   const PaginatedTrackTable(
-      {super.key, required this.loader, required this.titleBuilder});
+      {super.key,
+      required this.columns,
+      required this.loader,
+      required this.titleBuilder});
 
   @override
   State<PaginatedTrackTable> createState() => _PaginatedTrackTableState();
 }
 
 class _TrackTableDataSource extends DataTableSource {
+  final Set<TrackColumn> columns;
   final BuildContext context;
   final PartialSearchResponse<TrackShort> data;
+  final void Function(int, bool?) onSelected;
   final int pageSize;
+  final Set<int> selectedRows;
 
   @override
   bool isRowCountApproximate = false;
@@ -31,7 +39,13 @@ class _TrackTableDataSource extends DataTableSource {
   @override
   int selectedRowCount = 0;
 
-  _TrackTableDataSource(this.context, this.data, this.pageSize)
+  _TrackTableDataSource(
+      {required this.columns,
+      required this.context,
+      required this.data,
+      required this.onSelected,
+      required this.pageSize,
+      required this.selectedRows})
       : rowCount = data.total;
 
   @override
@@ -41,30 +55,52 @@ class _TrackTableDataSource extends DataTableSource {
       return null;
     }
     final track = data.data[internalIndex];
-    return DataRow(cells: <DataCell>[
-      DataCell(Row(children: [
-        Image.network(track.album!.coverSmall, height: 56.0, width: 56.0),
-        Text(track.title)
-      ])),
-      DataCell(Text(track.artist.name), onTap: () {
-        Navigator.pushNamed(context, '/artist',
-            arguments: ArtistArguments(track.artist.id));
-      }),
-      DataCell(Text(track.album!.title), onTap: () {
-        Navigator.pushNamed(context, '/album', arguments: track.album!.id);
-      }),
-      DataCell(Text(formatDuration(track.duration))),
-    ]);
+    return DataRow(
+        onSelectChanged: track.readable
+            ? (selected) {
+                onSelected(track.id, selected);
+              }
+            : null,
+        selected: selectedRows.contains(track.id),
+        cells: <DataCell>[
+          if (columns.contains(TrackColumn.track))
+            DataCell(Row(children: [
+              Image.network(track.album!.coverSmall, height: 56.0, width: 56.0),
+              Text(track.title)
+            ])),
+          if (columns.contains(TrackColumn.artist))
+            DataCell(Text(track.artist.name), onTap: () {
+              Navigator.pushNamed(context, '/artist',
+                  arguments: ArtistArguments(track.artist.id));
+            }),
+          if (columns.contains(TrackColumn.album))
+            DataCell(Text(track.album!.title), onTap: () {
+              Navigator.pushNamed(context, '/album',
+                  arguments: track.album!.id);
+            }),
+          if (columns.contains(TrackColumn.duration))
+            DataCell(Text(formatDuration(track.duration))),
+        ]);
   }
 }
 
 class _PaginatedTrackTableState extends State<PaginatedTrackTable> {
   int _page = 0;
   final int _pageSize = 25;
+  final Set<int> _selectedRows = {};
 
-  @override
-  void initState() {
-    super.initState();
+  void _onSelected(int trackId, bool? selected) {
+    if (selected != null) {
+      if (selected) {
+        if (_selectedRows.add(trackId)) {
+          setState(() {});
+        }
+      } else {
+        if (_selectedRows.remove(trackId)) {
+          setState(() {});
+        }
+      }
+    }
   }
 
   @override
@@ -74,8 +110,13 @@ class _PaginatedTrackTableState extends State<PaginatedTrackTable> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final tracks = snapshot.data!;
-            final datasource =
-                _TrackTableDataSource(context, tracks, _pageSize);
+            final datasource = _TrackTableDataSource(
+                columns: widget.columns,
+                context: context,
+                data: tracks,
+                onSelected: _onSelected,
+                pageSize: _pageSize,
+                selectedRows: _selectedRows);
             return PaginatedDataTable(
                 availableRowsPerPage: [_pageSize],
                 header: widget.titleBuilder(tracks.total),
@@ -86,33 +127,37 @@ class _PaginatedTrackTableState extends State<PaginatedTrackTable> {
                 },
                 rowsPerPage: _pageSize,
                 columns: <DataColumn>[
-                  DataColumn(
-                    label: Expanded(
-                      child: Text(
-                        AppLocalizations.of(context)!.track,
+                  if (widget.columns.contains(TrackColumn.track))
+                    DataColumn(
+                      label: Expanded(
+                        child: Text(
+                          AppLocalizations.of(context)!.track,
+                        ),
                       ),
                     ),
-                  ),
-                  DataColumn(
-                    label: Expanded(
-                      child: Text(
-                        AppLocalizations.of(context)!.artist,
+                  if (widget.columns.contains(TrackColumn.artist))
+                    DataColumn(
+                      label: Expanded(
+                        child: Text(
+                          AppLocalizations.of(context)!.artist,
+                        ),
                       ),
                     ),
-                  ),
-                  DataColumn(
-                    label: Expanded(
-                      child: Text(
-                        AppLocalizations.of(context)!.album,
+                  if (widget.columns.contains(TrackColumn.album))
+                    DataColumn(
+                      label: Expanded(
+                        child: Text(
+                          AppLocalizations.of(context)!.album,
+                        ),
                       ),
                     ),
-                  ),
-                  DataColumn(
-                    label: const Icon(
-                      Icons.access_time,
+                  if (widget.columns.contains(TrackColumn.duration))
+                    DataColumn(
+                      label: const Icon(
+                        Icons.access_time,
+                      ),
+                      tooltip: AppLocalizations.of(context)!.duration,
                     ),
-                    tooltip: AppLocalizations.of(context)!.duration,
-                  ),
                 ],
                 source: datasource);
           } else if (snapshot.hasError) {

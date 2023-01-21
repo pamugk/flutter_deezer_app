@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../models/playable.dart' as playable;
+import '../models/playable.dart';
 import '../models/search.dart';
 import '../models/user.dart';
 import '../navigation/artist_arguments.dart';
@@ -14,6 +14,7 @@ import '../widgets/drawer.dart';
 import '../widgets/paginated_track_table.dart';
 import '../widgets/player.dart';
 import '../widgets/playlist_card.dart';
+import '../widgets/track_columns.dart';
 import '../widgets/track_table.dart';
 import '../widgets/user_card.dart';
 
@@ -96,6 +97,12 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
                                   child: Column(children: <Widget>[
                                 if (highlights.tracks.total > 0)
                                   TrackTable(
+                                    columns: const {
+                                      TrackColumn.track,
+                                      TrackColumn.artist,
+                                      TrackColumn.album,
+                                      TrackColumn.duration
+                                    },
                                     title: Row(children: <Widget>[
                                       Text(AppLocalizations.of(context)!
                                           .favoriteTracks),
@@ -210,6 +217,12 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
                           }),
                       SingleChildScrollView(
                           child: PaginatedTrackTable(
+                        columns: const {
+                          TrackColumn.track,
+                          TrackColumn.artist,
+                          TrackColumn.album,
+                          TrackColumn.duration
+                        },
                         loader: (int page, int pageSize) {
                           return getUserTracks(id, page, pageSize);
                         },
@@ -218,7 +231,7 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
                               .tracksCount(trackCount));
                         },
                       )),
-                      DataGrid<playable.Playlist>(
+                      DataGrid<Playlist>(
                         itemBuilder: (itemContext, playlist) {
                           return PlaylistCard(
                               playlist: playlist,
@@ -238,7 +251,7 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
                               .playlistsCount(total));
                         },
                       ),
-                      DataGrid<playable.AlbumShort>(
+                      DataGrid<AlbumShort>(
                         itemBuilder: (itemContext, album) {
                           return AlbumCard(
                               album: album,
@@ -258,7 +271,7 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
                               AppLocalizations.of(context)!.albumsCount(total));
                         },
                       ),
-                      DataGrid<playable.Artist>(
+                      DataGrid<Artist>(
                         itemBuilder: (itemContext, artist) {
                           return ArtistCard(
                               artist: artist,

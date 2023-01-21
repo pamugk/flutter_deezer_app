@@ -379,7 +379,6 @@ Future<UserHighlights> getUserHighlights(int id) async {
   final albums = getUserAlbums(id, 0, 10);
   final artists = getUserArtists(id, 0, 10);
   final playlists = getUserPlaylists(id, 0, 10);
-  final radios = getUserRadios(id, 0, 10);
   final tracks = getUserTracks(id, 0, 10);
   final followers = getUserFollowers(id, 0, 10);
   final followings = getUserFollowings(id, 0, 10);
@@ -388,7 +387,6 @@ Future<UserHighlights> getUserHighlights(int id) async {
     await albums,
     await artists,
     await playlists,
-    await radios,
     await tracks,
     await followers,
     await followings,
@@ -490,7 +488,6 @@ Future<FullSearchResponse> search(String query) async {
   final albums = searchAlbums(query, 0, 10);
   final artists = searchArtists(query, 0, 10);
   final playlists = searchPlaylists(query, 0, 10);
-  final radios = searchRadios(query, 0, 10);
   final tracks = searchTracks(query, 0, 10);
   final users = searchUsers(query, 0, 10);
 
@@ -498,7 +495,6 @@ Future<FullSearchResponse> search(String query) async {
     await albums,
     await artists,
     await playlists,
-    await radios,
     await tracks,
     await users,
   );

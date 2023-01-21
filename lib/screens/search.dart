@@ -14,6 +14,7 @@ import '../widgets/paginated_track_table.dart';
 import '../widgets/player.dart';
 import '../widgets/playlist_card.dart';
 import '../widgets/section.dart';
+import '../widgets/track_columns.dart';
 import '../widgets/track_table.dart';
 import '../widgets/user_card.dart';
 
@@ -92,6 +93,12 @@ class _SearchPageState extends State<SearchPage> {
                                             children: <Widget>[
                                             if (overview.tracks.total > 0)
                                               TrackTable(
+                                                columns: const {
+                                                  TrackColumn.track,
+                                                  TrackColumn.artist,
+                                                  TrackColumn.album,
+                                                  TrackColumn.duration
+                                                },
                                                 title: Text(AppLocalizations.of(
                                                         context)!
                                                     .tracks),
@@ -185,6 +192,12 @@ class _SearchPageState extends State<SearchPage> {
                                 if (overview.tracks.total > 0)
                                   SingleChildScrollView(
                                       child: PaginatedTrackTable(
+                                    columns: const {
+                                      TrackColumn.track,
+                                      TrackColumn.artist,
+                                      TrackColumn.album,
+                                      TrackColumn.duration
+                                    },
                                     loader: (page, pageSize) {
                                       return searchTracks(
                                           _query, page, pageSize);

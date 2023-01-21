@@ -11,6 +11,7 @@ import '../widgets/drawer.dart';
 import '../widgets/paginated_track_table.dart';
 import '../widgets/player.dart';
 import '../widgets/playlist_card.dart';
+import '../widgets/track_columns.dart';
 
 class ArtistPage extends StatefulWidget {
   const ArtistPage({super.key});
@@ -103,6 +104,11 @@ class _ArtistPageState extends State<ArtistPage> {
                           ),
                           SingleChildScrollView(
                               child: PaginatedTrackTable(
+                            columns: const {
+                              TrackColumn.track,
+                              TrackColumn.album,
+                              TrackColumn.duration
+                            },
                             loader: (int page, int pageSize) {
                               return getArtistTopTracks(
                                   arguments.id, page, pageSize);

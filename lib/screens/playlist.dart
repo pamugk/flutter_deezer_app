@@ -1,12 +1,13 @@
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../models/playable.dart';
+import '../navigation/artist_arguments.dart';
 import '../providers/deezer.dart';
 import '../utils/duration.dart';
 import '../widgets/drawer.dart';
 import '../widgets/player.dart';
-import '../widgets/track_table.dart';
 
 class PlaylistPage extends StatefulWidget {
   const PlaylistPage({super.key});
@@ -25,6 +26,23 @@ bool _checkTrack(TrackShort track, String searchText) {
 class _PlaylistPageState extends State<PlaylistPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   String _searchText = '';
+  Set<int> _selectedRows = {};
+  int? _sortColumnIdx;
+  bool _sortOrderAsc = true;
+
+  void _onSort(int columnIndex, bool asc) {
+    if (_sortColumnIdx == columnIndex && !_sortOrderAsc) {
+      setState(() {
+        _sortOrderAsc = true;
+        _sortColumnIdx = null;
+      });
+    } else {
+      setState(() {
+        _sortOrderAsc = asc;
+        _sortColumnIdx = columnIndex;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +51,45 @@ class _PlaylistPageState extends State<PlaylistPage> {
         future: getPlaylist(id),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
+            final locale = Localizations.localeOf(context);
             final playlist = snapshot.data!;
             final lastUpdated = playlist.tracks
                 ?.map((track) => track.added)
                 .reduce((date, otherDate) =>
                     date.isAfter(otherDate) ? date : otherDate);
+            final filteredTracks = [
+              for (var track in playlist.tracks!)
+                if (_checkTrack(track, _searchText)) track
+            ];
+            if (_sortColumnIdx != null) {
+              switch (_sortColumnIdx) {
+                case 0:
+                  filteredTracks.sort(_sortOrderAsc
+                      ? (a, b) => a.title.compareTo(b.title)
+                      : (a, b) => b.title.compareTo(a.title));
+                  break;
+                case 1:
+                  filteredTracks.sort(_sortOrderAsc
+                      ? (a, b) => a.artist.name.compareTo(b.artist.name)
+                      : (a, b) => b.artist.name.compareTo(a.artist.name));
+                  break;
+                case 2:
+                  filteredTracks.sort(_sortOrderAsc
+                      ? (a, b) => a.album!.title.compareTo(b.album!.title)
+                      : (a, b) => b.album!.title.compareTo(a.album!.title));
+                  break;
+                case 3:
+                  filteredTracks.sort(_sortOrderAsc
+                      ? (a, b) => a.added.compareTo(b.added)
+                      : (a, b) => b.added.compareTo(a.added));
+                  break;
+                case 4:
+                  filteredTracks.sort(_sortOrderAsc
+                      ? (a, b) => a.duration.compareTo(b.duration)
+                      : (a, b) => b.duration.compareTo(a.duration));
+                  break;
+              }
+            }
             return Scaffold(
                 key: _scaffoldKey,
                 appBar: AppBar(
@@ -72,31 +124,139 @@ class _PlaylistPageState extends State<PlaylistPage> {
                     child: Padding(
                         padding: const EdgeInsets.only(bottom: 100.0),
                         child: SingleChildScrollView(
-                            child: TrackTable(
-                          placeholder: Center(
-                              child: Text(
-                                  AppLocalizations.of(context)!.nothingFound)),
-                          title: FractionallySizedBox(
-                              alignment: Alignment.centerLeft,
-                              widthFactor: 0.4,
-                              child: TextField(
-                                decoration: InputDecoration(
-                                  border: const OutlineInputBorder(),
-                                  hintText:
-                                      AppLocalizations.of(context)!.search,
-                                  prefix: const Icon(Icons.search),
-                                ),
-                                onChanged: (text) {
-                                  setState(() {
-                                    _searchText = text;
-                                  });
-                                },
-                              )),
-                          tracks: [
-                            for (var track in playlist.tracks!)
-                              if (_checkTrack(track, _searchText)) track
-                          ],
-                        )))),
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                              FractionallySizedBox(
+                                  alignment: Alignment.centerLeft,
+                                  widthFactor: 0.4,
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                      border: const OutlineInputBorder(),
+                                      hintText:
+                                          AppLocalizations.of(context)!.search,
+                                      prefix: const Icon(Icons.search),
+                                    ),
+                                    onChanged: (text) {
+                                      setState(() {
+                                        _searchText = text;
+                                      });
+                                    },
+                                  )),
+                              DataTable(
+                                  onSelectAll: (bool? selected) {
+                                    if (selected != null) {
+                                      if (selected) {
+                                        setState(() {
+                                          _selectedRows = playlist.tracks!
+                                              .where((track) => track.readable)
+                                              .map((track) => track.id)
+                                              .toSet();
+                                        });
+                                      } else {
+                                        setState(() {
+                                          _selectedRows = {};
+                                        });
+                                      }
+                                    }
+                                  },
+                                  sortAscending: _sortOrderAsc,
+                                  sortColumnIndex: _sortColumnIdx,
+                                  columns: <DataColumn>[
+                                    DataColumn(
+                                      label: Expanded(
+                                        child: Text(
+                                          AppLocalizations.of(context)!.track,
+                                        ),
+                                      ),
+                                      onSort: _onSort,
+                                    ),
+                                    DataColumn(
+                                      label: Expanded(
+                                        child: Text(
+                                          AppLocalizations.of(context)!.artist,
+                                        ),
+                                      ),
+                                      onSort: _onSort,
+                                    ),
+                                    DataColumn(
+                                      label: Expanded(
+                                        child: Text(
+                                          AppLocalizations.of(context)!.album,
+                                        ),
+                                      ),
+                                      onSort: _onSort,
+                                    ),
+                                    DataColumn(
+                                      label: Text(
+                                        AppLocalizations.of(context)!.added,
+                                      ),
+                                      onSort: _onSort,
+                                    ),
+                                    DataColumn(
+                                      label: const Icon(
+                                        Icons.access_time,
+                                      ),
+                                      onSort: _onSort,
+                                      tooltip: AppLocalizations.of(context)!
+                                          .duration,
+                                    ),
+                                  ],
+                                  rows: [
+                                    for (var track in filteredTracks)
+                                      DataRow(
+                                          onSelectChanged: track.readable
+                                              ? (bool? selected) {
+                                                  if (selected != null) {
+                                                    if (selected) {
+                                                      if (_selectedRows
+                                                          .add(track.id)) {
+                                                        setState(() {});
+                                                      }
+                                                    } else {
+                                                      if (_selectedRows
+                                                          .remove(track.id)) {
+                                                        setState(() {});
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              : null,
+                                          selected:
+                                              _selectedRows.contains(track.id),
+                                          cells: <DataCell>[
+                                            DataCell(Row(children: [
+                                              Image.network(
+                                                  track.album!.coverSmall,
+                                                  height: 56.0,
+                                                  width: 56.0),
+                                              Text(track.title)
+                                            ])),
+                                            DataCell(Text(track.artist.name),
+                                                onTap: () {
+                                              Navigator.pushNamed(
+                                                  context, '/artist',
+                                                  arguments: ArtistArguments(
+                                                      track.artist.id));
+                                            }),
+                                            DataCell(Text(track.album!.title),
+                                                onTap: () {
+                                              Navigator.pushNamed(
+                                                  context, '/album',
+                                                  arguments: track.album!.id);
+                                            }),
+                                            DataCell(Text(DateFormat.yMd(
+                                                    locale.toLanguageTag())
+                                                .format(track.added))),
+                                            DataCell(Text(formatDuration(
+                                                track.duration))),
+                                          ])
+                                  ]),
+                              if (filteredTracks.isEmpty)
+                                Center(
+                                    child: Text(AppLocalizations.of(context)!
+                                        .nothingFound))
+                            ])))),
                 drawer: const AppDrawer(),
                 endDrawer: Drawer(
                     child: Padding(
