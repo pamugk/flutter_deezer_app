@@ -383,6 +383,10 @@
       }
     }
   },
+  "userProfile": "User profile",
+  "@userProfile": {
+    "description": "User profile navigation label"
+  },
   "users": "Users",
   "@users": {
     "description": "Users label"
@@ -405,5 +409,9 @@
         "type": "int"
       }
     }
+  },
+  "zoomCover": "Zoom in on the cover",
+  "@zoomCover": {
+    "description": "Zoom in on cover action label"
   }
 }

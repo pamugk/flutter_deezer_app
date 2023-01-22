@@ -2,23 +2,44 @@ import 'package:flutter/material.dart';
 
 import '../models/user.dart';
 
-class UserCard extends StatelessWidget {
+class UserCard extends StatefulWidget {
   final GestureTapCallback? onTap;
   final UserShort user;
   const UserCard({super.key, required this.user, this.onTap});
 
   @override
+  State<UserCard> createState() => _UserCardState();
+}
+
+class _UserCardState extends State<UserCard> {
+  bool active = false;
+
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
-        width: 250.0,
+        width: 282.0,
         child: Card(
             child: InkWell(
-                onTap: onTap,
+                onHover: (hovered) {
+                  setState(() {
+                    active = hovered;
+                  });
+                },
+                onTap: widget.onTap,
                 child:
-                    Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                  Image.network(user.pictureMedium!,
-                      height: 250.0, width: 250.0),
-                  Text(user.name),
-                ]))));
+                    Padding(
+    padding: EdgeInsets.all(16.0),
+    child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                  Opacity(
+                        opacity: active ? 0.75 : 1.0,
+                        child: CircleAvatar(
+                    backgroundImage: NetworkImage(widget.user.pictureMedium!),
+                    radius: 125.0,
+                  )),
+                  Tooltip(
+                    message: widget.user.name,
+                    child: Text(widget.user.name, overflow: TextOverflow.ellipsis)
+                  ),
+                ])))));
   }
 }

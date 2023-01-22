@@ -26,7 +26,7 @@ class _CarouselState extends State<Carousel> {
     final shiftedChildren = widget.children.skip(_offset).toList();
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        final countOfElements = max(constraints.maxWidth ~/ 284, 1);
+        final countOfElements = max((constraints.maxWidth - 48) ~/ 282, 1);
         final cutOffElements = shiftedChildren.take(countOfElements).toList();
         return Padding(
             padding: const EdgeInsets.all(24.0),

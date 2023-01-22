@@ -201,6 +201,7 @@ class Playlist {
   final String picture, pictureSmall, pictureMedium, pictureBig, pictureXl;
   final String checksum;
   final UserShort? creator;
+  final UserShort? user;
   final List<PlaylistTrack>? tracks;
 
   const Playlist(
@@ -223,6 +224,7 @@ class Playlist {
       this.pictureXl,
       this.checksum,
       this.creator,
+      this.user,
       this.tracks);
 
   Playlist.fromJson(Map<String, dynamic> json)
@@ -251,6 +253,9 @@ class Playlist {
         creator = json['creator'] == null
             ? null
             : UserShort.fromJson(json['creator']),
+        user = json['user'] == null
+            ? null
+            : UserShort.fromJson(json['user']),
         tracks = json['tracks'] == null
             ? null
             : [

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'problem_dialog.dart';
 import '../models/playable.dart';
 
 class _HoverableCover extends StatefulWidget {
@@ -29,10 +30,7 @@ class _HoverableCoverState extends State<_HoverableCover> {
           children: [
             Image.network(widget.imageUrl, height: 56.0, width: 56.0),
             if (showPlayIcon)
-              const Icon(
-                Icons.play_circle_filled,
-                color: Colors.white,
-              ),
+              const Icon(Icons.play_circle),
           ],
         ));
   }
@@ -50,81 +48,6 @@ class _TrackInfoPopup extends StatefulWidget {
 
 class _TrackInfoPopupState extends State<_TrackInfoPopup> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  Future<void> _problemDialogBuilder(BuildContext context) {
-    return showDialog<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(AppLocalizations.of(context)!.reportProblem),
-            content: Form(
-              key: _formKey,
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    FormField<bool>(
-                      builder: (state) => CheckboxListTile(
-                        onChanged: state.didChange,
-                        title:
-                            Text(AppLocalizations.of(context)!.problemArtist),
-                        value: state.value!,
-                      ),
-                      initialValue: false,
-                    ),
-                    FormField<bool>(
-                      builder: (state) => CheckboxListTile(
-                        onChanged: state.didChange,
-                        title: Text(AppLocalizations.of(context)!.problemSound),
-                        value: state.value!,
-                      ),
-                      initialValue: false,
-                    ),
-                    FormField<bool>(
-                      builder: (state) => CheckboxListTile(
-                        onChanged: state.didChange,
-                        title: Text(
-                            AppLocalizations.of(context)!.problemSuspicious),
-                        value: state.value!,
-                      ),
-                      initialValue: false,
-                    ),
-                    FormField<bool>(
-                      builder: (state) => CheckboxListTile(
-                        onChanged: state.didChange,
-                        title: Text(AppLocalizations.of(context)!.problemOther),
-                        value: state.value!,
-                      ),
-                      initialValue: false,
-                    ),
-                    TextField(
-                      decoration: InputDecoration(
-                          hintText: AppLocalizations.of(context)!
-                              .problemOtherComment),
-                      enabled: false,
-                    ),
-                  ]),
-            ),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                style: TextButton.styleFrom(
-                  textStyle: Theme.of(context).textTheme.labelLarge,
-                ),
-                child: Text(AppLocalizations.of(context)!.cancel),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text(AppLocalizations.of(context)!.submit),
-              ),
-            ],
-          );
-        });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -190,7 +113,7 @@ class _TrackInfoPopupState extends State<_TrackInfoPopup> {
       PopupMenuItem(
         child: ListTile(
             leading: const Icon(Icons.report_problem),
-            onTap: () => _problemDialogBuilder(context),
+            onTap: () => problemDialogBuilder(context, _formKey),
             title: Text(AppLocalizations.of(context)!.reportProblem)),
       ),
     ];
@@ -221,11 +144,14 @@ class _TrackInfoPopupState extends State<_TrackInfoPopup> {
       PopupMenuItem(
         child: ListTile(
             leading: const Icon(Icons.report_problem),
-            onTap: () => _problemDialogBuilder(context),
+            onTap: () => problemDialogBuilder(context, _formKey),
             title: Text(AppLocalizations.of(context)!.reportProblem)),
       ),
     ];
     return PopupMenuButton(
+        icon: const Icon(
+          Icons.more_horiz,
+        ),
         itemBuilder: (innerContext) =>
             widget.readable ? activeTrackItems : inactiveTrackItems);
   }

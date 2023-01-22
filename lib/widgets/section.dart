@@ -20,7 +20,7 @@ class Section extends StatelessWidget {
         padding: const EdgeInsets.all(24.0),
         child: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
-          final countOfElements = max(constraints.maxWidth ~/ 284, 1);
+          final countOfElements = max((constraints.maxWidth - 48) ~/ 282, 1);
           final cutOffElements = children.take(countOfElements).toList();
           return Column(
             children: <Widget>[

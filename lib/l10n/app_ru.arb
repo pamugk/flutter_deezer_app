@@ -72,7 +72,9 @@
   "trackNotAvailable": "Этот трек недоступен в нашей стране.",
   "tracks": "Треки",
   "tracksCount": "{count, plural, =0{Нет треков}, =1{1 трек} other{{count} треков}}",
+  "userProfile": "Профиль пользователя",
   "users": "Профили",
   "usersCount": "{count, plural, =0{Нет профилей}, =1{1 профиль} other{{count} профилей}}",
-  "volume": "Громкость: {volume}"
+  "volume": "Громкость: {volume}",
+  "zoomCover": "Увеличить обложку"
 }
