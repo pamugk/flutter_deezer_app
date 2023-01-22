@@ -8,6 +8,7 @@ import '../providers/deezer.dart';
 import '../utils/duration.dart';
 import '../widgets/drawer.dart';
 import '../widgets/player.dart';
+import '../widgets/track_cell.dart';
 
 class PlaylistPage extends StatefulWidget {
   const PlaylistPage({super.key});
@@ -225,21 +226,39 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                           selected:
                                               _selectedRows.contains(track.id),
                                           cells: <DataCell>[
-                                            DataCell(Row(children: [
-                                              Image.network(
-                                                  track.album!.coverSmall,
-                                                  height: 56.0,
-                                                  width: 56.0),
-                                              Text(track.title)
-                                            ])),
-                                            DataCell(Text(track.artist.name),
+                                            DataCell(TrackCell(track: track)),
+                                            DataCell(
+                                                Tooltip(
+                                                    message: track.artist.name,
+                                                    child: ConstrainedBox(
+                                                        constraints:
+                                                            BoxConstraints(
+                                                                maxWidth:
+                                                                    215.0),
+                                                        child: Text(
+                                                            track.artist.name,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis))),
                                                 onTap: () {
                                               Navigator.pushNamed(
                                                   context, '/artist',
                                                   arguments: ArtistArguments(
                                                       track.artist.id));
                                             }),
-                                            DataCell(Text(track.album!.title),
+                                            DataCell(
+                                                Tooltip(
+                                                    message: track.album!.title,
+                                                    child: ConstrainedBox(
+                                                        constraints:
+                                                            BoxConstraints(
+                                                                maxWidth:
+                                                                    215.0),
+                                                        child: Text(
+                                                            track.album!.title,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis))),
                                                 onTap: () {
                                               Navigator.pushNamed(
                                                   context, '/album',

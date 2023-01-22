@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import 'track_columns.dart';
+import 'track_cell.dart';
+import 'track_column.dart';
 import '../models/playable.dart';
 import '../models/search.dart';
 import '../navigation/artist_arguments.dart';
@@ -64,17 +65,26 @@ class _TrackTableDataSource extends DataTableSource {
         selected: selectedRows.contains(track.id),
         cells: <DataCell>[
           if (columns.contains(TrackColumn.track))
-            DataCell(Row(children: [
-              Image.network(track.album!.coverSmall, height: 56.0, width: 56.0),
-              Text(track.title)
-            ])),
+            DataCell(TrackCell(track: track)),
           if (columns.contains(TrackColumn.artist))
-            DataCell(Text(track.artist.name), onTap: () {
+            DataCell(
+                Tooltip(
+                    message: track.artist.name,
+                    child: ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: 215.0),
+                        child: Text(track.artist.name,
+                            overflow: TextOverflow.ellipsis))), onTap: () {
               Navigator.pushNamed(context, '/artist',
                   arguments: ArtistArguments(track.artist.id));
             }),
           if (columns.contains(TrackColumn.album))
-            DataCell(Text(track.album!.title), onTap: () {
+            DataCell(
+                Tooltip(
+                    message: track.album!.title,
+                    child: ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: 215.0),
+                        child: Text(track.album!.title,
+                            overflow: TextOverflow.ellipsis))), onTap: () {
               Navigator.pushNamed(context, '/album',
                   arguments: track.album!.id);
             }),

@@ -7,8 +7,16 @@
   "@addToFavorite": {
     "description": "Favorite action label"
   },
+  "addToQueue": "Add to queue",
+  "@addToQueue": {
+    "description": "Enqueue action label"
+  },
   "addToPlaylist": "Add to playlist",
   "@addToPlaylist": {
+    "description": "Playlist action label"
+  },
+  "addToPlaylistAction": "Add to playlist...",
+  "@addToPlaylistAction": {
     "description": "Playlist action label"
   },
   "album": "Album",
@@ -51,6 +59,14 @@
       }
     }
   },
+  "back": "Back",
+  "@back": {
+    "description": "Back navigation label"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button label"
+  },
   "cdNumber": "CD #{number}",
   "@cdNumber": {
     "description": "CD number label",
@@ -63,6 +79,10 @@
   "discography": "Discography",
   "@discography": {
     "description": "Discography label"
+  },
+  "doNotRecommend": "Don't recommend this track",
+  "@doNotRecommend": {
+    "description": "Do not recommend action label"
   },
   "duration": "Duration",
   "@duration": {
@@ -134,6 +154,14 @@
   "home": "Home",
   "@home": {
     "description": "Home label"
+  },
+  "launchTrackMix": "Launch Track mix",
+  "@launchTrackMix": {
+    "description": "Launch mix action label"
+  },
+  "listenNext": "Listen next",
+  "@listenNext": {
+    "description": "Listen next action label"
   },
   "loading": "Loading...",
   "@loading": {
@@ -217,9 +245,33 @@
       }
     }
   },
+  "playWithLyrics": "Play with lyrics",
+  "@playWithLyrics": {
+    "description": "Play with lyrics action label"
+  },
   "previous": "Previous",
   "@previous": {
     "description": "Previous tooltip"
+  },
+  "problemArtist": "This track wasn't recorded by artist shown.",
+  "@problemArtist": {
+    "description": "Mistaken artist problem label"
+  },
+  "problemOther": "Other",
+  "@problemOther": {
+    "description": "Other problem label"
+  },
+  "problemOtherComment": "Write a comment",
+  "@problemOtherCommentr": {
+    "description": "Other problem comment hint"
+  },
+  "problemSound": "There's an audio problem.",
+  "@problemSound": {
+    "description": "Problematic sound label"
+  },
+  "problemSuspicious": "Undesirable content.",
+  "@problemSuspicious": {
+    "description": "Suspicious track content problem label"
   },
   "releaseDate": "Released on {date}",
   "@releaseDate": {
@@ -234,6 +286,10 @@
   "repeat": "Repeat",
   "@repeat": {
     "description": "Repeat label"
+  },
+  "reportProblem": "Report a problem",
+  "@reportProblem": {
+    "description": "Report problem action label"
   },
   "search": "Search",
   "@search": {
@@ -261,6 +317,14 @@
   "@settings": {
     "description": "Settings label"
   },
+  "seeCredits": "See song credits...",
+  "@seeCredits": {
+    "description": "See song credits action label"
+  },
+  "share": "Share",
+  "@share": {
+    "description": "Share action label"
+  },
   "shuffle": "Shuffle",
   "@shuffle": {
     "description": "Shuffle label"
@@ -279,6 +343,10 @@
       }
     }
   },
+  "submit": "Submit",
+  "@submit": {
+    "description": "Submit button label"
+  },
   "topTracks": "Top Tracks",
   "@topTracks": {
     "description": "Artist top tracks label"
@@ -296,6 +364,10 @@
   "track": "Track",
   "@track": {
     "description": "Track column header label"
+  },
+  "trackNotAvailable": "This track is not available in your country.",
+  "@trackNotAvailable": {
+    "description": "Unseen track tooltip"
   },
   "tracks": "Tracks",
   "@tracks": {
