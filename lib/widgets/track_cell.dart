@@ -29,8 +29,7 @@ class _HoverableCoverState extends State<_HoverableCover> {
           alignment: AlignmentDirectional.center,
           children: [
             Image.network(widget.imageUrl, height: 56.0, width: 56.0),
-            if (showPlayIcon)
-              const Icon(Icons.play_circle),
+            if (showPlayIcon) const Icon(Icons.play_circle),
           ],
         ));
   }

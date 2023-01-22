@@ -26,20 +26,22 @@ class _UserCardState extends State<UserCard> {
                   });
                 },
                 onTap: widget.onTap,
-                child:
-                    Padding(
-    padding: EdgeInsets.all(16.0),
-    child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                  Opacity(
-                        opacity: active ? 0.75 : 1.0,
-                        child: CircleAvatar(
-                    backgroundImage: NetworkImage(widget.user.pictureMedium!),
-                    radius: 125.0,
-                  )),
-                  Tooltip(
-                    message: widget.user.name,
-                    child: Text(widget.user.name, overflow: TextOverflow.ellipsis)
-                  ),
-                ])))));
+                child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Opacity(
+                              opacity: active ? 0.75 : 1.0,
+                              child: CircleAvatar(
+                                backgroundImage:
+                                    NetworkImage(widget.user.pictureMedium!),
+                                radius: 125.0,
+                              )),
+                          Tooltip(
+                              message: widget.user.name,
+                              child: Text(widget.user.name,
+                                  overflow: TextOverflow.ellipsis)),
+                        ])))));
   }
 }

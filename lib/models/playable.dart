@@ -253,9 +253,7 @@ class Playlist {
         creator = json['creator'] == null
             ? null
             : UserShort.fromJson(json['creator']),
-        user = json['user'] == null
-            ? null
-            : UserShort.fromJson(json['user']),
+        user = json['user'] == null ? null : UserShort.fromJson(json['user']),
         tracks = json['tracks'] == null
             ? null
             : [
