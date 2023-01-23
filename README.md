@@ -1,16 +1,29 @@
-# flutter_deezer_app
+# Неофициальный клиент Deezer
 
-A new Flutter project.
+## Реализованные возможности
+* Поиск треков, альбомов, исполнителей, плейлистов.
+* Просмотр полной информации об альбомах, исполнителях, плейлистах.
+* Просмотр дополнительной информации о треках, альбомах, исполнителях, плейлистах.
 
-## Getting Started
+## Что ещё может быть сделано
+* Воспроизведение треков (превью).
+* Работа с подкастами и их эпизодами.
+* Доработка постраничного получения данных.
+* Приведение оформления к рекомендациям Deezer (цвета, шрифты и т.п.).
+* ...
 
-This project is a starting point for a Flutter application.
+## Использованные технологии и инструментальные средства
 
-A few resources to get you started if this is your first Flutter project:
+Клиент разработан на языке программирования [Dart](https://dart.dev/).
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+При разработке были использованы следующие программные библиотеки:
+* [Flutter](https://flutter.dev/).
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Прочие использованные материалы
+* [Deezer Brand](http://deezerbrand.com/) - рекомендованные к использованию шрифты и официальные логотипы Deezer.
+
+## Лицензия
+Использование, модификация и распространение определено приложенной [лицензией](./LICENSE).
+
+## Дополнение
+Данный проект никак не связан с Deezer, и разрабатывается исключительно в целях самообразования.
