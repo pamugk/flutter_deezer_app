@@ -64,10 +64,10 @@ class _DataGridState<T> extends State<DataGrid<T>> {
                     padding: const EdgeInsets.all(24.0),
                     gridDelegate:
                         const SliverGridDelegateWithMaxCrossAxisExtent(
-                            maxCrossAxisExtent: 250.0,
+                            maxCrossAxisExtent: 282.0,
                             mainAxisSpacing: 24.0,
                             crossAxisSpacing: 34.0,
-                            mainAxisExtent: 300.0),
+                            mainAxisExtent: 332.0),
                     itemCount: response.data.length,
                     itemBuilder: (itemContext, idx) {
                       return widget.itemBuilder(

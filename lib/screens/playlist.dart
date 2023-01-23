@@ -112,13 +112,45 @@ class _PlaylistPageState extends State<PlaylistPage> {
                         icon: const Icon(Icons.favorite_border),
                         tooltip: AppLocalizations.of(context)!.addToFavorite,
                         onPressed: null),
-                    IconButton(
-                      icon: const Icon(Icons.search),
-                      tooltip: AppLocalizations.of(context)!.search,
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/search');
-                      },
-                    ),
+                    PopupMenuButton(
+                        icon: const Icon(
+                          Icons.more_horiz,
+                        ),
+                        itemBuilder: (innerContext) => [
+                              PopupMenuItem(
+                                child: ListTile(
+                                    leading: const Icon(Icons.queue_play_next),
+                                    title: Text(AppLocalizations.of(context)!
+                                        .listenNext)),
+                              ),
+                              PopupMenuItem(
+                                child: ListTile(
+                                    leading: const Icon(Icons.add_to_queue),
+                                    title: Text(AppLocalizations.of(context)!
+                                        .addToQueue)),
+                              ),
+                              PopupMenuItem(
+                                child: ListTile(
+                                    leading: const Icon(Icons.share),
+                                    title: Text(
+                                        AppLocalizations.of(innerContext)!
+                                            .share)),
+                              ),
+                              if (playlist.user != null ||
+                                  playlist.creator != null)
+                                PopupMenuItem(
+                                  child: ListTile(
+                                      leading: const Icon(Icons.people_outline),
+                                      onTap: () {
+                                        Navigator.pushNamed(context, '/user',
+                                            arguments: playlist.user != null
+                                                ? playlist.user!.id
+                                                : playlist.creator!.id);
+                                      },
+                                      title: Text(AppLocalizations.of(context)!
+                                          .userProfile)),
+                                ),
+                            ]),
                   ],
                 ),
                 body: SizedBox.expand(

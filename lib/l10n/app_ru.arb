@@ -16,6 +16,7 @@
   "cdNumber": "CD №{number}",
   "discography": "Дискография",
   "doNotRecommend": "Не предлагать этот трек",
+  "doNotRecommendArtist": "Не предлагать этого артиста",
   "duration": "Продолжительность",
   "durationValue": "Продолжительность: {duration}",
   "error": "Ошибка!",

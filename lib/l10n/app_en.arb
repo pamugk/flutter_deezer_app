@@ -84,6 +84,10 @@
   "@doNotRecommend": {
     "description": "Do not recommend action label"
   },
+  "doNotRecommendArtist": "Don't recommend this artist",
+  "@doNotRecommendArtist": {
+    "description": "Do not recommend artist action label"
+  },
   "duration": "Duration",
   "@duration": {
     "description": "Duration column header label"

@@ -11,6 +11,7 @@ import '../widgets/drawer.dart';
 import '../widgets/paginated_track_table.dart';
 import '../widgets/player.dart';
 import '../widgets/playlist_card.dart';
+import '../widgets/problem_dialog.dart';
 import '../widgets/track_column.dart';
 
 class ArtistPage extends StatefulWidget {
@@ -21,6 +22,7 @@ class ArtistPage extends StatefulWidget {
 }
 
 class _ArtistPageState extends State<ArtistPage> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   @override
@@ -59,13 +61,36 @@ class _ArtistPageState extends State<ArtistPage> {
                             tooltip:
                                 AppLocalizations.of(context)!.addToFavorite,
                             onPressed: null),
-                        IconButton(
-                          icon: const Icon(Icons.search),
-                          tooltip: AppLocalizations.of(context)!.search,
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/search');
-                          },
-                        ),
+                        PopupMenuButton(
+                            icon: const Icon(
+                              Icons.more_horiz,
+                            ),
+                            itemBuilder: (innerContext) => [
+                                  PopupMenuItem(
+                                    child: ListTile(
+                                        leading:
+                                            const Icon(Icons.do_not_disturb),
+                                        title: Text(
+                                            AppLocalizations.of(context)!
+                                                .doNotRecommendArtist)),
+                                  ),
+                                  PopupMenuItem(
+                                    child: ListTile(
+                                        leading: const Icon(Icons.share),
+                                        title: Text(
+                                            AppLocalizations.of(innerContext)!
+                                                .share)),
+                                  ),
+                                  PopupMenuItem(
+                                      child: ListTile(
+                                          leading:
+                                              const Icon(Icons.report_problem),
+                                          onTap: () => problemDialogBuilder(
+                                              innerContext, _formKey),
+                                          title: Text(
+                                              AppLocalizations.of(innerContext)!
+                                                  .reportProblem))),
+                                ]),
                       ],
                       bottom: TabBar(
                         tabs: <Widget>[

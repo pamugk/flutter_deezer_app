@@ -11,7 +11,9 @@ import '../widgets/album_card.dart';
 import '../widgets/artist_card.dart';
 import '../widgets/carousel.dart';
 import '../widgets/drawer.dart';
+import '../widgets/image_dialog.dart';
 import '../widgets/player.dart';
+import '../widgets/problem_dialog.dart';
 
 class AlbumPage extends StatefulWidget {
   const AlbumPage({super.key});
@@ -21,6 +23,7 @@ class AlbumPage extends StatefulWidget {
 }
 
 class _AlbumPageState extends State<AlbumPage> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   @override
@@ -56,13 +59,53 @@ class _AlbumPageState extends State<AlbumPage> {
                         icon: const Icon(Icons.favorite_border),
                         tooltip: AppLocalizations.of(context)!.addToFavorite,
                         onPressed: null),
-                    IconButton(
-                      icon: const Icon(Icons.search),
-                      tooltip: AppLocalizations.of(context)!.search,
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/search');
-                      },
-                    ),
+                    PopupMenuButton(
+                        icon: const Icon(
+                          Icons.more_horiz,
+                        ),
+                        itemBuilder: (innerContext) => [
+                              PopupMenuItem(
+                                child: ListTile(
+                                    leading: const Icon(Icons.queue_play_next),
+                                    title: Text(
+                                        AppLocalizations.of(innerContext)!
+                                            .listenNext)),
+                              ),
+                              PopupMenuItem(
+                                child: ListTile(
+                                    leading: const Icon(Icons.add_to_queue),
+                                    title: Text(
+                                        AppLocalizations.of(innerContext)!
+                                            .addToQueue)),
+                              ),
+                              PopupMenuItem(
+                                child: ListTile(
+                                    leading: const Icon(Icons.share),
+                                    title: Text(
+                                        AppLocalizations.of(innerContext)!
+                                            .share)),
+                              ),
+                              PopupMenuItem(
+                                child: ListTile(
+                                    leading: const Icon(Icons.preview),
+                                    onTap: () => showDialog<void>(
+                                        context: innerContext,
+                                        builder: (BuildContext context) =>
+                                            imageDialogBuilder(context,
+                                                album.coverXl!, album.title)),
+                                    title: Text(
+                                        AppLocalizations.of(innerContext)!
+                                            .zoomCover)),
+                              ),
+                              PopupMenuItem(
+                                  child: ListTile(
+                                      leading: const Icon(Icons.report_problem),
+                                      onTap: () => problemDialogBuilder(
+                                          innerContext, _formKey),
+                                      title: Text(
+                                          AppLocalizations.of(innerContext)!
+                                              .reportProblem))),
+                            ]),
                   ]),
               body: SizedBox.expand(
                   child: Padding(
