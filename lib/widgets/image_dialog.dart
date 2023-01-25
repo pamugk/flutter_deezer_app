@@ -6,7 +6,7 @@ Dialog imageDialogBuilder(BuildContext context, String imageUrl, String title) {
           padding: EdgeInsets.all(16.0),
           child: Column(children: [
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Text(title),
+              Text(title, style: Theme.of(context).textTheme.titleLarge),
               CloseButton(onPressed: () => Navigator.of(context).pop()),
             ]),
             const SizedBox(height: 8.0),
