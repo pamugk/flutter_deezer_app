@@ -27,7 +27,7 @@
   "@albums": {
     "description": "Albums label"
   },
-  "albumsCount": "{count, plural, =0{no albums}, =1{1 album} other{{count} albums}}",
+  "albumsCount": "{count, plural, =0{no albums} =1{1 album} other{{count} albums}}",
   "@albumsCount": {
     "description": "A plural albums count message",
     "placeholders": {
@@ -49,7 +49,7 @@
   "@artists": {
     "description": "Artists label"
   },
-  "artistsCount": "{count, plural, =0{no artists}, =1{1 artist} other{{count} artists}}",
+  "artistsCount": "{count, plural, =0{no artists} =1{1 artist} other{{count} artists}}",
   "@artistsCount": {
     "description": "A plural artists count message",
     "placeholders": {
@@ -58,6 +58,22 @@
         "format": "compact"
       }
     }
+  },
+  "audioQuality": "Audio Quality",
+  "@audioQuality": {
+    "description": "Audio quality label"
+  },
+  "audioQualityBetter": "Better",
+  "@audioQualityBetter": {
+    "description": "Better audio quality radio label"
+  },
+  "audioQualityHighFidelity": "High Fidelity",
+  "@audioQualityHighFidelity": {
+    "description": "High fidelity quality radio label"
+  },
+  "audioQualityStandard": "Standard",
+  "@audioQualityStandard": {
+    "description": "Standard audio quality radio label"
   },
   "back": "Back",
   "@back": {
@@ -71,7 +87,7 @@
   "@cdNumber": {
     "description": "CD number label",
     "placeholders": {
-      "query": {
+      "number": {
         "type": "int"
       }
     }
@@ -109,7 +125,7 @@
   "@explore": {
     "description": "Explore label"
   },
-  "fansCount": "{count, plural, =0{no fans}, =1{1 fan} other{{count} fans}}",
+  "fansCount": "{count, plural, =0{no fans} =1{1 fan} other{{count} fans}}",
   "@fansCount": {
     "description": "A plural fans message",
     "placeholders": {
@@ -127,7 +143,7 @@
   "@followers": {
     "description": "Followers label"
   },
-  "followersCount": "{count, plural, =0{no followers}, =1{1 follower} other{{count} followers}}",
+  "followersCount": "{count, plural, =0{no followers} =1{1 follower} other{{count} followers}}",
   "@followersCount": {
     "description": "Followers numeric label",
     "placeholders": {
@@ -141,7 +157,7 @@
   "@followings": {
     "description": "Following label"
   },
-  "followingsCount": "{count, plural, =0{no followings}, =1{1 following} other{{count} followings}}",
+  "followingsCount": "{count, plural, =0{no followings} =1{1 following} other{{count} followings}}",
   "@followingsCount": {
     "description": "Followings numeric label",
     "placeholders": {
@@ -207,6 +223,14 @@
   "@noPlaylists": {
     "description": "Empty search results label"
   },
+  "normaliseAudio": "Normalise audio",
+  "@normaliseAudio": {
+    "description": "Normalise audio switch label"
+  },
+  "normaliseAudioDescription": "Adjusts sound to maintain the same volume level",
+  "@normaliseAudioDescription": {
+    "description": "Normalise audio switch description"
+  },
   "nothingFound": "Nothing found",
   "@nothingFound": {
     "description": "Empty search results label"
@@ -229,7 +253,7 @@
   "@playlists": {
     "description": "Playlists label"
   },
-  "playlistsCount": "{count, plural, =0{no playlists}, =1{1 playlist} other{{count} playlists}}",
+  "playlistsCount": "{count, plural, =0{no playlists} =1{1 playlist} other{{count} playlists}}",
   "@playlistsCount": {
     "description": "A plural playlists count message",
     "placeholders": {
@@ -276,6 +300,10 @@
   "problemSuspicious": "Undesirable content.",
   "@problemSuspicious": {
     "description": "Suspicious track content problem label"
+  },
+  "queue": "Queue",
+  "@queue": {
+    "description": "Queue label"
   },
   "releaseDate": "Released on {date}",
   "@releaseDate": {
@@ -337,7 +365,7 @@
   "@similarArtists": {
     "description": "Artist similar artists"
   },
-  "similarArtistsCount": "{count, plural, =0{no similar artists}, =1{1 similar artist} other{{count} similar artists}}",
+  "similarArtistsCount": "{count, plural, =0{no similar artists} =1{1 similar artist} other{{count} similar artists}}",
   "@similarArtistsCount": {
     "description": "Artist similar artists count",
     "placeholders": {
@@ -355,7 +383,7 @@
   "@topTracks": {
     "description": "Artist top tracks label"
   },
-  "topTracksCount": "{count, plural, =0{no top tracks}, =1{1 top track} other{{count} top tracks}}",
+  "topTracksCount": "{count, plural, =0{no top tracks} =1{1 top track} other{{count} top tracks}}",
   "@topTracksCount": {
     "description": "Artist top tracks label",
     "placeholders": {
@@ -377,7 +405,7 @@
   "@tracks": {
     "description": "Tracks label"
   },
-  "tracksCount": "{count, plural, =0{no tracks}, =1{1 track} other{{count} tracks}}",
+  "tracksCount": "{count, plural, =0{no tracks} =1{1 track} other{{count} tracks}}",
   "@tracksCount": {
     "description": "A plural top tracks count message",
     "placeholders": {
@@ -395,7 +423,7 @@
   "@users": {
     "description": "Users label"
   },
-  "usersCount": "{count, plural, =0{no users}, =1{1 user} other{{count} users}}",
+  "usersCount": "{count, plural, =0{no users} =1{1 user} other{{count} users}}",
   "@usersCount": {
     "description": "A plural users count message",
     "placeholders": {

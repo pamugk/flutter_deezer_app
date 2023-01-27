@@ -50,21 +50,21 @@ class _TrackInfoPopupState extends State<_TrackInfoPopup> {
 
   @override
   Widget build(BuildContext context) {
-    final addToPlaylistItems = [
+    final addToPlaylistItems = <PopupMenuEntry<Never>>[
       PopupMenuItem(
           child: ListTile(
         leading: const Icon(Icons.navigate_before),
         title: Text(AppLocalizations.of(context)!.back),
       )),
-      const PopupMenuItem(child: PopupMenuDivider()),
+      const PopupMenuDivider(),
     ];
-    final creditsItems = [
+    final creditsItems = <PopupMenuEntry<Never>>[
       PopupMenuItem(
           child: ListTile(
         leading: const Icon(Icons.navigate_before),
         title: Text(AppLocalizations.of(context)!.back),
       )),
-      const PopupMenuItem(child: PopupMenuDivider()),
+      const PopupMenuDivider(),
     ];
 
     final activeTrackItems = [

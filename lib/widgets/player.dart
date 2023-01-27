@@ -3,6 +3,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../utils/duration.dart';
 
+enum _AudioQuality {
+  standard, better, hifi
+}
+
 class Player extends StatefulWidget {
   const Player({super.key});
 
@@ -11,10 +15,12 @@ class Player extends StatefulWidget {
 }
 
 class _PlayerState extends State<Player> {
+  _AudioQuality _audioQuality = _AudioQuality.standard;
   final bool _hasNext = true;
   final bool _hasPrevious = false;
   bool _favorite = false;
   bool _mute = false;
+  bool _normaliseSound = true;
   bool _playing = false;
   bool _repeating = false;
   bool _shuffling = false;
@@ -44,7 +50,7 @@ class _PlayerState extends State<Player> {
 
   void _showLyrics() {}
 
-  void _showSettings() {}
+  void _showQueue() {}
 
   void _shuffle() {
     setState(() {
@@ -70,6 +76,51 @@ class _PlayerState extends State<Player> {
 
   @override
   Widget build(BuildContext context) {
+    final settingsPopupItems = <PopupMenuEntry<Never>>[
+      PopupMenuItem(
+        child: Text(AppLocalizations.of(context)!.audioQuality),
+      ),
+      PopupMenuItem(
+        child: RadioListTile(
+          value: _AudioQuality.standard,
+          groupValue: _audioQuality,
+          onChanged: (newQuality) {
+            _audioQuality = newQuality!;
+          },
+          title: Text(AppLocalizations.of(context)!.audioQualityStandard),
+        ),
+      ),
+      PopupMenuItem(
+        child: RadioListTile(
+          value: _AudioQuality.better,
+          groupValue: _audioQuality,
+          onChanged: null,
+          title: Text(AppLocalizations.of(context)!.audioQualityBetter),
+        ),
+      ),
+      PopupMenuItem(
+        child: RadioListTile(
+          value:_AudioQuality.hifi,
+          groupValue: _audioQuality,
+          onChanged: null,
+          title: Text(AppLocalizations.of(context)!.audioQualityHighFidelity),
+        ),
+      ),
+      const PopupMenuDivider(),
+      PopupMenuItem(
+        child: SwitchListTile.adaptive(
+          value: _normaliseSound,
+          onChanged: (normaliseSound) {
+            setState((){
+              _normaliseSound = normaliseSound;
+            });
+          },
+          title: Text(AppLocalizations.of(context)!.normaliseAudio),
+          subtitle: Text(AppLocalizations.of(context)!.normaliseAudioDescription),
+        ),
+      ),
+    ];
+
     return Row(children: <Widget>[
       IconButton(
         icon: const Icon(Icons.skip_previous),
@@ -126,6 +177,11 @@ class _PlayerState extends State<Player> {
         ]),
       ),
       IconButton(
+        icon: const Icon(Icons.cast),
+        tooltip: 'Chromecast',
+        onPressed: null,
+      ),
+      IconButton(
         icon:
             _repeating ? const Icon(Icons.repeat_on) : const Icon(Icons.repeat),
         tooltip: AppLocalizations.of(context)!.repeat,
@@ -144,11 +200,15 @@ class _PlayerState extends State<Player> {
         tooltip: AppLocalizations.of(context)!.volume(_volume.round()),
         onPressed: _toggleVolume,
       ),
-      IconButton(
+      PopupMenuButton(
         icon: const Icon(Icons.tune),
+        itemBuilder: (innerContext) => settingsPopupItems,
         tooltip: AppLocalizations.of(context)!.settings,
-        onPressed: _showSettings,
       ),
+      TextButton.icon(
+        onPressed: _showQueue,
+        icon: const Icon(Icons.music_note),
+        label: Text(AppLocalizations.of(context)!.queue)),
     ]);
   }
 }
