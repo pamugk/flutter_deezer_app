@@ -4,26 +4,45 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
 
+  int _getCurrentDestinationIndex(BuildContext context) {
+    switch (ModalRoute.of(context)?.settings?.name) {
+      case '/':
+        return 0;
+      default:
+        return -1;
+    }
+  }
+
+  void _onDestinationSelected(BuildContext context, int destination) {
+    switch (destination) {
+      case 0:
+        Navigator.pushNamed(context, '/');
+        break;
+    }
+  }
+
   @override
-  Drawer build(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          const DrawerHeader(
-            child: Image(
-                image: AssetImage('assets/images/Colored_Full_Black@2x.png')),
-          ),
-          ListTile(
-            leading: const Icon(Icons.home),
-            title: Text(AppLocalizations.of(context)!.home),
-          ),
-          ListTile(
-            leading: const Icon(Icons.explore),
-            title: Text(AppLocalizations.of(context)!.explore),
-          ),
-        ],
-      ),
+  Widget build(BuildContext context) {
+    final logo = Theme.of(context)!.brightness == Brightness.light
+      ? const AssetImage('assets/images/Colored_Full_Black@2x.png')
+      : const AssetImage('assets/images/Colored_Full_White@2x.png');
+    final selectedIndex = _getCurrentDestinationIndex(context);
+    return NavigationDrawer(
+      onDestinationSelected: (destination) {
+        _onDestinationSelected(context, destination);
+      },
+      selectedIndex: selectedIndex,
+      children: <Widget>[
+        DrawerHeader(child: Image(image: logo)),
+        NavigationDrawerDestination(
+          icon: const Icon(Icons.home),
+          label: Text(AppLocalizations.of(context)!.home),
+        ),
+        NavigationDrawerDestination(
+          icon: const Icon(Icons.explore),
+          label: Text(AppLocalizations.of(context)!.explore),
+        ),
+      ],
     );
   }
 }
