@@ -71,7 +71,7 @@ class _TrackTableDataSource extends DataTableSource {
                 Tooltip(
                     message: track.artist.name,
                     child: ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: 215.0),
+                        constraints: const BoxConstraints(maxWidth: 215.0),
                         child: Text(track.artist.name,
                             overflow: TextOverflow.ellipsis))), onTap: () {
               Navigator.pushNamed(context, '/artist',
@@ -82,7 +82,7 @@ class _TrackTableDataSource extends DataTableSource {
                 Tooltip(
                     message: track.album!.title,
                     child: ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: 215.0),
+                        constraints: const BoxConstraints(maxWidth: 215.0),
                         child: Text(track.album!.title,
                             overflow: TextOverflow.ellipsis))), onTap: () {
               Navigator.pushNamed(context, '/album',

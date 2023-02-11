@@ -24,7 +24,7 @@ class _HoverableCoverState extends State<_HoverableCover> {
             showPlayIcon = hovered;
           });
         },
-        onTap: () => null,
+        onTap: () => {},
         child: Stack(
           alignment: AlignmentDirectional.center,
           children: [
@@ -169,15 +169,15 @@ class TrackCell extends StatelessWidget {
             Tooltip(
                 message: track.title,
                 child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: 215.0),
+                    constraints: const BoxConstraints(maxWidth: 215.0),
                     child: Text(
                       track.title,
                       overflow: TextOverflow.ellipsis,
                     ))),
             if (track.explicitLyrics)
               const Tooltip(
-                child: Icon(Icons.explicit),
                 message: 'EXPLICIT',
+                child: Icon(Icons.explicit),
               ),
             const Spacer(),
             IconButton(
@@ -197,15 +197,15 @@ class TrackCell extends StatelessWidget {
               Tooltip(
                   message: AppLocalizations.of(context)!.trackNotAvailable,
                   child: ConstrainedBox(
-                      constraints: BoxConstraints(maxWidth: 215.0),
+                      constraints: const BoxConstraints(maxWidth: 215.0),
                       child: Text(
                         track.title,
                         overflow: TextOverflow.ellipsis,
                       ))),
               if (track.explicitLyrics)
                 const Tooltip(
-                  child: Icon(Icons.explicit),
                   message: 'EXPLICIT',
+                  child: Icon(Icons.explicit),
                 ),
               const Spacer(),
               _TrackInfoPopup(id: track.id, readable: track.readable),

@@ -106,7 +106,7 @@ class _TrackTableState extends State<TrackTable> {
                           Tooltip(
                               message: track.artist.name,
                               child: ConstrainedBox(
-                                  constraints: BoxConstraints(maxWidth: 215.0),
+                                  constraints: const BoxConstraints(maxWidth: 215.0),
                                   child: Text(track.artist.name,
                                       overflow: TextOverflow.ellipsis))),
                           onTap: () {
@@ -118,7 +118,7 @@ class _TrackTableState extends State<TrackTable> {
                           Tooltip(
                               message: track.album!.title,
                               child: ConstrainedBox(
-                                  constraints: BoxConstraints(maxWidth: 215.0),
+                                  constraints: const BoxConstraints(maxWidth: 215.0),
                                   child: Text(track.album!.title,
                                       overflow: TextOverflow.ellipsis))),
                           onTap: () {

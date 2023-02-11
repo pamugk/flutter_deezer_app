@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 Dialog imageDialogBuilder(BuildContext context, String imageUrl, String title) {
   return Dialog(
       child: Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(children: [
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Text(title, style: Theme.of(context).textTheme.titleLarge),

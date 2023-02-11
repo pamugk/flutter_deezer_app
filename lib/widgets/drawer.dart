@@ -5,7 +5,7 @@ class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
 
   int _getCurrentDestinationIndex(BuildContext context) {
-    switch (ModalRoute.of(context)?.settings?.name) {
+    switch (ModalRoute.of(context)?.settings.name) {
       case '/':
         return 0;
       default:
@@ -23,7 +23,7 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final logo = Theme.of(context)!.brightness == Brightness.light
+    final logo = Theme.of(context).brightness == Brightness.light
       ? const AssetImage('assets/images/Colored_Full_Black@2x.png')
       : const AssetImage('assets/images/Colored_Full_White@2x.png');
     final selectedIndex = _getCurrentDestinationIndex(context);

@@ -27,7 +27,7 @@ class _UserCardState extends State<UserCard> {
                 },
                 onTap: widget.onTap,
                 child: Padding(
-                    padding: EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(16.0),
                     child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[

@@ -264,7 +264,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                                     message: track.artist.name,
                                                     child: ConstrainedBox(
                                                         constraints:
-                                                            BoxConstraints(
+                                                            const BoxConstraints(
                                                                 maxWidth:
                                                                     215.0),
                                                         child: Text(
@@ -283,7 +283,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                                     message: track.album!.title,
                                                     child: ConstrainedBox(
                                                         constraints:
-                                                            BoxConstraints(
+                                                            const BoxConstraints(
                                                                 maxWidth:
                                                                     215.0),
                                                         child: Text(

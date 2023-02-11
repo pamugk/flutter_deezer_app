@@ -31,7 +31,7 @@ class _AlbumCardState extends State<AlbumCard> {
                 },
                 onTap: widget.onTap,
                 child: Padding(
-                    padding: EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(16.0),
                     child: Column(mainAxisSize: MainAxisSize.min, children: <
                         Widget>[
                       Stack(
@@ -47,7 +47,7 @@ class _AlbumCardState extends State<AlbumCard> {
                                   color: Colors.transparent,
                                   child: Center(
                                       child: Ink(
-                                          decoration: BoxDecoration(
+                                          decoration: const BoxDecoration(
                                             shape: BoxShape.circle,
                                             color: Colors.white,
                                           ),
@@ -63,7 +63,7 @@ class _AlbumCardState extends State<AlbumCard> {
                                     color: Colors.transparent,
                                     child: Center(
                                         child: Ink(
-                                            decoration: BoxDecoration(
+                                            decoration: const BoxDecoration(
                                               shape: BoxShape.circle,
                                               color: Colors.white,
                                             ),
@@ -78,7 +78,7 @@ class _AlbumCardState extends State<AlbumCard> {
                                     color: Colors.transparent,
                                     child: Center(
                                         child: Ink(
-                                            decoration: BoxDecoration(
+                                            decoration: const BoxDecoration(
                                               shape: BoxShape.circle,
                                               color: Colors.white,
                                             ),
@@ -129,7 +129,7 @@ class _AlbumCardState extends State<AlbumCard> {
                                                                         context,
                                                                         widget
                                                                             .album
-                                                                            .coverXl!,
+                                                                            .coverXl,
                                                                         widget
                                                                             .album
                                                                             .title)),

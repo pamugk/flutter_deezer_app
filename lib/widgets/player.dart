@@ -176,8 +176,8 @@ class _PlayerState extends State<Player> {
           ]),
         ]),
       ),
-      IconButton(
-        icon: const Icon(Icons.cast),
+      const IconButton(
+        icon: Icon(Icons.cast),
         tooltip: 'Chromecast',
         onPressed: null,
       ),

@@ -92,7 +92,7 @@ class _AlbumPageState extends State<AlbumPage> {
                                         context: innerContext,
                                         builder: (BuildContext context) =>
                                             imageDialogBuilder(context,
-                                                album.coverXl!, album.title)),
+                                                album.coverXl, album.title)),
                                     title: Text(
                                         AppLocalizations.of(innerContext)!
                                             .zoomCover)),

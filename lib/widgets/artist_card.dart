@@ -28,7 +28,7 @@ class _ArtistCardState extends State<ArtistCard> {
                 },
                 onTap: widget.onTap,
                 child: Padding(
-                    padding: EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(16.0),
                     child: Column(mainAxisSize: MainAxisSize.min, children: <
                         Widget>[
                       Stack(
@@ -47,7 +47,7 @@ class _ArtistCardState extends State<ArtistCard> {
                                   color: Colors.transparent,
                                   child: Center(
                                       child: Ink(
-                                          decoration: BoxDecoration(
+                                          decoration: const BoxDecoration(
                                             shape: BoxShape.circle,
                                             color: Colors.white,
                                           ),
@@ -62,7 +62,7 @@ class _ArtistCardState extends State<ArtistCard> {
                                   color: Colors.transparent,
                                   child: Center(
                                       child: Ink(
-                                          decoration: BoxDecoration(
+                                          decoration: const BoxDecoration(
                                             shape: BoxShape.circle,
                                             color: Colors.white,
                                           ),

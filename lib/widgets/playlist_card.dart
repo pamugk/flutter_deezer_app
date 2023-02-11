@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import 'image_dialog.dart';
 import '../models/playable.dart';
 
 class PlaylistCard extends StatefulWidget {
@@ -29,7 +28,7 @@ class _PlaylistCardState extends State<PlaylistCard> {
                 },
                 onTap: widget.onTap,
                 child: Padding(
-                    padding: EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(16.0),
                     child: Column(mainAxisSize: MainAxisSize.min, children: <
                         Widget>[
                       Stack(
@@ -46,7 +45,7 @@ class _PlaylistCardState extends State<PlaylistCard> {
                             color: Colors.transparent,
                             child: Center(
                                 child: Ink(
-                                    decoration: BoxDecoration(
+                                    decoration: const BoxDecoration(
                                       shape: BoxShape.circle,
                                       color: Colors.white,
                                     ),
@@ -60,7 +59,7 @@ class _PlaylistCardState extends State<PlaylistCard> {
                               color: Colors.transparent,
                               child: Center(
                                   child: Ink(
-                                      decoration: BoxDecoration(
+                                      decoration: const BoxDecoration(
                                         shape: BoxShape.circle,
                                         color: Colors.white,
                                       ),
@@ -74,7 +73,7 @@ class _PlaylistCardState extends State<PlaylistCard> {
                               color: Colors.transparent,
                               child: Center(
                                   child: Ink(
-                                      decoration: BoxDecoration(
+                                      decoration: const BoxDecoration(
                                         shape: BoxShape.circle,
                                         color: Colors.white,
                                       ),

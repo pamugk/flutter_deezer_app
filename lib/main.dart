@@ -21,7 +21,7 @@ class App extends StatelessWidget {
       title: 'Deezer',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSwatch(
-          primarySwatch: MaterialColor(0xFFDB343D, {
+          primarySwatch: const MaterialColor(0xFFDB343D, {
             50: Color(0xFFFCEBEE),
             100: Color(0xFFF7CCD3),
             200: Color(0xFFE7999C),
@@ -33,7 +33,7 @@ class App extends StatelessWidget {
             800: Color(0xFFBE2730),
             900: Color(0xFFB12424),
           }),
-          errorColor: Color(0xFFDF3C3C)),
+          errorColor: const Color(0xFFDF3C3C)),
         textTheme: const TextTheme(
           bodyLarge: TextStyle(fontFamily: 'Roboto'),
           bodyMedium: TextStyle(fontFamily: 'Roboto'),
