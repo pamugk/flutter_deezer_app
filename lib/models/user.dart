@@ -37,7 +37,7 @@ class User extends UserShort {
       this.explicitContentLevel,
       this.explicitContentLevelsAvailable);
 
-  User.fromJson(Map<String, dynamic> json)
+  User.fromJson(super.json)
       : lastName = json['lastname'],
         firstName = json['firstname'],
         birthday = DateTime.parse(json['birthday']),
@@ -52,7 +52,7 @@ class User extends UserShort {
         explicitContentLevel = json['explicit_content_level'],
         explicitContentLevelsAvailable =
             json['explicit_content_levels_available'],
-        super.fromJson(json);
+        super.fromJson();
 }
 
 class UserShort {

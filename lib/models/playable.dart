@@ -50,7 +50,7 @@ class Album extends AlbumShort {
     this.artist,
   );
 
-  Album.fromJson(Map<String, dynamic> json)
+  Album.fromJson(super.json)
       : upc = json['upc'],
         share = json['share'],
         genres = [
@@ -78,7 +78,7 @@ class Album extends AlbumShort {
         //tracks = json['tracks'] == null
         //    ? null
         //    : [for (var track in json['tracks']['data']) Track.fromJson(track)],
-        super.fromJson(json);
+        super.fromJson();
 }
 
 class AlbumShort {
@@ -120,7 +120,7 @@ class Artist extends ArtistShort {
       this.radio,
       super.tracklist);
 
-  Artist.fromJson(Map<String, dynamic> json)
+  Artist.fromJson(super.json)
       : picture = json['picture'],
         pictureSmall = json['picture_small'],
         pictureMedium = json['picture_medium'],
@@ -129,7 +129,7 @@ class Artist extends ArtistShort {
         albumCount = json['nb_album'],
         fanCount = json['nb_fan'],
         radio = json['radio'],
-        super.fromJson(json);
+        super.fromJson();
 }
 
 class ArtistShort {
@@ -279,9 +279,9 @@ class PlaylistTrack extends TrackShort {
       super.album,
       this.added);
 
-  PlaylistTrack.fromJson(Map<String, dynamic> json)
+  PlaylistTrack.fromJson(super.json)
       : added = DateTime(1970).add(Duration(seconds: json['time_add'])),
-        super.fromJson(json);
+        super.fromJson();
 }
 
 class Radio {
@@ -352,7 +352,7 @@ class Track extends TrackShort {
       this.alternative,
       this.contributors);
 
-  Track.fromJson(Map<String, dynamic> json)
+  Track.fromJson(super.json)
       : unseen = json['unseen'],
         isrc = json['isrc'],
         position = json['track_position'],
@@ -374,7 +374,7 @@ class Track extends TrackShort {
                 for (var contributor in json['contributors'])
                   Contributor.fromJson(contributor)
               ],
-        super.fromJson(json);
+        super.fromJson();
 }
 
 class TrackShort {
