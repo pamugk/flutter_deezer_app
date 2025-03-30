@@ -1,4 +1,6 @@
 {
+  "@@locale": "en",
+  
   "added": "Added",
   "@added": {
     "description": "Added column header label"
@@ -290,7 +292,7 @@
     "description": "Other problem label"
   },
   "problemOtherComment": "Write a comment",
-  "@problemOtherCommentr": {
+  "@problemOtherComment": {
     "description": "Other problem comment hint"
   },
   "problemSound": "There's an audio problem.",
